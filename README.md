@@ -1,0 +1,3 @@
+Diagnosis folder
+RealTimeDiagnosis folder
+AppRoutes file

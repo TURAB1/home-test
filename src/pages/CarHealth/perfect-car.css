@@ -1,0 +1,169 @@
+  .alert-banner {
+      width: 400px;
+      height: 74px;
+      opacity: 1;
+      position: absolute;
+      top: 98px;
+      left: 332px;
+    }
+
+    .alert-text {
+      width: 320px;
+      height: 74px;
+      opacity: 1;
+      position: absolute;
+      top: 0;
+      left: 80px;
+    }
+
+    .alert-title {
+      width: 320px;
+      height: 28px;
+      color: #ffffff;
+      position: absolute;
+      top: -30px;
+      left: 8px;
+      font-family: Pretendard;
+      font-weight: 400;
+      font-size: 28px;
+      opacity: 1;
+      text-align: left;
+    }
+
+    .alert-message {
+      width: 320px;
+      color: #666666;
+      position: absolute;
+      top: 20px;
+      left: 8px;
+      font-family: Pretendard;
+      font-weight: 500;
+      font-size: 16px;
+      opacity: 1;
+      text-align: left;
+    }
+
+    .exclamation {
+      width: 73px;
+      height: 64px;
+      background: url("../../assets/images/exclamation.svg");
+      opacity: 1;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .exclamation2 {
+      width: 73px;
+      height: 64px;
+      background: url("../../assets/images/exclamation2.svg");
+      opacity: 1;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .diagnostic-container {
+      width: 400px;
+      height: 172px;
+      top: 188px;
+      left: 332px;
+      position: absolute;
+    }
+
+    .diagnostic-box-top,
+    .diagnostic-box-bottom {
+      width: 400px;
+      height: 78px;
+      position: absolute;
+      left: 0;
+    }
+
+    .diagnostic-box-top {
+      top: 0;
+    }
+
+    .diagnostic-box-bottom {
+      top: 94px;
+    }
+
+    .box-frame {
+      width: 400px;
+      height: 78px;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: cover;
+      position: absolute;
+      top: 0;
+      left: 0;
+      border: 1px solid rgba(45, 46, 56, 1);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .arrow-icon {
+      width: 16px;
+      height: 8px;
+      position: absolute;
+      background-repeat: no-repeat;
+    }
+
+    .arrow-icon-top, .arrow-icon-bottom {
+      top: 32px;
+      right: 20px;
+      background-image: url("../../assets/images/right.svg");
+    }
+
+    .label-title {
+      position: absolute;
+      top: 27px;
+      left: 20px;
+      font-family: Pretendard;
+      font-weight: 400;
+      font-size: 20px;
+      color: #fff;
+    }
+
+    .label-nocount {
+      position: absolute;
+      top: 27px;
+      left: 109px;
+      font-family: Pretendard;
+      font-weight: bold;
+      font-size: 20px;
+      color: #15985D;
+    }
+
+    .label-count {
+      position: absolute;
+      top: 27px;
+      left: 109px;
+      font-family: Pretendard;
+      font-weight: bold;
+      font-size: 20px;
+      color: #ed1b23;
+    }
+
+    .label-status {
+      position: absolute;
+      top: 27px;
+      left: 144px;
+      font-family: Pretendard;
+      font-weight: bold;
+      font-size: 20px;
+      color: #15985d;
+    }
+
+    .button {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 856px;
+      height: 60px;
+      border: none;
+      background: linear-gradient(to right, #EC1C24, #F28952);
+      color: white;
+      font-size: 22px;
+      font-weight: 600;
+      cursor: pointer;
+    }

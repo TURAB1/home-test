@@ -1,0 +1,196 @@
+ * {
+   box-sizing: border-box;
+ }
+
+ html {
+   width: 956px;
+   height: 460px;
+   margin: 0;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   background: #333;
+ }
+
+ body {
+   font-family: Pretendard;
+   font-size: 14px;
+ }
+
+ .container {
+   width: 956px;
+   height: 460px;
+   background: #0d0d0e;
+   position: absolute;
+   top: 0;
+   left: 0;
+   overflow: hidden;
+ }
+
+ .header-wrapper,
+ .header-background {
+   width: 956px;
+   height: 48px;
+   position: absolute;
+   top: 0;
+   left: 0;
+ }
+
+ .header-background {
+   background: #000;
+ }
+
+ .clock-box {
+   width: 71px;
+   height: 19px;
+   position: absolute;
+   top: 14px;
+   right: 20px;
+ }
+
+ .clock-hour,
+ .clock-ampm {
+   color: #fff;
+   font-family: Pretendard;
+   font-weight: 500;
+   font-size: 16px;
+   position: absolute;
+   top: 0;
+   text-align: center;
+ }
+
+ .clock-hour {
+   width: 42px;
+   left: 0px;
+ }
+
+ .clock-ampm {
+   width: 24px;
+   left: 47px;
+ }
+
+ .signal-icon,
+ .wifi-icon,
+ .battery-icon {
+   position: absolute;
+   background-size: cover;
+   background-position: center;
+   background-repeat: no-repeat;
+ }
+
+ .signal-icon {
+   width: 16px;
+   height: 19px;
+   color: #fff;
+   top: 15px;
+   left: 40px;
+   background-image: url("../../assets/images/signal-icon.svg");
+   border-radius: 1px;
+ }
+
+ .wifi-icon {
+   width: 18px;
+   height: 18px;
+   color: #fff;
+   top: 15px;
+   left: 172px;
+   background-image: url("../../assets/images/wifi-icon.svg");
+   border-radius: 1px;
+ }
+
+ .battery-icon {
+   width: 17px;
+   height: 17px;
+   color: #fff;
+   top: 16px;
+   left: 264px;
+   background-image: url("../../assets/images/battery-icon.svg");
+   border-radius: 1px;
+ }
+
+    .sidebar-nav {
+      width: 100px;
+      height: 412px;
+      background: rgba(36, 36, 36, 1);
+      opacity: 1;
+      position: absolute;
+      top: 48px;
+      left: 0;
+      overflow: hidden;
+    }
+ /*NavBar*/
+ .nav-item-health,
+ .nav-item-health-on,
+ .nav-item-battery,
+ .nav-item-battery-on,
+ .nav-item-notice,
+ .nav-item-notice-on,
+ .nav-item-setting,
+ .nav-item-setting-on {
+   position: absolute;
+   overflow: hidden;
+   background-repeat: no-repeat;
+   background-position: center center;
+   background-size: cover;
+ }
+
+ .nav-item-health {
+   width: 49px;
+   height: 50px;
+   background-image: url("../../assets/images/nav-item-health.svg");
+   top: 60px;
+   left: 20px;
+ }
+
+ .nav-item-health-on {
+   width: 67px;
+   height: 79px;
+   background-image: url("../../assets/images/nav-item-health-on.svg");
+   top: 40px;
+   left: 16.5px;
+ }
+
+ .nav-item-battery {
+   width: 49px;
+   height: 50px;
+   background-image: url("../../assets/images/nav-item-battery.svg");
+   top: 150px;
+   left: 25px;
+ }
+
+  .nav-item-battery-on {
+   width: 67px;
+   height: 79px;
+   background-image: url("../../assets/images/nav-item-battery-on.svg");
+   top: 150px;
+   left: 10px;
+ }
+ .nav-item-notice {
+   width: 49px;
+   height: 50px;
+   background-image: url("../../assets/images/nav-item-notice.svg");
+   top: 230px;
+   left: 25px;
+ }
+  .nav-item-notice-on {
+   width: 67px;
+   height: 79px;
+   background-image: url("../../assets/images/nav-item-notice-on.svg");
+   top: 230px;
+   left: 15px;
+ }
+
+ .nav-item-setting {
+   width: 49px;
+   height: 50px;
+   background-image: url("../../assets/images/nav-item-setting.svg");
+   top: 310px;
+   left: 25px;
+ }
+  .nav-item-setting-on {
+   width: 67px;
+   height: 79px;
+   background-image: url("../../assets/images/nav-item-setting-on.svg");
+   top: 310px;
+   left: 15px;
+ }

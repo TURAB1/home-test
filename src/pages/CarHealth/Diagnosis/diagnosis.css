@@ -1,0 +1,191 @@
+
+    sensor-alert-widget {
+      width: 244px;
+      height: 140px;
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: cover;
+      position: absolute;
+      top: 106px;
+      left: 172px;
+      overflow: hidden;
+      display: block;
+    }
+
+    sensor-icon {
+      width: 66px;
+      height: 58px;
+      background: url("../../../assets/images/exclamation_red.svg");
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: cover;
+      position: absolute;
+      top: 0;
+      left: 6px;
+      overflow: hidden;
+      display: block;
+    }
+
+    sensor-message-box {
+      width: 244px;
+      height: 33px;
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: cover;
+      position: absolute;
+      top: 78px;
+      left: 0;
+      overflow: hidden;
+      display: block;
+    }
+
+    sensor-message {
+      width: 244px;
+      color: rgba(237, 27, 35, 1);
+      font-family: Pretendard;
+      font-weight: bold;
+      font-size: 28px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      text-align: left;
+      display: block;
+    }
+
+    sensor-timestamp {
+      width: 159px;
+      color: rgba(102, 102, 102, 1);
+      font-family: Pretendard;
+      font-weight: 400;
+      font-size: 18px;
+      position: absolute;
+      top: 119px;
+      left: 0;
+      text-align: left;
+      display: block;
+    }
+
+    .dtc-container {
+      width: 440px;
+      height: 604px;
+      position: absolute;
+      top: 86px;
+      right: 20px;
+      overflow: hidden;
+    }
+
+    .dtc-background {
+      width: 100%;
+      height: 100%;
+      border: 1px solid #2d2e38;
+      border-radius: 4px;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .dtc-block {
+      width: 400px;
+      height: 126px;
+      position: absolute;
+      left: 20px;
+      overflow: hidden;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: cover;
+    }
+
+    .block-1 {
+     top: 20px;
+    }
+
+    .block-2 {
+      top: 150px;
+    }
+
+    .block-3 {
+      top: 312px;
+    }
+
+    .block-4 {
+      top: 458px;
+    }
+
+    .dtc-header {
+      width: 240px;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .dtc-icon-1 {
+      width: 32px;
+      height: 32px;
+      position: absolute;
+      background: url("../../../assets/images/confirmed.svg");
+      top: 0;
+      left: 0;
+    }
+
+    .dtc-icon-2 {
+      width: 32px;
+      height: 32px;
+      position: absolute;
+      background: url("../../../assets/images/pending.svg");
+      top: 0;
+      left: 0;
+    }
+
+    .dtc-icon-3 {
+      width: 32px;
+      height: 32px;
+      position: absolute;
+      background: url("../../../assets/images/emergency.svg");
+      top: 0;
+      left: 0;
+    }
+
+    .dtc-icon-4 {
+      width: 32px;
+      height: 32px;
+      position: absolute;
+      background: url("../../../assets/images/emergency.svg");
+      top: 0;
+      left: 0;
+    }
+
+    .dtc-code {
+      width: 250px;
+      font-size: 22px;
+      color: #fff;
+      position: absolute;
+      top: 0;
+      left: 44px;
+    }
+
+    .dtc-description-wrap {
+      width: 400px;
+      height: 78px;
+      position: absolute;
+      top: 48px;
+      left: 0;
+    }
+
+    .dtc-description-frame {
+      width: 100%;
+      height: 100%;
+      border: 1px solid #2d2e38;
+      border-radius: 4px;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .dtc-description {
+      font-size: 20px;
+      color: #fff;
+      position: absolute;
+      top: 15px;
+      left: 20px;
+      width: 360px;
+    }

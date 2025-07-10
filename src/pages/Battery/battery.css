@@ -1,0 +1,225 @@
+
+    sensor-alert-widget {
+      position: absolute;
+      top: 160px;
+      left: 340px;
+      width: 261px;
+      height: 150px;
+      display: block;
+    }
+
+    sensor-icon {
+      width: 66px;
+      height: 58px;
+      background: url("../../assets/images/battery-red.svg") no-repeat center / cover;
+      position: absolute;
+      top: 0;
+      left: 6px;
+      display: block;
+    }
+
+    sensor-message-box {
+      position: absolute;
+      top: 78px;
+      left: 0;
+      width: 244px;
+      height: 33px;
+      display: block;
+    }
+
+    sensor-message {
+      color: #ED1B23;
+      font-size: 28px;
+      font-weight: bold;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 244px;
+    }
+
+    data-widget {
+      position: absolute;
+      top: 128px;
+      right: 220px;
+      width: 480px;
+      height: 248px;
+      display: block;
+    }
+
+    data-row {
+      position: absolute;
+      width: 480px;
+      height: 72px;
+      display: block;
+    }
+
+    data-row:nth-of-type(1) {
+      top: 0;
+    }
+
+    data-row:nth-of-type(2) {
+      top: 88px;
+    }
+
+    data-row:nth-of-type(3) {
+      top: 176px;
+    }
+
+    data-box {
+      width: 480px;
+      height: 72px;
+      background: #1E1F25;
+      border: 2px solid #2D2E38;
+      border-radius: 8px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: block;
+    }
+
+    data-label,
+    data-unit,
+    data-value {
+      font-family: Pretendard;
+      font-size: 32px;
+      /* 16 * 2 */
+      position: absolute;
+      top: 16px;
+      /* 8 * 2 */
+      display: block;
+    }
+
+    data-label {
+      left: 40px;
+      /* 20 * 2 */
+      color: #fff;
+      font-weight: 400;
+    }
+
+    data-unit {
+      left: 416px;
+      /* 208 * 2 */
+      font-weight: bold;
+    }
+
+    data-value {
+      font-weight: bold;
+    }
+
+    data-row:nth-of-type(1) data-unit,
+    data-row:nth-of-type(1) data-value {
+      color: #ED1B23;
+    }
+
+    data-row:nth-of-type(1) data-value {
+      left: 386px;
+      /* 193 * 2 */
+      width: 22px;
+    }
+
+    data-row:nth-of-type(2) data-unit,
+    data-row:nth-of-type(2) data-value {
+      color: #15985D;
+    }
+
+    data-row:nth-of-type(2) data-value {
+      left: 344px;
+      /* 172 * 2 */
+      width: 64px;
+    }
+
+    .battery-info-container {
+      position: absolute;
+      top: 320px;
+      left: 340px;
+      width: 1360px;
+      height: 683px;
+    }
+
+    .background-layer {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 4px;
+      background-color: #0D0E0F;
+      border: 1px solid #2D2E38;
+    }
+
+    .card-group {
+      display: flex;
+      gap: 20px;
+      position: absolute;
+      top: 32px;
+      left: 30px;
+      z-index: 1;
+    }
+
+    .spec-info,
+    .usage-info {
+      width: 640px;
+    }
+
+    .card-title {
+      font-size: 28px;
+      color: #fff;
+      margin: 0 0 16px 0;
+    }
+
+    .info-item {
+      background-color: #1E1F25;
+      border: 1px solid #2D2E38;
+      border-radius: 4px;
+      padding: 26px 20px;
+      margin-bottom: 10px;
+      height: 78px;
+      position: relative;
+    }
+
+    .label {
+      font-size: 20px;
+      color: #fff;
+      opacity: 0.4;
+    }
+
+    .value-unit {
+      position: absolute;
+      top: 27px;
+      right: 20px;
+      display: flex;
+      gap: 4px;
+    }
+
+    .value,
+    .unit,
+    .value-none {
+      font-size: 20px;
+      font-weight: bold;
+      color: #F8F7FA;
+    }
+
+    .value-none {
+      position: absolute;
+      right: 20px;
+      top: 27px;
+    }
+
+    .bottom-buttons {
+      display: flex;
+      gap: 20px;
+      position: absolute;
+      bottom: 32px;
+      left: 30px;
+      width: 1300px;
+    }
+
+    .history-button {
+      flex: 1;
+      height: 78px;
+      background-color: #F8F7F9;
+      color: #222;
+      font-size: 22px;
+      font-weight: bold;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }

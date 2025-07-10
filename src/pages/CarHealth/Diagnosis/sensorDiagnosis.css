@@ -1,0 +1,714 @@
+sensor-alert-widget {
+    width: 244px;
+    height: 140px;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    position: absolute;
+    top: 106px;
+    left: 172px;
+    overflow: hidden;
+    display: block;
+}
+
+sensor-icon {
+    width: 66px;
+    height: 58px;
+    background: url("../../../assets/images/exclamation_red.svg");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    position: absolute;
+    top: 0;
+    left: 6px;
+    overflow: hidden;
+    display: block;
+}
+
+sensor-message-box {
+    width: 244px;
+    height: 33px;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    position: absolute;
+    top: 78px;
+    left: 0;
+    overflow: hidden;
+    display: block;
+}
+
+sensor-message {
+    width: 244px;
+    color: rgba(237, 27, 35, 1);
+    font-family: Pretendard;
+    font-weight: bold;
+    font-size: 28px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    text-align: left;
+    display: block;
+}
+
+/* normal*/
+sensor-icon-green {
+    width: 66px;
+    height: 58px;
+    background: url("../../../assets/images/smile.svg");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    position: absolute;
+    top: 0;
+    left: 6px;
+    overflow: hidden;
+    display: block;
+}
+sensor-message-green {
+    width: 244px;
+    color: #15985D;
+    font-family: Pretendard;
+    font-weight: bold;
+    font-size: 28px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    text-align: left;
+    display: block;
+}
+/*/*/
+
+sensor-timestamp {
+    width: 159px;
+    color: rgba(102, 102, 102, 1);
+    font-family: Pretendard;
+    font-weight: 400;
+    font-size: 18px;
+    position: absolute;
+    top: 119px;
+    left: 0;
+    text-align: left;
+    display: block;
+}
+
+data-widget {
+    width: 240px;
+    height: 124px;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    position: absolute;
+    top: 106px;
+    right: 60px;
+    overflow: hidden;
+    display: block;
+}
+
+data-row {
+    width: 240px;
+    height: 36px;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    position: absolute;
+    overflow: hidden;
+    display: block;
+}
+
+data-row:nth-of-type(1) {
+    top: 0px;
+}
+
+data-row:nth-of-type(2) {
+    top: 44px;
+}
+
+data-row:nth-of-type(3) {
+    top: 88px;
+}
+
+data-box {
+    width: 240px;
+    height: 36px;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    border: 1px solid rgba(45, 46, 56, 1);
+    border-radius: 4px;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    overflow: hidden;
+    display: block;
+}
+
+data-label,
+data-unit,
+data-value {
+    font-family: Pretendard;
+    font-size: 16px;
+    position: absolute;
+    top: 8px;
+    opacity: 1;
+    display: block;
+}
+
+data-label {
+    left: 20px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 1);
+}
+
+data-unit {
+    left: 208px;
+    font-weight: bold;
+}
+
+data-value {
+    font-weight: bold;
+    text-align: right;
+}
+
+data-row:nth-of-type(1) data-unit,
+data-row:nth-of-type(1) data-value {
+    color: rgba(237, 27, 35, 1);
+}
+
+data-row:nth-of-type(1) data-value {
+    left: 193px;
+    width: 11px;
+}
+
+data-row:nth-of-type(2) data-unit,
+data-row:nth-of-type(2) data-value {
+    color: rgba(21, 152, 93, 1);
+}
+
+data-row:nth-of-type(2) data-value {
+    left: 172px;
+    width: 32px;
+}
+
+data-row:nth-of-type(3) data-label {
+    top: 9px;
+}
+
+data-row:nth-of-type(3) data-unit,
+data-row:nth-of-type(3) data-value {
+    color: rgba(99, 171, 250, 1);
+}
+
+data-row:nth-of-type(3) data-unit {
+    left: 201px;
+    width: 19px;
+}
+
+data-row:nth-of-type(3) data-value {
+    left: 176px;
+    width: 21px;
+}
+
+.alert-banner {
+    width: 400px;
+    height: 74px;
+    opacity: 1;
+    position: absolute;
+    top: 158px;
+    left: 362px;
+}
+
+.alert-text {
+    width: 320px;
+    height: 74px;
+    opacity: 1;
+    position: absolute;
+    top: 0;
+    left: 80px;
+}
+
+.alert-title {
+    width: 320px;
+    height: 28px;
+    color: #ffffff;
+    position: absolute;
+    top: -30px;
+    left: 8px;
+    font-family: Pretendard;
+    font-weight: 400;
+    font-size: 28px;
+    opacity: 1;
+    text-align: left;
+}
+
+.alert-message {
+    width: 320px;
+    color: #666666;
+    position: absolute;
+    top: 20px;
+    left: 8px;
+    font-family: Pretendard;
+    font-weight: 500;
+    font-size: 16px;
+    opacity: 1;
+    text-align: left;
+}
+
+.exclamation {
+    width: 73px;
+    height: 64px;
+    background: url("../../../assets/images/exclamation.svg");
+    opacity: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.exclamation2 {
+    width: 73px;
+    height: 64px;
+    background: url("../../../assets/images/exclamation2.svg");
+    opacity: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.diagnostic-container {
+    width: 400px;
+    height: 172px;
+    top: 248px;
+    left: 362px;
+    position: absolute;
+}
+
+.diagnostic-box-top,
+.diagnostic-box-bottom {
+    width: 400px;
+    height: 78px;
+    position: absolute;
+    left: 0;
+}
+
+.diagnostic-box-top {
+    top: 0;
+}
+
+.diagnostic-box-bottom {
+    top: 94px;
+}
+
+.box-frame {
+    width: 400px;
+    height: 78px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border: 1px solid rgba(45, 46, 56, 1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.arrow-icon {
+    width: 16px;
+    height: 8px;
+    position: absolute;
+    top: 31px;
+    left: 372px;
+    transform: rotate(-90deg);
+    background-repeat: no-repeat;
+    background-image: url("../../../assets/images/right.svg");
+    /* <-- 추가 */
+}
+
+.arrow-icon-top {
+    background-image: url("../../../assets/images/right.svg");
+}
+
+.arrow-icon-bottom {
+    background-image: url("../../../assets/images/right.svg");
+}
+
+.label-title {
+    position: absolute;
+    top: 27px;
+    left: 20px;
+    font-family: Pretendard;
+    font-weight: 400;
+    font-size: 20px;
+    color: #fff;
+}
+
+.label-nocount {
+    position: absolute;
+    top: 27px;
+    left: 109px;
+    font-family: Pretendard;
+    font-weight: bold;
+    font-size: 20px;
+    color: #15985D;
+}
+
+.label-count {
+    position: absolute;
+    top: 27px;
+    left: 109px;
+    font-family: Pretendard;
+    font-weight: bold;
+    font-size: 20px;
+    color: #ed1b23;
+}
+
+.label-status {
+    position: absolute;
+    top: 27px;
+    left: 144px;
+    font-family: Pretendard;
+    font-weight: bold;
+    font-size: 20px;
+    color: #15985d;
+}
+
+.diagnosis {
+    width: 263px;
+    height: 121px;
+    position: absolute;
+    top: 238px;
+    left: 323px;
+}
+
+h1 {
+    width: 280px;
+    color: rgba(255, 255, 255, 1);
+    position: absolute;
+    top: 77px;
+    left: 99px;
+    font-family: Pretendard;
+    font-weight: bold;
+    font-size: 28px;
+    opacity: 1;
+    text-align: left;
+}
+
+p {
+    width: 374px;
+    color: rgba(85, 85, 85, 1);
+    position: absolute;
+    top: 118px;
+    left: 168px;
+    font-family: Pretendard;
+    font-weight: normal;
+    font-size: 18px;
+}
+
+figure {
+    width: 66px;
+    height: 58px;
+    background: url("../../../assets/images/diagnosis.svg");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    opacity: 1;
+    position: absolute;
+    top: 0px;
+    left: 164px;
+}
+
+figcaption {
+    width: 66px;
+    height: 58px;
+    opacity: 1;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+
+label {
+    color: #fff;
+}
+
+.battery-widget {
+    width: 332px;
+    height: 148px;
+    position: absolute;
+    top: 284px;
+    left: 172px;
+    overflow: hidden;
+}
+
+.temperature-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 332px;
+    height: 104px;
+    position: absolute;
+    top: 40px;
+    left: 0;
+    overflow: hidden;
+}
+
+.temperature-bg {
+    width: 332px;
+    height: 104px;
+    background: rgba(13, 14, 15, 1);
+    border: 1px solid rgba(45, 46, 56, 1);
+    border-radius: 4px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+}
+
+.temp-max {
+    position: absolute;
+    width: 157px;
+    height: 68px;
+    top: 20px;
+    left: 180px;
+}
+
+.temp-min {
+    position: absolute;
+    width: 157px;
+    height: 68px;
+    top: 20px;
+    left: 20px;
+}
+
+.temp-value-max,
+.temp-value-min {
+    position: absolute;
+    top: 40px;
+    left: 48px;
+    width: 59px;
+    height: 26px;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+}
+
+.temp-value-max span,
+.temp-value-min span {
+    font-family: Pretendard;
+    font-weight: Bold;
+    font-size: 22px;
+    color: rgba(248, 247, 250, 1);
+    position: absolute;
+}
+
+.temp-value-max span:last-child,
+.temp-value-min span:last-child {
+    left: 0;
+}
+
+.temp-value-max span:first-child,
+.temp-value-min span:first-child {
+    left: 33px;
+    top: 0px;
+}
+
+.temp-icon-max,
+.temp-icon-min {
+    width: 32px;
+    height: 32px;
+    position: absolute;
+    top: 36px;
+    left: 0;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+}
+
+.temp-icon-max {
+    background-image: url("../../../assets/images/thermometer.svg");
+}
+
+.temp-icon-min {
+    background-image: url("../../../assets/images/thermometer_red.svg");
+}
+
+.temp-icon-max div,
+.temp-icon-min div {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.temp-max span,
+.temp-min span {
+    color: white;
+    font-family: Pretendard;
+    font-weight: Light;
+    font-size: 20px;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.battery-widget-title>span {
+    width: 92px;
+    color: #fff;
+    position: absolute;
+    top: 0;
+    left: 0;
+    text-align: left;
+    font-family: Pretendard;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.battery-widget-title>p {
+    width: 105px;
+    color: #fff;
+    position: absolute;
+    top: -12px;
+    left: 96px;
+    font-family: Pretendard;
+    font-weight: Light;
+    font-size: 16px;
+}
+
+.cellvoltage-widget {
+    width: 348px;
+    height: 148px;
+    position: absolute;
+    top: 284px;
+    right: 60px;
+    overflow: hidden;
+}
+
+.cellvoltage-box {
+    width: 348px;
+    height: 104px;
+    position: absolute;
+    top: 38px;
+    left: 0;
+    overflow: hidden;
+}
+
+.cellvoltage-bg {
+    width: 348px;
+    height: 104px;
+    background: rgba(13, 14, 15, 1);
+    border: 1px solid rgba(45, 46, 56, 1);
+    border-radius: 4px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+}
+
+.voltage-max {
+    top: 20px;
+    left: 180px;
+    width: 163px;
+    height: 69px;
+    position: absolute;
+}
+
+.voltage-min {
+    top: 20px;
+    left: 20px;
+    width: 163px;
+    height: 69px;
+    position: absolute;
+}
+
+.voltage-max-value,
+.voltage-min-value {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    width: 55px;
+    height: 26px;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+}
+
+.unit {
+    position: absolute;
+    left: 38px;
+    font-family: Pretendard;
+    font-weight: Bold;
+    font-size: 20px;
+    color: rgba(248, 247, 250, 1);
+}
+
+.value {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    font-family: Pretendard;
+    font-weight: Bold;
+    font-size: 20px;
+    color: rgba(248, 247, 250, 1);
+}
+
+.voltage-max-icon,
+.voltage-min-icon {
+    width: 32px;
+    height: 32px;
+    position: absolute;
+    top: 37px;
+    left: 0;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+}
+
+.voltage-max-icon {
+    background-image: url("../../../assets/images/charge.svg");
+}
+
+.voltage-min-icon {
+    background-image: url("../../../assets/images/charge_red.svg");
+}
+
+.voltage-max-label,
+.voltage-min-label {
+    color: #fff;
+    font-family: Pretendard;
+    font-weight: Light;
+    font-size: 20px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    text-align: left;
+    width: 164px;
+}
+
+.cellvoltage-titlebox {
+    width: 185px;
+    height: 24px;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.cellvoltage-title {
+    font-family: Pretendard;
+    font-weight: Bold;
+    font-size: 20px;
+    color: #fff;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.cellvoltage-subtitle {
+    font-family: Pretendard;
+    font-weight: Light;
+    font-size: 16px;
+    color: #fff;
+    position: absolute;
+    top: 3px;
+    left: 113px;
+}
