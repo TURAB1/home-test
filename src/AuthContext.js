@@ -4,11 +4,12 @@ export const AuthContext = createContext(null)
 
 const AuthContextProvider = ({ children }) => {
     const [user, setUser] = useState()
-    const [vehicleData,setVehicleData]=useState()
-    const [vehicleKey,setVehicleKey]=useState('')
-    const [dtcHstr_data,set_dtcHstr_data]=useState([])
+    const [vehicleData, setVehicleData] = useState()
+    const [vehicleKey, setVehicleKey] = useState('')
+    const [dtcHstr_data, set_dtcHstr_data] = useState([])
+    const [sensorFault,setSensorFault]=useState(false)
     let token
-    
+
 
     //회원 토큰가져오기
     function login(email, password, expire = '86400') {
@@ -45,27 +46,29 @@ const AuthContextProvider = ({ children }) => {
                         .then(response => {
                             console.log("user data=>" + JSON.stringify(response.data.result));
                             if (response.data.result) {
-                                const get_vehicleKey=response.data.result.favoriteVehicle
-                                axios.get('http://localhost/api/1/vehicle/' +get_vehicleKey+ '/vehicleHealth',
-                                    {
-                                        headers: {
-                                            'key': token,
-                                            "Content-type": "application/json"
-                                        }
-                                    })
-                                    .then(response => {
-                                        console.log("vehicle data=>" + JSON.stringify(response));
-                                        if (response.data.result) {
-                                         setVehicleData(response.data.result)
-                                         setVehicleKey(get_vehicleKey)
-                                    
-                                        }
+                                const get_vehicleKey = response.data.result.favoriteVehicle
+                                if (get_vehicleKey) {
+                                    axios.get('http://localhost/api/1/vehicle/' + get_vehicleKey + '/vehicleHealth',
+                                        {
+                                            headers: {
+                                                'key': token,
+                                                "Content-type": "application/json"
+                                            }
+                                        })
+                                        .then(response => {
+                                            console.log("vehicle data=>" + JSON.stringify(response));
+                                            if (response.data.result) {
+                                                setVehicleData(response.data.result)
+                                                setVehicleKey(get_vehicleKey)
 
-                                    }, error => {
-                                        console.log(error);
-                                    });
-                                // setUser(response.data.result)
-                                // return true
+                                            }
+
+                                        }, error => {
+                                            console.log(error);
+                                        });
+                                } else {
+                                    setVehicleKey("0")
+                                }
                             }
 
                         }, error => {
@@ -84,7 +87,7 @@ const AuthContextProvider = ({ children }) => {
 
 
     return (
-        <AuthContext.Provider value={{ user, login,vehicleData,vehicleKey,dtcHstr_data,set_dtcHstr_data }}>
+        <AuthContext.Provider value={{ user, login, vehicleData, vehicleKey, dtcHstr_data, set_dtcHstr_data,sensorFault,setSensorFault }}>
             {
                 children
             }

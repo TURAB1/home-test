@@ -1,30 +1,33 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import Header from "../../../components/Header/Header"
 import NavBar from "../../../components/NavBar/NavBar"
+import { AuthContext } from '../../../AuthContext'
 import './sensorDiagnosis.css'
 const SensorDiagnosis = () => {
+  const { sensorFault } = useContext(AuthContext)
   return (
     <div class="container">
       <Header />
       <NavBar healthClass="nav-item-health-on" batteryClass="nav-item-battery" noticeClass="nav-item-notice" settingClass="nav-item-setting" />
-
-       <sensor-alert-widget>
-        <sensor-icon>
-        </sensor-icon>
-        <sensor-message-box>
-          <sensor-message>센서진단결과 이상 1건</sensor-message>
-        </sensor-message-box>
-        <sensor-timestamp>[2025-10-02 17:09]</sensor-timestamp>
-      </sensor-alert-widget> 
-
-      {/* <sensor-alert-widget>
-        <sensor-icon-green>
-        </sensor-icon-green>
-        <sensor-message-box>
-          <sensor-message-green>센서진단결과 정상</sensor-message-green>
-        </sensor-message-box>
-        <sensor-timestamp>[2025-10-02 17:09]</sensor-timestamp>
-      </sensor-alert-widget> */}
+      {sensorFault ?
+        <sensor-alert-widget>
+          <sensor-icon>
+          </sensor-icon>
+          <sensor-message-box>
+            <sensor-message>센서진단결과 이상 1건</sensor-message>
+          </sensor-message-box>
+          <sensor-timestamp>[2025-10-02 17:09]</sensor-timestamp>
+        </sensor-alert-widget>
+        :
+        <sensor-alert-widget>
+          <sensor-icon-green>
+          </sensor-icon-green>
+          <sensor-message-box>
+            <sensor-message-green>센서진단결과 정상</sensor-message-green>
+          </sensor-message-box>
+          <sensor-timestamp>[2025-10-02 17:09]</sensor-timestamp>
+        </sensor-alert-widget>
+      }
 
       <data-widget>
         <data-row>

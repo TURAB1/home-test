@@ -1,0 +1,112 @@
+.calendar {
+    width: 684px;
+    height: 380px;
+    /* background-image: url("../../../assets/images/calendar2-684.png"); */
+    position: absolute;
+    top: 64px;
+    left: 115px;
+}
+
+.card-wrapper {
+    width: 120px;
+    height: 64px;
+    position: absolute;
+    top: 64px;
+    right: 14px;
+    overflow: hidden;
+}
+
+.card-inner {
+    width: 120px;
+    height: 64px;
+    position: absolute;
+    overflow: hidden;
+}
+
+.card-content {
+    width: 120px;
+    height: 64px;
+    position: absolute;
+    overflow: hidden;
+}
+
+.card {
+    width: 120px;
+    height: 64px;
+    position: absolute;
+    border: 1px solid rgba(45, 46, 56, 1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.value-wrap {
+    width: 104px;
+    height: 19px;
+    position: absolute;
+    top: 36px;
+    right: 12px;
+}
+
+.value {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 39px;
+    color: white;
+    font-family: Pretendard;
+    font-weight: bold;
+    font-size: 16px;
+    text-align: right;
+}
+
+.unit {
+    position: absolute;
+    top: 0;
+    color: white;
+    font-family: Pretendard;
+    font-weight: bold;
+    font-size: 16px;
+    text-align: right;
+}
+
+.unit.kmper {
+    left: 43px;
+    width: 29px;
+}
+
+.unit.kwh {
+    left: 72px;
+    width: 32px;
+}
+
+.label {
+    position: absolute;
+    top: 11px;
+    right: 12px;
+    width: 80px;
+    color: #6e6e6f;
+    font-family: Pretendard;
+    font-weight: 400;
+    font-size: 16px;
+    text-align: center;
+}
+.distance{
+    right: 14px; 
+    top: 64px;
+}
+.time{
+    right: 14px; 
+    top: 140px;
+}
+.fuel{
+    right: 14px; 
+    top: 218px;
+}
+.average-power{
+    right: 14px; 
+    top: 292px;
+}
+.cert-power{
+    right: 14px; 
+    top: 368px;
+}

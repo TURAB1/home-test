@@ -15,7 +15,7 @@ const Login = () => {
     const [isChecked, setIsChecked] = useState(false)
     const [resultData, setResultData] = useState("")
 
-    const { user, login, vehicleData } = useContext(AuthContext)
+    const { user, login, vehicleData, vehicleKey,setDtcCounter } = useContext(AuthContext)
 
     const handleEmailChange = (event) => {
         const value = event.target.value;
@@ -49,6 +49,11 @@ const Login = () => {
 
     }
 
+    if (vehicleKey === "0") {
+        return (
+            <Navigate to="/noCar" replace />)
+    }
+
     if (vehicleData) {
         let dtcCount
         if (vehicleData.vehicleHealthStatusEv) {
@@ -57,9 +62,15 @@ const Login = () => {
         } else {
             dtcCount = vehicleData.vehicleHealthStatus.dtcCnt
         }
-        if (dtcCount === 0) {
+       
+        if (dtcCount !== 0) {
             return (
-                <Navigate to="/faultCar" replace />)
+                 <Navigate to="/faultCar" replace />
+                
+            )
+        } else {
+            return (
+                <Navigate to="/perfectCar" replace />)
         }
 
     }

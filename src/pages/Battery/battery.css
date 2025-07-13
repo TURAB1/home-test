@@ -1,79 +1,117 @@
-
     sensor-alert-widget {
+      width: 244px;
+      height: 140px;
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: cover;
       position: absolute;
-      top: 160px;
-      left: 340px;
-      width: 261px;
-      height: 150px;
+      top: 106px;
+      left: 172px;
+      overflow: hidden;
       display: block;
     }
 
     sensor-icon {
       width: 66px;
       height: 58px;
-      background: url("../../assets/images/battery-red.svg") no-repeat center / cover;
+      background: url("../../assets/images/battery-red.svg");
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: cover;
       position: absolute;
       top: 0;
       left: 6px;
+      overflow: hidden;
       display: block;
     }
 
     sensor-message-box {
+      width: 244px;
+      height: 33px;
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: cover;
       position: absolute;
       top: 78px;
       left: 0;
-      width: 244px;
-      height: 33px;
+      overflow: hidden;
       display: block;
     }
 
     sensor-message {
-      color: #ED1B23;
-      font-size: 28px;
-      font-weight: bold;
-      position: absolute;
-      left: 0;
-      top: 0;
       width: 244px;
+      color: #ED1B23;
+      font-family: Pretendard;
+      font-weight: bold;
+      font-size: 28px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      text-align: left;
+      display: block;
+    }
+
+    sensor-timestamp {
+      width: 159px;
+      color: rgba(102, 102, 102, 1);
+      font-family: Pretendard;
+      font-weight: 400;
+      font-size: 18px;
+      position: absolute;
+      top: 119px;
+      left: 0;
+      text-align: left;
+      display: block;
     }
 
     data-widget {
+      width: 240px;
+      height: 124px;
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: cover;
       position: absolute;
-      top: 128px;
-      right: 220px;
-      width: 480px;
-      height: 248px;
+      top: 106px;
+      right: 60px;
+      overflow: hidden;
       display: block;
     }
 
     data-row {
+      width: 240px;
+      height: 36px;
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: cover;
       position: absolute;
-      width: 480px;
-      height: 72px;
+      overflow: hidden;
       display: block;
     }
 
     data-row:nth-of-type(1) {
-      top: 0;
+      top: 0px;
     }
 
     data-row:nth-of-type(2) {
-      top: 88px;
+      top: 44px;
     }
 
     data-row:nth-of-type(3) {
-      top: 176px;
+      top: 88px;
     }
 
     data-box {
-      width: 480px;
-      height: 72px;
-      background: #1E1F25;
-      border: 2px solid #2D2E38;
-      border-radius: 8px;
+      width: 240px;
+      height: 36px;
       position: absolute;
-      top: 0;
-      left: 0;
+      top: 0px;
+      left: 0px;
+      border: 1px solid rgba(45, 46, 56, 1);
+      border-radius: 4px;
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: cover;
+      overflow: hidden;
       display: block;
     }
 
@@ -81,101 +119,291 @@
     data-unit,
     data-value {
       font-family: Pretendard;
-      font-size: 32px;
-      /* 16 * 2 */
+      font-size: 16px;
       position: absolute;
-      top: 16px;
-      /* 8 * 2 */
+      top: 8px;
+      opacity: 1;
       display: block;
     }
 
     data-label {
-      left: 40px;
-      /* 20 * 2 */
-      color: #fff;
+      left: 20px;
+      font-family: Pretendard;
       font-weight: 400;
+      color: rgba(255, 255, 255, 1);
     }
 
     data-unit {
-      left: 416px;
-      /* 208 * 2 */
+      left: 208px;
+      font-family: Pretendard;
       font-weight: bold;
     }
 
     data-value {
+      font-family: Pretendard;
       font-weight: bold;
+      text-align: right;
     }
 
     data-row:nth-of-type(1) data-unit,
     data-row:nth-of-type(1) data-value {
-      color: #ED1B23;
+      color: rgba(237, 27, 35, 1);
     }
 
     data-row:nth-of-type(1) data-value {
-      left: 386px;
-      /* 193 * 2 */
-      width: 22px;
+      left: 193px;
+      width: 11px;
     }
 
     data-row:nth-of-type(2) data-unit,
     data-row:nth-of-type(2) data-value {
-      color: #15985D;
+      color: rgba(21, 152, 93, 1);
     }
 
     data-row:nth-of-type(2) data-value {
-      left: 344px;
-      /* 172 * 2 */
-      width: 64px;
+      left: 172px;
+      width: 32px;
+    }
+
+    .alert-banner {
+      width: 400px;
+      height: 74px;
+      opacity: 1;
+      position: absolute;
+      top: 158px;
+      left: 362px;
+    }
+
+    .alert-text {
+      width: 320px;
+      height: 74px;
+      opacity: 1;
+      position: absolute;
+      top: 0;
+      left: 80px;
+    }
+
+    .alert-title {
+      width: 320px;
+      height: 28px;
+      color: #ffffff;
+      position: absolute;
+      top: -30px;
+      left: 8px;
+      font-family: Pretendard;
+      font-weight: 400;
+      font-size: 28px;
+      opacity: 1;
+      text-align: left;
+    }
+
+    .alert-message {
+      width: 320px;
+      color: #666666;
+      position: absolute;
+      top: 20px;
+      left: 8px;
+      font-family: Pretendard;
+      font-weight: 500;
+      font-size: 16px;
+      opacity: 1;
+      text-align: left;
+    }
+
+    .exclamation {
+      width: 73px;
+      height: 64px;
+      background: url("../../assets/images/exclamation.svg");
+      opacity: 1;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .exclamation2 {
+      width: 73px;
+      height: 64px;
+      background: url("../../assets/images/exclamation2.svg");
+      opacity: 1;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .diagnostic-container {
+      width: 400px;
+      height: 172px;
+      top: 248px;
+      left: 362px;
+      position: absolute;
+    }
+
+    .diagnostic-box-top,
+    .diagnostic-box-bottom {
+      width: 400px;
+      height: 78px;
+      position: absolute;
+      left: 0;
+    }
+
+    .diagnostic-box-top {
+      top: 0;
+    }
+
+    .diagnostic-box-bottom {
+      top: 94px;
+    }
+
+    .box-frame {
+      width: 400px;
+      height: 78px;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: cover;
+      position: absolute;
+      top: 0;
+      left: 0;
+      border: 1px solid rgba(45, 46, 56, 1);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .arrow-icon {
+      width: 16px;
+      height: 8px;
+      position: absolute;
+      top: 31px;
+      left: 372px;
+      transform: rotate(-90deg);
+      background-repeat: no-repeat;
+      background-image: url("../../assets/images/right.svg");
+      /* <-- 추가 */
+    }
+
+    .arrow-icon-top {
+      background-image: url("../../assets/images/right.svg");
+    }
+
+    .arrow-icon-bottom {
+      background-image: url("../../assets/images/right.svg");
+    }
+
+    .label-title {
+      position: absolute;
+      top: 27px;
+      left: 20px;
+      font-family: Pretendard;
+      font-weight: 400;
+      font-size: 20px;
+      color: #fff;
+    }
+
+    .label-nocount {
+      position: absolute;
+      top: 27px;
+      left: 109px;
+      font-family: Pretendard;
+      font-weight: bold;
+      font-size: 20px;
+      color: #15985D;
+    }
+
+    .label-count {
+      position: absolute;
+      top: 27px;
+      left: 109px;
+      font-family: Pretendard;
+      font-weight: bold;
+      font-size: 20px;
+      color: #ed1b23;
+    }
+
+    .label-status {
+      position: absolute;
+      top: 27px;
+      left: 144px;
+      font-family: Pretendard;
+      font-weight: bold;
+      font-size: 20px;
+      color: #15985d;
     }
 
     .battery-info-container {
-      position: absolute;
-      top: 320px;
-      left: 340px;
-      width: 1360px;
-      height: 683px;
+      position: relative;
+      width: 800px;
+      height: 198px;
+      top: 262px;
+      left: 128px;
+      overflow: auto;
     }
 
     .background-layer {
       position: absolute;
-      width: 100%;
-      height: 100%;
+      top: 0;
+      left: 0;
+      width: 800px;
+      height: 683px;
       border-radius: 4px;
       background-color: #0D0E0F;
       border: 1px solid #2D2E38;
+      overflow: auto;
     }
 
+    /* 카드 그룹: 좌우 flex */
     .card-group {
       display: flex;
-      gap: 20px;
+      gap: 16px;
       position: absolute;
       top: 32px;
-      left: 30px;
+      left: 32px;
       z-index: 1;
     }
 
+    /* 각 카드 */
     .spec-info,
     .usage-info {
-      width: 640px;
+      width: 360px;
+    }
+
+    /* 제목 영역 */
+    .card-header {
+      margin-bottom: 16px;
     }
 
     .card-title {
       font-size: 28px;
       color: #fff;
-      margin: 0 0 16px 0;
+      margin: 0;
     }
 
+    /* 정보 항목 */
     .info-item {
+      /* position: relative; */
       background-color: #1E1F25;
       border: 1px solid #2D2E38;
       border-radius: 4px;
       padding: 26px 20px;
       margin-bottom: 10px;
       height: 78px;
-      position: relative;
+      /* overflow: hidden; */
+      display: flex;
+      justify-content: space-between;
     }
 
+    /* 라벨 텍스트 */
     .label {
+      font-family: Pretendard;
+      font-size: 20px;
+      color: #fff;
+      opacity: 0.4;
+
+    }
+
+    .label2 {
+      /* position: absolute; */
+      top: 27px;
+      right: 20px;
+      font-family: Pretendard;
       font-size: 20px;
       color: #fff;
       opacity: 0.4;
@@ -186,30 +414,48 @@
       top: 27px;
       right: 20px;
       display: flex;
+      align-items: center;
       gap: 4px;
     }
 
-    .value,
-    .unit,
-    .value-none {
+    /* 값 */
+    .value {
+      position: static;
       font-size: 20px;
       font-weight: bold;
       color: #F8F7FA;
     }
 
     .value-none {
-      position: absolute;
-      right: 20px;
+      /* position: absolute; */
       top: 27px;
+      right: 20px;
+      font-family: Pretendard;
+      font-size: 20px;
+      font-weight: bold;
+      color: #F8F7FA;
     }
 
+    /* 단위 */
+    .unit {
+      position: static;
+      font-size: 20px;
+      font-weight: bold;
+      color: #F8F7FA;
+    }
+
+
+
+    /* 하단 버튼 */
     .bottom-buttons {
       display: flex;
-      gap: 20px;
+      justify-content: space-between;
       position: absolute;
-      bottom: 32px;
-      left: 30px;
-      width: 1300px;
+      bottom: -440px;
+      left: 32px;
+      width: 736px;
+      gap: 16px;
+      z-index: 1;
     }
 
     .history-button {
@@ -217,6 +463,7 @@
       height: 78px;
       background-color: #F8F7F9;
       color: #222;
+      font-family: Pretendard;
       font-size: 22px;
       font-weight: bold;
       border: none;

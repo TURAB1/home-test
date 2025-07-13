@@ -5,7 +5,18 @@ import "./diagnosis.css";
 import { AuthContext } from "../../../AuthContext";
 
 const Diagnosis = () => {
-  const { dtcHstr_data } = useContext(AuthContext)
+  const { dtcHstr_data ,vehicleData} = useContext(AuthContext)
+    let dtcCount
+  if (vehicleData) {
+    
+    if (vehicleData.vehicleHealthStatusEv) {
+      dtcCount = vehicleData.vehicleHealthStatusEv.dtcCnt
+
+    } else {
+      dtcCount = vehicleData.vehicleHealthStatus.dtcCnt
+    }
+  }
+
   console.log("arr=>" + JSON.stringify(dtcHstr_data))
 
   return (
@@ -17,16 +28,16 @@ const Diagnosis = () => {
         <sensor-icon>
         </sensor-icon>
         <sensor-message-box>
-          <sensor-message>고장코드 4건</sensor-message>
+          <sensor-message>고장코드 {dtcCount}건</sensor-message>
         </sensor-message-box>
         <sensor-timestamp>[2025-10-02 17:09]</sensor-timestamp>
       </sensor-alert-widget>
 
-      <div className="dtc-container">
+      {/* <div className="dtc-container">
         <div className="dtc-background"></div>
 
-        {/* <!-- Block 1 --> */}
-        {dtcHstr_data ?
+       
+         {dtcHstr_data.length !==0 ?
           dtcHstr_data.map((item1, index1) => {
         
             console.log(JSON.stringify(item1.dtcRecords))
@@ -66,47 +77,63 @@ const Diagnosis = () => {
             </div>
           </div>
 
-        }
-        {/* <!-- Block 2 --> /}
-        <div className="dtc-block block-2">
-          <div className="dtc-header">
-            <div className="dtc-icon-2">
-            </div>
-            <span className="dtc-code">[P0120] 파워트레인</span>
+        } 
+        
+
+      </div> */}
+      {/* <!-- DTC Container --> */}
+    <div class="dtc-container">
+      <div class="dtc-background">
+        {/* <!-- Block 1 --> */}
+        <div class="dtc-block">
+          <div class="dtc-header">
+            <div class="dtc-icon-1"></div>
+            <span class="dtc-code">[P0120] 파워트레인</span>
           </div>
-          <div className="dtc-description-wrap">
-            <div className="dtc-description-frame"></div>
-            <span className="dtc-description">스로틀/페달 위치 센서/스위치 "A" 회로</span>
+          <div class="dtc-description-wrap">
+            <div class="dtc-description-frame"></div>
+            <span class="dtc-description">스로틀/페달 위치 센서/스위치 "A" 회로</span>
           </div>
         </div>
 
-        {/* <!-- Block 3 --> /}
-        <div className="dtc-block block-3">
-          <div className="dtc-header">
-            <div className="dtc-icon-3">
-            </div>
-            <span className="dtc-code">[P0120] 파워트레인</span>
+        {/* <!-- Block 2 --> */}
+        <div class="dtc-block">
+          <div class="dtc-header">
+            <div class="dtc-icon-2"></div>
+            <span class="dtc-code">[P0120] 파워트레인</span>
           </div>
-          <div className="dtc-description-wrap">
-            <div className="dtc-description-frame"></div>
-            <span className="dtc-description">스로틀/페달 위치 센서/스위치 "A" 회로</span>
+          <div class="dtc-description-wrap">
+            <div class="dtc-description-frame"></div>
+            <span class="dtc-description">스로틀/페달 위치 센서/스위치 "A" 회로</span>
           </div>
         </div>
 
-        {/* <!-- Block 4 --> /}
-        <div className="dtc-block block-4">
-          <div className="dtc-header">
-            <div className="dtc-icon-4">
-            </div>
-            <span className="dtc-code">[P0120] 파워트레인</span>
+        {/* <!-- Block 3 --> */}
+        <div class="dtc-block">
+          <div class="dtc-header">
+            <div class="dtc-icon-3"></div>
+            <span class="dtc-code">[P0120] 파워트레인</span>
           </div>
-          <div className="dtc-description-wrap">
-            <div className="dtc-description-frame"></div>
-            <span className="dtc-description">스로틀/페달 위치 센서/스위치 "A" 회로</span>
+          <div class="dtc-description-wrap">
+            <div class="dtc-description-frame"></div>
+            <span class="dtc-description">스로틀/페달 위치 센서/스위치 "A" 회로</span>
           </div>
-        </div>*/}
+        </div>
 
+        {/* <!-- Block 4 --> */}
+        <div class="dtc-block">
+          <div class="dtc-header">
+            <div class="dtc-icon-4"></div>
+            <span class="dtc-code">[P0120] 파워트레인</span>
+          </div>
+          <div class="dtc-description-wrap">
+            <div class="dtc-description-frame"></div>
+            <span class="dtc-description">스로틀/페달 위치 센서/스위치 "A" 회로</span>
+          </div>
+        </div>
       </div>
+    </div>
+
     </div>
   )
 }

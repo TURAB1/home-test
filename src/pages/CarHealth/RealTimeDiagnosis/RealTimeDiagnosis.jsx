@@ -1,8 +1,13 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import Header from "../../../components/Header/Header"
 import NavBar from "../../../components/NavBar/NavBar"
 import './real-time-diagnosis.css'
 const RealTimeDiagnosis = () => {
+   const navigate = useNavigate()
+  const handleDiagnosis=()=>{
+     navigate("health/realTimeDiagnosing")
+  }
   return (
     <div className="container">
       <Header />
@@ -17,7 +22,7 @@ const RealTimeDiagnosis = () => {
         </figure>
       </div>
 
-      <button type="button" class="button">진단 실행</button>
+      <button type="button" class="button" onClick={handleDiagnosis}>진단 실행</button>
     </div>
   )
 }

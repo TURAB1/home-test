@@ -1,73 +1,75 @@
- * {
-   box-sizing: border-box;
- }
+    * {
+      box-sizing: border-box;
+    }
 
- html {
-   width: 956px;
-   height: 460px;
-   margin: 0;
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   background: #333;
- }
+    html {
+      width: 956px;
+      height: 460px;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #333;
+      overflow: hidden;
+    }
 
- body {
-   font-family: Pretendard;
-   font-size: 14px;
- }
+    body {
+      font-family: Pretendard;
+      font-size: 14px;
+    }
 
- .container {
-   width: 956px;
-   height: 460px;
-   background: #0d0d0e;
-   position: absolute;
-   top: 0;
-   left: 0;
-   overflow: hidden;
- }
+    .container {
+      width: 956px;
+      height: 460px;
+      background: #0d0d0e;
+      position: absolute;
+      top: 0;
+      left: 0;
+      overflow: hidden;
+    }
 
- .header-wrapper,
- .header-background {
-   width: 956px;
-   height: 48px;
-   position: absolute;
-   top: 0;
-   left: 0;
- }
+    .header-wrapper,
+    .header-background {
+      width: 956px;
+      height: 48px;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
 
- .header-background {
-   background: #000;
- }
+    .header-background {
+      background: #000;
+    }
 
- .clock-box {
-   width: 71px;
-   height: 19px;
-   position: absolute;
-   top: 14px;
-   right: 20px;
- }
+    .clock-box {
+      width: 71px;
+      height: 19px;
+      position: absolute;
+      top: 14px;
+      right: 20px;
+    }
 
- .clock-hour,
- .clock-ampm {
-   color: #fff;
-   font-family: Pretendard;
-   font-weight: 500;
-   font-size: 16px;
-   position: absolute;
-   top: 0;
-   text-align: center;
- }
+    .clock-hour,
+    .clock-ampm {
+      color: #fff;
+      font-family: Pretendard;
+      font-weight: 500;
+      font-size: 16px;
+      position: absolute;
+      top: 0;
+      text-align: center;
+    }
 
- .clock-hour {
-   width: 42px;
-   left: 0px;
- }
+    .clock-hour {
+      width: 42px;
+      left: 0px;
+    }
 
- .clock-ampm {
-   width: 24px;
-   left: 47px;
- }
+    .clock-ampm {
+      width: 24px;
+      left: 47px;
+    }
+
 
  .signal-icon,
  .wifi-icon,
@@ -107,7 +109,7 @@
    background-image: url("../../assets/images/battery-icon.svg");
    border-radius: 1px;
  }
-
+ /*NavBar*/
     .sidebar-nav {
       width: 100px;
       height: 412px;
@@ -118,7 +120,7 @@
       left: 0;
       overflow: hidden;
     }
- /*NavBar*/
+
  .nav-item-health,
  .nav-item-health-on,
  .nav-item-battery,

@@ -1,0 +1,81 @@
+
+    .calendar {
+      width: 684px;
+      height: 380px;
+      /* background-image: url("../../../assets/images/calendar-684.png"); */
+   
+      position: absolute;
+      top: 64px;
+      left: 115px;
+    }
+
+    .charge-summary {
+      width: 120px;
+      height: 292px;
+      position: absolute;
+      top: 64px;
+      right: 14px;
+    }
+
+    .charge-box {
+      width: 120px;
+      height: 64px;
+      position: absolute;
+      border: 1px solid #2d2e38;
+      border-radius: 4px;
+      overflow: hidden;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: cover;
+    }
+
+    .fast-charge {
+      top: 228px;
+    }
+
+    .slow-charge {
+      top: 152px;
+    }
+
+    .estimated-cost {
+      top: 76px;
+    }
+
+    .total-energy {
+      top: 0px;
+    }
+
+    .charge-count,
+    .charge-amount {
+      position: absolute;
+      top: 32px;
+      margin-left: 15px;
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .charge-count .unit,
+    .charge-amount .unit {
+      color: #fff;
+      font-weight: bold;
+      font-size: 16px;
+      right: 12px;
+    }
+
+    .charge-count .count,
+    .charge-amount .amount {
+      color: #fff;
+      font-weight: bold;
+      font-size: 16px;
+      right: 12px;
+    }
+
+    .charge-label {
+      position: absolute;
+      top: 0px;
+      margin-left: 15px;
+      font-size: 16px;
+      font-weight: 400;
+      color: #6e6e6f;
+    }

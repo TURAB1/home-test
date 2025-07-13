@@ -13,6 +13,9 @@ import SensorDiagnosis from "../pages/CarHealth/Diagnosis/SensorDiagnosis";
 import RealTimeDiagnosis from "../pages/CarHealth/RealTimeDiagnosis/RealTimeDiagnosis";
 import RealTimeDiagnosing from "../pages/CarHealth/RealTimeDiagnosis/RealTimeDiagnosing";
 import RealTimeDiagnosisResult from "../pages/CarHealth/RealTimeDiagnosis/RealTimeDiagnosisResult";
+import UsageHistory from "../pages/Battery/UsageHistory/UsageHistory";
+import ChargingHistory from "../pages/Battery/ChargingHistory/ChargingHistory";
+
 
 const AppRoutes = () => {
   return (
@@ -27,8 +30,20 @@ const AppRoutes = () => {
       <Route path="health/diagnosis" element={<Diagnosis />} />
       <Route path="health/sensorDiagnosis" element={<SensorDiagnosis />} />
       <Route path="health/realTimeDiagnosis" element={<RealTimeDiagnosis />} />
+
+      <Route path="perfectCar/health/realTimeDiagnosis" element={<RealTimeDiagnosis />} />
+      <Route path="faultCar/health/realTimeDiagnosis" element={<RealTimeDiagnosis />} />
+
       <Route path="health/realTimeDiagnosing" element={<RealTimeDiagnosing />} />
+
+      <Route path="perfectCar/health/realTimeDiagnosis/health/realTimeDiagnosing" element={<RealTimeDiagnosing />} />
+      <Route path="faultCar/health/realTimeDiagnosis/health/realTimeDiagnosing" element={<RealTimeDiagnosing />} />
+
       <Route path="health/realTimeDiagnosisResult" element={<RealTimeDiagnosisResult />} />
+       <Route path="battery/usageHistory" element={<UsageHistory />} />
+       <Route path="battery/chargingHistory" element={<ChargingHistory />} />
+     
+      
     </Routes>
   )
 }

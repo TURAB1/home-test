@@ -6,11 +6,21 @@ import Header from '../../components/Header/Header'
 import './fault-car.css'
 import { AuthContext } from '../../AuthContext.js'
 
-const FaultCar = ({ dtcCount }) => {
-  const { vehicleData,vehicleKey ,set_dtcHstr_data} = useContext(AuthContext)
+const FaultCar = () => {
+  const { vehicleData, vehicleKey, set_dtcHstr_data,setSensorFault } = useContext(AuthContext)
   const navigate = useNavigate()
+  let dtcCount
+  if (vehicleData) {
+    
+    if (vehicleData.vehicleHealthStatusEv) {
+      dtcCount = vehicleData.vehicleHealthStatusEv.dtcCnt
 
-  async function get_dtcHstr( limit = 0) {
+    } else {
+      dtcCount = vehicleData.vehicleHealthStatus.dtcCnt
+    }
+  }
+
+  async function get_dtcHstr(limit = 0) {
     const api_base_url = "http://localhost/api/1"
     const key = localStorage.getItem('token');
 
@@ -26,7 +36,7 @@ const FaultCar = ({ dtcCount }) => {
       });
 
       if (response.data.result) {
-        console.log("dtcHstr=>"+JSON.stringify(response.data.result))
+        console.log("dtcHstr=>" + JSON.stringify(response.data.result))
         set_dtcHstr_data(response.data.result)
 
       }
@@ -40,11 +50,16 @@ const FaultCar = ({ dtcCount }) => {
 
   const handleDtc = () => {
     get_dtcHstr()
-   //navigate("/health/diagnosis")
+    //navigate("/health/diagnosis")
   }
   const handleSensor = () => {
-
+   setSensorFault(true)
+   navigate("/health/sensorDiagnosis")
   }
+  const handleRealTimeDiagnosis=()=>{
+    navigate("health/realTimeDiagnosis")
+  }
+
   return (
     <div className="container">
       <Header />
@@ -62,7 +77,7 @@ const FaultCar = ({ dtcCount }) => {
         <div className="diagnostic-box-top" onClick={handleDtc}>
           <div className="box-frame box-frame-top"></div>
           <div className="arrow-icon arrow-icon-top"></div>
-          <span className="label-count" >4건</span>
+          <span className="label-count" >{dtcCount}건</span>
           <span className="label-title">고장코드</span>
         </div>
         <div className="diagnostic-box-bottom" onClick={handleSensor}>
@@ -73,7 +88,7 @@ const FaultCar = ({ dtcCount }) => {
         </div>
       </div>
 
-      <button type="button" className="button">실시간 고장진단</button>
+      <button type="button" className="button" onClick={handleRealTimeDiagnosis}>실시간 고장진단</button>
 
     </div>
   )
