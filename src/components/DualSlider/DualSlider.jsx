@@ -21,7 +21,7 @@ const DualSlider = () => {
 
     return (
         <div className="slider-container">
-
+            <span className="slider-labels2">0</span>
 
             <div className="slider">
                 <input
@@ -52,11 +52,10 @@ const DualSlider = () => {
                 <div className="slider-track" />
                 <div ref={range} className="slider-range" />
 
-                <div className="slider-labels">
-                    <span>0</span>
-                    <span>100</span>
-                </div>
+
             </div>
+            <span className="slider-labels2">100</span>
+
         </div>
     );
 };

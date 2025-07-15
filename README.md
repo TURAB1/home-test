@@ -10,3 +10,7 @@ Notice Folder
 Settings Folder
 ----------
 AppRoutes
+...........
+........0716.....
+DualSlider Folder
+settings.css .battery{} .switch.on {}

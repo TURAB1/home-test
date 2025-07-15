@@ -1,8 +1,7 @@
-
-
 .slider {
   position: relative;
   height: 36px;
+  width: 680px;
 }
 
 .slider-track,
@@ -17,13 +16,14 @@
 .slider-track {
   background: #3a3a45;
   width: 680px;
-  margin-left: 20px;
+
   z-index: 1;
 }
 
 .slider-range {
   background: red;
   z-index: 2;
+
 }
 
 input[type="range"] {
@@ -60,8 +60,8 @@ input[type="range"]::-moz-range-thumb {
 .slider-labels {
   position: absolute;
   top: 50%;
+
   transform: translateY(-50%);
-  width: 100%;
   display: flex;
   justify-content: space-between;
   color: #aaa;
@@ -69,4 +69,16 @@ input[type="range"]::-moz-range-thumb {
   z-index: 5;
   padding: 0 2px;
   pointer-events: none;
+  width: 680px;
+}
+
+.slider-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.slider-labels2 {
+  color: #aaa;
+  font-size: 14px;
 }

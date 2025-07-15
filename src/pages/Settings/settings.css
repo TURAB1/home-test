@@ -48,7 +48,8 @@
 }
 
 .switch.on {
-  background: #ccc;
+  /* background: #ccc; */
+   background: red;
   justify-content: flex-end;
 }
 
@@ -62,6 +63,7 @@
 
 .battery {
   background: #1e1e24;
+    border-radius: 8px;
 
 }
 
