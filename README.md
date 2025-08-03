@@ -200,7 +200,7 @@
     <script src="https://cdn.amcharts.com/lib/5/radar.js"></script>
     <script src="https://cdn.amcharts.com/lib/5/locales/ko_KR.js"></script>
     <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
-    <script src="js/common.js" type="text/javascript"></script>
+    <!-- <script src="js/common.js" type="text/javascript"></script> -->
 </head>
 
 <body>
@@ -340,6 +340,10 @@
 
     <script>
         $(function () {
+            createPublicScoreChart("chartdiv1", 0x222222); // 그래프 1
+            createSafeScoreChart("chartdiv2", 0xE73846); // 그래프 2
+            createFuelScoreChart("chartdiv3", 0xA150CB); // 그래프 3
+            createEcoScoreChart("chartdiv4", 0x68B2C2); // 그래프 4 
             let _key = sessionStorage.getItem('token');
             let _data = [];
             console.log(_key, 'token=>');
@@ -573,135 +577,7 @@
                 series2.appear(1000);
                 chart.appear(1000, 100);
             }
-
             function createPublicScoreChart(chartId, color) {
-                const root = am5.Root.new(chartId);
-                root._logo.dispose();
-                root.setThemes([am5themes_Animated.new(root)]);
-
-                const chart = root.container.children.push(am5xy.XYChart.new(root, {
-                    panX: false,
-                    panY: true,
-                    wheelX: "panX",
-                    wheelY: "none",
-                    pinchZoomX: true,
-                    paddingLeft: 0
-                }));
-                const cursor = chart.set("cursor", am5xy.XYCursor.new(root, {
-                    behavior: "none"
-                }));
-                cursor.lineY.set("visible", false);
-                // ✅ X Axis: CategoryAxis for names
-                const xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
-                    categoryField: "name",
-                    renderer: am5xy.AxisRendererX.new(root, {
-                        minGridDistance: 30,
-                        minorGridEnabled: true,
-                        pan: "zoom"
-                    }),
-                                        tooltip: am5.Tooltip.new(root, {
-                        labelText: "{name}"  // ← 허버링 시
-                    })
-                }));
-
-                // ✅ Y Axis: ValueAxis for numeric values
-                const yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
-                    min: 0,
-                    max: 100,
-                    strictMinMax: true,
-                    renderer: am5xy.AxisRendererY.new(root, {
-                         pan: "zoom"
-                    })
-                }));
-
-                // ✅ Series: Column chart (can be changed to line if needed)
-                const series = chart.series.push(am5xy.SmoothedXLineSeries.new(root, {
-                    name: "Series",
-                    xAxis: xAxis,
-                    yAxis: yAxis,
-                    valueYField: "value",
-                    categoryXField: "name",
-                     sequencedInterpolation: true,
-                    tooltip: am5.Tooltip.new(root, {
-                        labelText: "{categoryX}: {valueY}점"
-                    })
-                }));
-
-                series.bullets.push(function () {
-                    return am5.Bullet.new(root, {
-                        sprite: am5.Circle.new(root, {
-                            radius: 5,
-                            fill: am5.color(color),
-                            strokeWidth: 2,
-                            stroke: root.interfaceColors.get("background")
-                        })
-                    });
-                });
-                ///제일 가까운 데이터 포인트를 찾는 클릭 이벤트
-                chart.plotContainer.events.on("click", function (ev) {
-                    const point = chart.plotContainer.toLocal(ev.point);
-
-                    const xVal = xAxis.positionToValue(
-                        xAxis.toAxisPosition(point.x / chart.plotContainer.width())
-                    );
-
-                    const yVal = yAxis.positionToValue(
-                        yAxis.toAxisPosition(point.y / chart.plotContainer.height())
-                    );
-
-                    let closest = null;
-                    let minDiff = Number.MAX_VALUE;
-
-                    // ✅ Loop safely using am5.array.each
-                    am5.array.each(series.dataItems, function (item) {
-                        const itemX = item.get("valueX");
-                        const diff = Math.abs(itemX - xVal);
-
-                        if (diff < minDiff) {
-                            closest = item;
-                            minDiff = diff;
-                        }
-                    });
-
-                    if (closest) {
-                        const closestX = closest.get("valueX");
-                        const closestY = closest.get("valueY");
-                        //const dateStr = new Date(closestX).toLocaleDateString("en-US");
-
-                        console.log("🟢 Closest Data Point:");
-                       // console.log("🕓 X (date):", dateStr);
-                        console.log("📈 Y (value):", closestY);
-                        // console.log("📦 Raw Data:", closest.dataContext);
-                        // const date = new Date(closestX);
-                        // const month = date.getMonth() + 1;
-                        // const day = date.getDate();
-                        // $("#public-score-date").html(`${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일 점수는 ${closestY}점이에요.`);
-
-                    } else {
-                        console.log("⚠️ No data points found.");
-                    }
-                });
-
-
-                chart.set("scrollbarX", am5.Scrollbar.new(root, {
-                    orientation: "horizontal"
-                }));
-                // ✅ Data setup
-                const data = [
-                    { name: "John", value: 72 },
-                    { name: "Mary", value: 85 },
-                    { name: "Alice", value: 60 },
-                    { name: "Bob", value: 91 }
-                ];
-
-                series.data.setAll(data);
-                xAxis.data.setAll(data);
-
-                series.appear(1000);
-                chart.appear(1000, 100);
-            }
-
-            function createPublicScoreChart_Og(chartId, color) {
                 const root = am5.Root.new(chartId);
                 root._logo.dispose();
                 root.locale = am5locales_ko_KR;
@@ -721,43 +597,20 @@
                 }));
                 cursor.lineY.set("visible", false);
 
-                const xAxis = chart.xAxes.push(am5xy.DateAxis.new(root, {
-                    baseInterval: {
-                        timeUnit: "day",
-                        count: 1
-                    },
-                    maxDeviation: 0.5,
+                // X Axis (Category)
+                const xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
+                    categoryField: "label",
                     renderer: am5xy.AxisRendererX.new(root, {
                         minGridDistance: 80,
                         minorGridEnabled: true,
                         pan: "zoom"
                     }),
                     tooltip: am5.Tooltip.new(root, {
-                        labelText: "{value.formatDate('MM/dd')}"  // ← 허버링 시
+                        labelText: "{category}"
                     })
                 }));
 
-                // xAxis.get("renderer").labels.template.setAll({
-                //     oversizedBehavior: "wrap",
-                //     text: "{value}", // 기본값은 그대로 두고
-                //     populateText: true // 내부 텍스트 생성을 강제함
-                // });
-
-                // xAxis.get("renderer").labels.template.adapters.add("text", function (text, target) {
-                //     const value = target.dataItem?.get("value");
-
-                //     if (!value) return "";
-
-                //     const date = new Date(value);
-                //     const month = date.getMonth() + 1;
-                //     const day = date.getDate();
-
-                //     return `${month}월 ${day}일`; // ✅ 원하는 형식
-                // });
-
-
-
-
+                // Y Axis
                 const yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
                     min: 0,
                     max: 100,
@@ -767,12 +620,13 @@
                     })
                 }));
 
+                // Series
                 const series = chart.series.push(am5xy.SmoothedXLineSeries.new(root, {
                     name: "Series",
                     xAxis: xAxis,
                     yAxis: yAxis,
                     valueYField: "value",
-                    valueXField: "date",
+                    categoryXField: "label",
                     sequencedInterpolation: true,
                     tooltip: am5.Tooltip.new(root, {
                         labelText: "{valueY}"
@@ -790,8 +644,8 @@
                         fill: am5.color(color),
                         strokeWidth: 2,
                         stroke: root.interfaceColors.get("background"),
-                        interactive: true,               // ✅ 필수
-                        cursorOverStyle: "pointer"      // ✅ 시각적 피드백
+                        interactive: true,
+                        cursorOverStyle: "pointer"
                     });
 
                     return am5.Bullet.new(root, {
@@ -799,96 +653,100 @@
                         sprite: circle
                     });
                 });
-                // /// Add click event anywhere on the chart
-                // chart.plotContainer.events.on("click", function (ev) {
-                //     // Convert pixel position to relative axis position (0 to 1)
-                //     const point = chart.plotContainer.toLocal(ev.point);
-                //     const xAxisValue = xAxis.positionToValue(xAxis.toAxisPosition(point.x / chart.plotContainer.width()));
-                //     const yAxisValue = yAxis.positionToValue(yAxis.toAxisPosition(point.y / chart.plotContainer.height()));
-                //     const dateStr = new Date(xAxisValue).toLocaleDateString("en-US");
 
-                //     console.log("📍 Clicked chart at:");
-                //     console.log("🕓 X (date):", dateStr);
-                //     console.log("📈 Y (value):", yAxisValue.toFixed(2));
-                // });
-                ///제일 가까운 데이터 포인트를 찾는 클릭 이벤트
+                // Click to find closest data point by index
                 chart.plotContainer.events.on("click", function (ev) {
                     const point = chart.plotContainer.toLocal(ev.point);
+                    const x = point.x;
 
-                    const xVal = xAxis.positionToValue(
-                        xAxis.toAxisPosition(point.x / chart.plotContainer.width())
-                    );
+                    const axisRenderer = xAxis.get("renderer");
+                    if (!axisRenderer) {
+                        console.warn("❌ X Axis renderer not found.");
+                        return;
+                    }
 
-                    const yVal = yAxis.positionToValue(
-                        yAxis.toAxisPosition(point.y / chart.plotContainer.height())
-                    );
+                    const categories = xAxis.dataItems;
+                    let closestItem = null;
+                    let minDistance = Number.MAX_VALUE;
 
-                    let closest = null;
-                    let minDiff = Number.MAX_VALUE;
+                    categories.forEach((dataItem) => {
+                        const category = dataItem.get("category");
+                        if (!category) return;
 
-                    // ✅ Loop safely using am5.array.each
-                    am5.array.each(series.dataItems, function (item) {
-                        const itemX = item.get("valueX");
-                        const diff = Math.abs(itemX - xVal);
+                        const categoryPosition = xAxis.categoryToPosition(category);
+                        const categoryX = axisRenderer.positionToCoordinate(categoryPosition);
 
-                        if (diff < minDiff) {
-                            closest = item;
-                            minDiff = diff;
+                        const distance = Math.abs(x - categoryX);
+
+                        if (distance < minDistance) {
+                            minDistance = distance;
+                            closestItem = dataItem;
                         }
                     });
 
-                    if (closest) {
-                        const closestX = closest.get("valueX");
-                        const closestY = closest.get("valueY");
-                        const dateStr = new Date(closestX).toLocaleDateString("en-US");
+                    if (closestItem) {
+                        const data = closestItem.dataContext;
+                        const label = data.label;
+                        const value = data.value;
+                        const originalDate = data.originalDate;
 
-                        console.log("🟢 Closest Data Point:");
-                        console.log("🕓 X (date):", dateStr);
-                        console.log("📈 Y (value):", closestY);
-                        console.log("📦 Raw Data:", closest.dataContext);
-                        const date = new Date(closestX);
+                        const date = new Date(originalDate);
                         const month = date.getMonth() + 1;
                         const day = date.getDate();
-                        $("#public-score-date").html(`${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일 점수는 ${closestY}점이에요.`);
 
+                        $("#public-score-date").html(
+                            `${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일 점수는 ${value}점이에요.`
+                        );
+
+                        console.log("🟢 Closest Data Point (via axis position):");
+                        console.log("🗓 Label:", label);
+                        console.log("📈 Y (value):", value);
+                        console.log("📦 Raw Data:", data);
                     } else {
-                        console.log("⚠️ No data points found.");
+                        console.log("⚠️ No category data matched.");
                     }
                 });
 
-
+                // Scrollbar
                 chart.set("scrollbarX", am5.Scrollbar.new(root, {
                     orientation: "horizontal"
                 }));
 
+                // Parse and set data
                 const data = [];
-                const reverseData = _data.reverse();
+                // const reverseData = [..._data].reverse();  // safer than mutating
 
+                const dateObj = new Date();
+                dateObj.setHours(0, 0, 0, 0);
+                for (let i = 0; i < 15; i++) {
+                    // const item = reverseData[i];
+                    // const safeScore = item.safeScore || 0;
+                    // const fuelScore = item.fuelScore || 0;
+                    // const ecoScore = item.ecoScore || 0;
+                    // const publicScore = Math.round((safeScore + fuelScore + ecoScore) / 3);
 
-                for (let i = 0; i < reverseData.length; i++) {
-                    const item = reverseData[i];
-                    const safeScore = item.safeScore || 0;
-                    const fuelScore = item.fuelScore || 0;
-                    const ecoScore = item.ecoScore || 0;
-                    const publicScore = Math.round((safeScore + fuelScore + ecoScore) / 3);
+                    // const dateObj = new Date(item.scoreDateTs);
+                    //    const dateObj = new Date();
+                    //     dateObj.setHours(0, 0, 0, 0);
 
-                    var _date2 = new Date(item.scoreDateTs);
-                    _date2.setHours(0, 0, 0, 0);
+                    const month = dateObj.getMonth() + 1;
+                    const day = dateObj.getDate();
+                    const label = `${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일`;
 
                     data.push({
-                        date: _date2.getTime(),
-                        value: publicScore
+                        label,
+                        value: Math.floor(Math.random() * 100),
+                        originalDate: dateObj.getTime()  // used for click response
                     });
+                    dateObj.setDate(dateObj.getDate() + 1);
                 }
 
-
-
-
+                xAxis.data.setAll(data);
                 series.data.setAll(data);
+
                 series.appear(1000);
                 chart.appear(1000, 100);
             }
-
 
             function createSafeScoreChart(chartId, color) {
                 const root = am5.Root.new(chartId);
@@ -897,10 +755,10 @@
                 root.setThemes([am5themes_Animated.new(root)]);
 
                 const chart = root.container.children.push(am5xy.XYChart.new(root, {
-                    panX: true,
+                    panX: false,
                     panY: true,
                     wheelX: "panX",
-                    wheelY: "zoomX",
+                    wheelY: "none",
                     pinchZoomX: true,
                     paddingLeft: 0
                 }));
@@ -910,23 +768,20 @@
                 }));
                 cursor.lineY.set("visible", false);
 
-                const xAxis = chart.xAxes.push(am5xy.DateAxis.new(root, {
-                    baseInterval: {
-                        timeUnit: "day",
-                        count: 1
-                    },
-                    maxDeviation: 0.5,
+                // X Axis (Category)
+                const xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
+                    categoryField: "label",
                     renderer: am5xy.AxisRendererX.new(root, {
                         minGridDistance: 80,
                         minorGridEnabled: true,
                         pan: "zoom"
                     }),
                     tooltip: am5.Tooltip.new(root, {
-                        labelText: "{valueX.formatDate('MM월 dd일')}"
+                        labelText: "{category}"
                     })
                 }));
 
-
+                // Y Axis
                 const yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
                     min: 0,
                     max: 100,
@@ -936,12 +791,13 @@
                     })
                 }));
 
+                // Series
                 const series = chart.series.push(am5xy.SmoothedXLineSeries.new(root, {
                     name: "Series",
                     xAxis: xAxis,
                     yAxis: yAxis,
                     valueYField: "value",
-                    valueXField: "date",
+                    categoryXField: "label",
                     sequencedInterpolation: true,
                     tooltip: am5.Tooltip.new(root, {
                         labelText: "{valueY}"
@@ -953,79 +809,112 @@
                     stroke: am5.color(color)
                 });
 
-                series.bullets.push(function () {
+                series.bullets.push(function (root, series, dataItem) {
+                    const circle = am5.Circle.new(root, {
+                        radius: 5,
+                        fill: am5.color(color),
+                        strokeWidth: 2,
+                        stroke: root.interfaceColors.get("background"),
+                        interactive: true,
+                        cursorOverStyle: "pointer"
+                    });
+
                     return am5.Bullet.new(root, {
-                        locationY: 0,
-                        sprite: am5.Circle.new(root, {
-                            radius: 4,
-                            stroke: root.interfaceColors.get("background"),
-                            strokeWidth: 2,
-                            fill: am5.color(color)
-                        })
+                        locationY: 0.5,
+                        sprite: circle
                     });
                 });
-                ///제일 가까운 데이터 포인트를 찾는 클릭 이벤트
+
+                // Click to find closest data point by index
                 chart.plotContainer.events.on("click", function (ev) {
                     const point = chart.plotContainer.toLocal(ev.point);
+                    const x = point.x;
 
-                    const xVal = xAxis.positionToValue(
-                        xAxis.toAxisPosition(point.x / chart.plotContainer.width())
-                    );
+                    const axisRenderer = xAxis.get("renderer");
+                    if (!axisRenderer) {
+                        console.warn("❌ X Axis renderer not found.");
+                        return;
+                    }
 
-                    const yVal = yAxis.positionToValue(
-                        yAxis.toAxisPosition(point.y / chart.plotContainer.height())
-                    );
+                    const categories = xAxis.dataItems;
+                    let closestItem = null;
+                    let minDistance = Number.MAX_VALUE;
 
-                    let closest = null;
-                    let minDiff = Number.MAX_VALUE;
+                    categories.forEach((dataItem) => {
+                        const category = dataItem.get("category");
+                        if (!category) return;
 
-                    // ✅ Loop safely using am5.array.each
-                    am5.array.each(series.dataItems, function (item) {
-                        const itemX = item.get("valueX");
-                        const diff = Math.abs(itemX - xVal);
+                        const categoryPosition = xAxis.categoryToPosition(category);
+                        const categoryX = axisRenderer.positionToCoordinate(categoryPosition);
 
-                        if (diff < minDiff) {
-                            closest = item;
-                            minDiff = diff;
+                        const distance = Math.abs(x - categoryX);
+
+                        if (distance < minDistance) {
+                            minDistance = distance;
+                            closestItem = dataItem;
                         }
                     });
 
-                    if (closest) {
-                        const closestX = closest.get("valueX");
-                        const closestY = closest.get("valueY");
-                        const dateStr = new Date(closestX).toLocaleDateString("en-US");
+                    if (closestItem) {
+                        const data = closestItem.dataContext;
+                        const label = data.label;
+                        const value = data.value;
+                        const originalDate = data.originalDate;
 
-                        console.log("🟢 Closest Data Point:");
-                        console.log("🕓 X (date):", dateStr);
-                        console.log("📈 Y (value):", closestY);
-                        console.log("📦 Raw Data:", closest.dataContext);
-                        const date = new Date(closestX);
+                        const date = new Date(originalDate);
                         const month = date.getMonth() + 1;
                         const day = date.getDate();
-                        $("#safe-score-date").html(`${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일 점수는 ${closestY}점이에요.`);
 
+                        $("#safe-score-date").html(
+                            `${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일 점수는 ${value}점이에요.`
+                        );
+
+                        console.log("🟢 Closest Data Point (via axis position):");
+                        console.log("🗓 Label:", label);
+                        console.log("📈 Y (value):", value);
+                        console.log("📦 Raw Data:", data);
                     } else {
-                        console.log("⚠️ No data points found.");
+                        console.log("⚠️ No category data matched.");
                     }
                 });
 
-
+                // Scrollbar
                 chart.set("scrollbarX", am5.Scrollbar.new(root, {
                     orientation: "horizontal"
                 }));
 
+                // Parse and set data
                 const data = [];
-                _data.map(item => {
+                // const reverseData = [..._data].reverse();  // safer than mutating
+
+                const dateObj = new Date();
+                dateObj.setHours(0, 0, 0, 0);
+                for (let i = 0; i < 15; i++) {
+                    // const item = reverseData[i];
+                    // const safeScore = item.safeScore 
+
+                    // const dateObj = new Date(item.scoreDateTs);
+                    //    const dateObj = new Date();
+                    //     dateObj.setHours(0, 0, 0, 0);
+
+                    const month = dateObj.getMonth() + 1;
+                    const day = dateObj.getDate();
+                    const label = `${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일`;
+
                     data.push({
-                        date: item.scoreDate,
-                        value: item.safeScore
+                        label,
+                        value: Math.floor(Math.random() * 100),
+                        originalDate: dateObj.getTime()  // used for click response
                     });
-                });
+                    dateObj.setDate(dateObj.getDate() + 1);
+                }
+
+                xAxis.data.setAll(data);
                 series.data.setAll(data);
+
                 series.appear(1000);
                 chart.appear(1000, 100);
             }
-
             function createFuelScoreChart(chartId, color) {
                 const root = am5.Root.new(chartId);
                 root._logo.dispose();
@@ -1033,10 +922,10 @@
                 root.setThemes([am5themes_Animated.new(root)]);
 
                 const chart = root.container.children.push(am5xy.XYChart.new(root, {
-                    panX: true,
+                    panX: false,
                     panY: true,
                     wheelX: "panX",
-                    wheelY: "zoomX",
+                    wheelY: "none",
                     pinchZoomX: true,
                     paddingLeft: 0
                 }));
@@ -1046,22 +935,20 @@
                 }));
                 cursor.lineY.set("visible", false);
 
-                const xAxis = chart.xAxes.push(am5xy.DateAxis.new(root, {
-                    baseInterval: {
-                        timeUnit: "day",
-                        count: 1
-                    },
-                    maxDeviation: 0.5,
+                // X Axis (Category)
+                const xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
+                    categoryField: "label",
                     renderer: am5xy.AxisRendererX.new(root, {
                         minGridDistance: 80,
                         minorGridEnabled: true,
                         pan: "zoom"
                     }),
                     tooltip: am5.Tooltip.new(root, {
-                        labelText: "{valueX.formatDate('yyyy년 MM월 dd일')}"
+                        labelText: "{category}"
                     })
                 }));
 
+                // Y Axis
                 const yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
                     min: 0,
                     max: 100,
@@ -1071,12 +958,13 @@
                     })
                 }));
 
+                // Series
                 const series = chart.series.push(am5xy.SmoothedXLineSeries.new(root, {
                     name: "Series",
                     xAxis: xAxis,
                     yAxis: yAxis,
                     valueYField: "value",
-                    valueXField: "date",
+                    categoryXField: "label",
                     sequencedInterpolation: true,
                     tooltip: am5.Tooltip.new(root, {
                         labelText: "{valueY}"
@@ -1088,80 +976,111 @@
                     stroke: am5.color(color)
                 });
 
-                series.bullets.push(function () {
+                series.bullets.push(function (root, series, dataItem) {
+                    const circle = am5.Circle.new(root, {
+                        radius: 5,
+                        fill: am5.color(color),
+                        strokeWidth: 2,
+                        stroke: root.interfaceColors.get("background"),
+                        interactive: true,
+                        cursorOverStyle: "pointer"
+                    });
+
                     return am5.Bullet.new(root, {
-                        locationY: 0,
-                        sprite: am5.Circle.new(root, {
-                            radius: 4,
-                            stroke: root.interfaceColors.get("background"),
-                            strokeWidth: 2,
-                            fill: am5.color(color)
-                        })
+                        locationY: 0.5,
+                        sprite: circle
                     });
                 });
-                ///제일 가까운 데이터 포인트를 찾는 클릭 이벤트
+
+                // Click to find closest data point by index
                 chart.plotContainer.events.on("click", function (ev) {
                     const point = chart.plotContainer.toLocal(ev.point);
+                    const x = point.x;
 
-                    const xVal = xAxis.positionToValue(
-                        xAxis.toAxisPosition(point.x / chart.plotContainer.width())
-                    );
+                    const axisRenderer = xAxis.get("renderer");
+                    if (!axisRenderer) {
+                        console.warn("❌ X Axis renderer not found.");
+                        return;
+                    }
 
-                    const yVal = yAxis.positionToValue(
-                        yAxis.toAxisPosition(point.y / chart.plotContainer.height())
-                    );
+                    const categories = xAxis.dataItems;
+                    let closestItem = null;
+                    let minDistance = Number.MAX_VALUE;
 
-                    let closest = null;
-                    let minDiff = Number.MAX_VALUE;
+                    categories.forEach((dataItem) => {
+                        const category = dataItem.get("category");
+                        if (!category) return;
 
-                    // ✅ Loop safely using am5.array.each
-                    am5.array.each(series.dataItems, function (item) {
-                        const itemX = item.get("valueX");
-                        const diff = Math.abs(itemX - xVal);
+                        const categoryPosition = xAxis.categoryToPosition(category);
+                        const categoryX = axisRenderer.positionToCoordinate(categoryPosition);
 
-                        if (diff < minDiff) {
-                            closest = item;
-                            minDiff = diff;
+                        const distance = Math.abs(x - categoryX);
+
+                        if (distance < minDistance) {
+                            minDistance = distance;
+                            closestItem = dataItem;
                         }
                     });
 
-                    if (closest) {
-                        const closestX = closest.get("valueX");
-                        const closestY = closest.get("valueY");
-                        const dateStr = new Date(closestX).toLocaleDateString("en-US");
+                    if (closestItem) {
+                        const data = closestItem.dataContext;
+                        const label = data.label;
+                        const value = data.value;
+                        const originalDate = data.originalDate;
 
-                        console.log("🟢 Closest Data Point:");
-                        console.log("🕓 X (date):", dateStr);
-                        console.log("📈 Y (value):", closestY);
-                        console.log("📦 Raw Data:", closest.dataContext);
-                        const date = new Date(closestX);
+                        const date = new Date(originalDate);
                         const month = date.getMonth() + 1;
                         const day = date.getDate();
-                        $("#fuel-score-date").html(`${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일 점수는 ${closestY}점이에요.`);
 
+                        $("#fuel-score-date").html(
+                            `${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일 점수는 ${value}점이에요.`
+                        );
+
+                        console.log("🟢 Closest Data Point (via axis position):");
+                        console.log("🗓 Label:", label);
+                        console.log("📈 Y (value):", value);
+                        console.log("📦 Raw Data:", data);
                     } else {
-                        console.log("⚠️ No data points found.");
+                        console.log("⚠️ No category data matched.");
                     }
                 });
 
-
-
+                // Scrollbar
                 chart.set("scrollbarX", am5.Scrollbar.new(root, {
                     orientation: "horizontal"
                 }));
 
+                // Parse and set data
                 const data = [];
-                _data.map(item => {
+                // const reverseData = [..._data].reverse();  // safer than mutating
+
+                const dateObj = new Date();
+                dateObj.setHours(0, 0, 0, 0);
+                for (let i = 0; i < 15; i++) {
+                    // const item = reverseData[i];
+                    // const fuelScore = item.fuelScore 
+                    // const dateObj = new Date(item.scoreDateTs);
+                    //    const dateObj = new Date();
+                    //     dateObj.setHours(0, 0, 0, 0);
+
+                    const month = dateObj.getMonth() + 1;
+                    const day = dateObj.getDate();
+                    const label = `${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일`;
+
                     data.push({
-                        date: item.scoreDate,
-                        value: item.fuelScore
+                        label,
+                        value: Math.floor(Math.random() * 100),
+                        originalDate: dateObj.getTime()  // used for click response
                     });
-                });
+                    dateObj.setDate(dateObj.getDate() + 1);
+                }
+
+                xAxis.data.setAll(data);
                 series.data.setAll(data);
+
                 series.appear(1000);
                 chart.appear(1000, 100);
             }
-
             function createEcoScoreChart(chartId, color) {
                 const root = am5.Root.new(chartId);
                 root._logo.dispose();
@@ -1169,10 +1088,10 @@
                 root.setThemes([am5themes_Animated.new(root)]);
 
                 const chart = root.container.children.push(am5xy.XYChart.new(root, {
-                    panX: true,
+                    panX: false,
                     panY: true,
                     wheelX: "panX",
-                    wheelY: "zoomX",
+                    wheelY: "none",
                     pinchZoomX: true,
                     paddingLeft: 0
                 }));
@@ -1182,22 +1101,20 @@
                 }));
                 cursor.lineY.set("visible", false);
 
-                const xAxis = chart.xAxes.push(am5xy.DateAxis.new(root, {
-                    baseInterval: {
-                        timeUnit: "day",
-                        count: 1
-                    },
-                    maxDeviation: 0.5,
+                // X Axis (Category)
+                const xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
+                    categoryField: "label",
                     renderer: am5xy.AxisRendererX.new(root, {
                         minGridDistance: 80,
                         minorGridEnabled: true,
                         pan: "zoom"
                     }),
                     tooltip: am5.Tooltip.new(root, {
-                        labelText: "{valueX.formatDate('yyyy년 MM월 dd일')}"
+                        labelText: "{category}"
                     })
                 }));
 
+                // Y Axis
                 const yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
                     min: 0,
                     max: 100,
@@ -1207,12 +1124,13 @@
                     })
                 }));
 
+                // Series
                 const series = chart.series.push(am5xy.SmoothedXLineSeries.new(root, {
                     name: "Series",
                     xAxis: xAxis,
                     yAxis: yAxis,
                     valueYField: "value",
-                    valueXField: "date",
+                    categoryXField: "label",
                     sequencedInterpolation: true,
                     tooltip: am5.Tooltip.new(root, {
                         labelText: "{valueY}"
@@ -1224,82 +1142,863 @@
                     stroke: am5.color(color)
                 });
 
-                series.bullets.push(function () {
-                    return am5.Bullet.new(root, {
-                        locationY: 0,
-                        sprite: am5.Circle.new(root, {
-                            radius: 4,
-                            stroke: root.interfaceColors.get("background"),
-                            strokeWidth: 2,
-                            fill: am5.color(color),
+                series.bullets.push(function (root, series, dataItem) {
+                    const circle = am5.Circle.new(root, {
+                        radius: 5,
+                        fill: am5.color(color),
+                        strokeWidth: 2,
+                        stroke: root.interfaceColors.get("background"),
+                        interactive: true,
+                        cursorOverStyle: "pointer"
+                    });
 
-                        })
+                    return am5.Bullet.new(root, {
+                        locationY: 0.5,
+                        sprite: circle
                     });
                 });
 
+                // Click to find closest data point by index
                 chart.plotContainer.events.on("click", function (ev) {
                     const point = chart.plotContainer.toLocal(ev.point);
+                    const x = point.x;
 
-                    const xVal = xAxis.positionToValue(
-                        xAxis.toAxisPosition(point.x / chart.plotContainer.width())
-                    );
+                    const axisRenderer = xAxis.get("renderer");
+                    if (!axisRenderer) {
+                        console.warn("❌ X Axis renderer not found.");
+                        return;
+                    }
 
-                    const yVal = yAxis.positionToValue(
-                        yAxis.toAxisPosition(point.y / chart.plotContainer.height())
-                    );
+                    const categories = xAxis.dataItems;
+                    let closestItem = null;
+                    let minDistance = Number.MAX_VALUE;
 
-                    let closest = null;
-                    let minDiff = Number.MAX_VALUE;
+                    categories.forEach((dataItem) => {
+                        const category = dataItem.get("category");
+                        if (!category) return;
 
-                    // ✅ Loop safely using am5.array.each
-                    am5.array.each(series.dataItems, function (item) {
-                        const itemX = item.get("valueX");
-                        const diff = Math.abs(itemX - xVal);
+                        const categoryPosition = xAxis.categoryToPosition(category);
+                        const categoryX = axisRenderer.positionToCoordinate(categoryPosition);
 
-                        if (diff < minDiff) {
-                            closest = item;
-                            minDiff = diff;
+                        const distance = Math.abs(x - categoryX);
+
+                        if (distance < minDistance) {
+                            minDistance = distance;
+                            closestItem = dataItem;
                         }
                     });
 
-                    if (closest) {
-                        const closestX = closest.get("valueX");
-                        const closestY = closest.get("valueY");
-                        const dateStr = new Date(closestX).toLocaleDateString("en-US");
+                    if (closestItem) {
+                        const data = closestItem.dataContext;
+                        const label = data.label;
+                        const value = data.value;
+                        const originalDate = data.originalDate;
 
-                        console.log("🟢 Closest Data Point:");
-                        console.log("🕓 X (date):", dateStr);
-                        console.log("📈 Y (value):", closestY);
-                        console.log("📦 Raw Data:", closest.dataContext);
-                        const date = new Date(closestX);
+                        const date = new Date(originalDate);
                         const month = date.getMonth() + 1;
                         const day = date.getDate();
-                        $("#eco-score-date").html(`${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일 점수는 ${closestY}점이에요.`);
 
+                        $("#eco-score-date").html(
+                            `${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일 점수는 ${value}점이에요.`
+                        );
+
+                        console.log("🟢 Closest Data Point (via axis position):");
+                        console.log("🗓 Label:", label);
+                        console.log("📈 Y (value):", value);
+                        console.log("📦 Raw Data:", data);
                     } else {
-                        console.log("⚠️ No data points found.");
+                        console.log("⚠️ No category data matched.");
                     }
                 });
 
-
-
+                // Scrollbar
                 chart.set("scrollbarX", am5.Scrollbar.new(root, {
                     orientation: "horizontal"
                 }));
 
-                // 데이터 생성
+                // Parse and set data
                 const data = [];
+                // const reverseData = [..._data].reverse();  // safer than mutating
 
-                _data.map(item => {
+                const dateObj = new Date();
+                dateObj.setHours(0, 0, 0, 0);
+                for (let i = 0; i < 15; i++) {
+                    // const item = reverseData[i];
+                    // const ecoScore = item.ecoScore
+                    // const dateObj = new Date(item.scoreDateTs);
+                    //    const dateObj = new Date();
+                    //     dateObj.setHours(0, 0, 0, 0);
+
+                    const month = dateObj.getMonth() + 1;
+                    const day = dateObj.getDate();
+                    const label = `${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일`;
+
                     data.push({
-                        date: item.scoreDate,
-                        value: item.ecoScore
+                        label,
+                        value: Math.floor(Math.random() * 100),
+                        originalDate: dateObj.getTime()  // used for click response
                     });
-                });
+                    dateObj.setDate(dateObj.getDate() + 1);
+                }
+
+                xAxis.data.setAll(data);
                 series.data.setAll(data);
+
                 series.appear(1000);
                 chart.appear(1000, 100);
             }
+    
+        //     function createPublicScoreChart2(chartId, color) {
+        //         const root = am5.Root.new(chartId);
+        //         root._logo.dispose();
+        //         root.setThemes([am5themes_Animated.new(root)]);
+
+        //         const chart = root.container.children.push(am5xy.XYChart.new(root, {
+        //             panX: false,
+        //             panY: true,
+        //             wheelX: "panX",
+        //             wheelY: "none",
+        //             pinchZoomX: true,
+        //             paddingLeft: 0
+        //         }));
+        //         const cursor = chart.set("cursor", am5xy.XYCursor.new(root, {
+        //             behavior: "none"
+        //         }));
+        //         cursor.lineY.set("visible", false);
+        //         // ✅ X Axis: CategoryAxis for names
+        //         const xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
+        //             categoryField: "name",
+        //             renderer: am5xy.AxisRendererX.new(root, {
+        //                 minGridDistance: 50,
+        //                 minorGridEnabled: true,
+        //                 pan: "zoom"
+        //             }),
+        //             tooltip: am5.Tooltip.new(root, {
+        //                 labelText: "{name}"  // ← 허버링 시
+        //             })
+        //         }));
+
+        //         // ✅ Y Axis: ValueAxis for numeric values
+        //         const yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
+        //             min: 0,
+        //             max: 100,
+        //             strictMinMax: true,
+        //             renderer: am5xy.AxisRendererY.new(root, {
+        //                 pan: "zoom"
+        //             })
+        //         }));
+
+        //         // ✅ Series: Column chart (can be changed to line if needed)
+        //         const series = chart.series.push(am5xy.SmoothedXLineSeries.new(root, {
+        //             name: "Series",
+        //             xAxis: xAxis,
+        //             yAxis: yAxis,
+        //             valueYField: "value",
+        //             categoryXField: "name",
+        //             sequencedInterpolation: true,
+        //             tooltip: am5.Tooltip.new(root, {
+        //                 labelText: "{categoryX}: {valueY}점"
+        //             })
+        //         }));
+
+        //         series.bullets.push(function () {
+        //             return am5.Bullet.new(root, {
+        //                 sprite: am5.Circle.new(root, {
+        //                     radius: 5,
+        //                     fill: am5.color(color),
+        //                     strokeWidth: 2,
+        //                     stroke: root.interfaceColors.get("background")
+        //                 })
+        //             });
+        //         });
+        //         ///제일 가까운 데이터 포인트를 찾는 클릭 이벤트
+        //         chart.plotContainer.events.on("click", function (ev) {
+        //             const point = chart.plotContainer.toLocal(ev.point);
+
+        //             const xVal = xAxis.positionToValue(
+        //                 xAxis.toAxisPosition(point.x / chart.plotContainer.width())
+        //             );
+
+        //             const yVal = yAxis.positionToValue(
+        //                 yAxis.toAxisPosition(point.y / chart.plotContainer.height())
+        //             );
+
+        //             let closest = null;
+        //             let minDiff = Number.MAX_VALUE;
+
+        //             // ✅ Loop safely using am5.array.each
+        //             am5.array.each(series.dataItems, function (item) {
+        //                 const itemX = item.get("valueX");
+        //                 const diff = Math.abs(itemX - xVal);
+
+        //                 if (diff < minDiff) {
+        //                     closest = item;
+        //                     minDiff = diff;
+        //                 }
+        //             });
+
+        //             if (closest) {
+        //                 const closestX = closest.get("valueX");
+        //                 const closestY = closest.get("valueY");
+        //                 //const dateStr = new Date(closestX).toLocaleDateString("en-US");
+
+        //                 console.log("🟢 Closest Data Point:");
+        //                 // console.log("🕓 X (date):", dateStr);
+        //                 console.log("📈 Y (value):", closestY);
+        //                 // console.log("📦 Raw Data:", closest.dataContext);
+        //                 // const date = new Date(closestX);
+        //                 // const month = date.getMonth() + 1;
+        //                 // const day = date.getDate();
+        //                 // $("#public-score-date").html(`${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일 점수는 ${closestY}점이에요.`);
+
+        //             } else {
+        //                 console.log("⚠️ No data points found.");
+        //             }
+        //         });
+
+
+        //         chart.set("scrollbarX", am5.Scrollbar.new(root, {
+        //             orientation: "horizontal"
+        //         }));
+        //         // ✅ Data setup
+        //         _data2 = [
+        //             { name: "John", value: 72 },
+        //             { name: "Mary", value: 85 },
+        //             { name: "Alice", value: 60 }
+        //             ,
+        //             { name: "Bob", value: 91 },
+        //             { name: "Mary1", value: 84 }
+        //             ,
+        //             { name: "John2", value: 75 },
+        //             { name: "Alice3", value: 65 },
+        //             { name: "Bob4", value: 88 },
+        //             { name: "John5", value: 80 },
+        //             { name: "Mary6", value: 90 },
+        //             { name: "Alice7", value: 70 },
+        //             { name: "Bob8", value: 95 },
+        //             { name: "John9", value: 78 },
+        //             { name: "Marys", value: 82 },
+        //             { name: "Alicee", value: 60 },
+        //             { name: "Bobb", value: 91 }
+        //         ];
+        //         const data = [];
+        //         _data2.map(item => {
+        //             data.push({
+        //                 name: item.name,
+        //                 value: item.value,
+        //                 // value: Math.floor(Math.random() * 100)
+        //             });
+        //         });
+
+
+
+        //         series.data.setAll(data);
+        //         xAxis.data.setAll(data);
+
+        //         series.appear(1000);
+        //         chart.appear(1000, 100);
+        //     }
+
+        //     function createPublicScoreChart_Og(chartId, color) {
+        //         const root = am5.Root.new(chartId);
+        //         root._logo.dispose();
+        //         root.locale = am5locales_ko_KR;
+        //         root.setThemes([am5themes_Animated.new(root)]);
+
+        //         const chart = root.container.children.push(am5xy.XYChart.new(root, {
+        //             panX: false,
+        //             panY: true,
+        //             wheelX: "panX",
+        //             wheelY: "none",
+        //             pinchZoomX: true,
+        //             paddingLeft: 0
+        //         }));
+
+        //         const cursor = chart.set("cursor", am5xy.XYCursor.new(root, {
+        //             behavior: "none"
+        //         }));
+        //         cursor.lineY.set("visible", false);
+
+        //         const xAxis = chart.xAxes.push(am5xy.DateAxis.new(root, {
+        //             baseInterval: {
+        //                 timeUnit: "day",
+        //                 count: 1
+        //             },
+        //             maxDeviation: 0.5,
+        //             renderer: am5xy.AxisRendererX.new(root, {
+        //                 minGridDistance: 80,
+        //                 minorGridEnabled: true,
+        //                 pan: "zoom"
+        //             }),
+        //             tooltip: am5.Tooltip.new(root, {
+        //                 labelText: "{value.formatDate('MM/dd')}"  // ← 허버링 시
+        //             })
+        //         }));
+
+        //         // xAxis.get("renderer").labels.template.setAll({
+        //         //     oversizedBehavior: "wrap",
+        //         //     text: "{value}", // 기본값은 그대로 두고
+        //         //     populateText: true // 내부 텍스트 생성을 강제함
+        //         // });
+
+        //         // xAxis.get("renderer").labels.template.adapters.add("text", function (text, target) {
+        //         //     const value = target.dataItem?.get("value");
+
+        //         //     if (!value) return "";
+
+        //         //     const date = new Date(value);
+        //         //     const month = date.getMonth() + 1;
+        //         //     const day = date.getDate();
+
+        //         //     return `${month}월 ${day}일`; // ✅ 원하는 형식
+        //         // });
+
+
+
+
+        //         const yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
+        //             min: 0,
+        //             max: 100,
+        //             strictMinMax: true,
+        //             renderer: am5xy.AxisRendererY.new(root, {
+        //                 pan: "zoom"
+        //             })
+        //         }));
+
+        //         const series = chart.series.push(am5xy.SmoothedXLineSeries.new(root, {
+        //             name: "Series",
+        //             xAxis: xAxis,
+        //             yAxis: yAxis,
+        //             valueYField: "value",
+        //             valueXField: "date",
+        //             sequencedInterpolation: true,
+        //             tooltip: am5.Tooltip.new(root, {
+        //                 labelText: "{valueY}"
+        //             })
+        //         }));
+
+        //         series.strokes.template.setAll({
+        //             strokeWidth: 2,
+        //             stroke: am5.color(color)
+        //         });
+
+        //         series.bullets.push(function (root, series, dataItem) {
+        //             const circle = am5.Circle.new(root, {
+        //                 radius: 5,
+        //                 fill: am5.color(color),
+        //                 strokeWidth: 2,
+        //                 stroke: root.interfaceColors.get("background"),
+        //                 interactive: true,               // ✅ 필수
+        //                 cursorOverStyle: "pointer"      // ✅ 시각적 피드백
+        //             });
+
+        //             return am5.Bullet.new(root, {
+        //                 locationY: 0.5,
+        //                 sprite: circle
+        //             });
+        //         });
+        //         // /// Add click event anywhere on the chart
+        //         // chart.plotContainer.events.on("click", function (ev) {
+        //         //     // Convert pixel position to relative axis position (0 to 1)
+        //         //     const point = chart.plotContainer.toLocal(ev.point);
+        //         //     const xAxisValue = xAxis.positionToValue(xAxis.toAxisPosition(point.x / chart.plotContainer.width()));
+        //         //     const yAxisValue = yAxis.positionToValue(yAxis.toAxisPosition(point.y / chart.plotContainer.height()));
+        //         //     const dateStr = new Date(xAxisValue).toLocaleDateString("en-US");
+
+        //         //     console.log("📍 Clicked chart at:");
+        //         //     console.log("🕓 X (date):", dateStr);
+        //         //     console.log("📈 Y (value):", yAxisValue.toFixed(2));
+        //         // });
+        //         ///제일 가까운 데이터 포인트를 찾는 클릭 이벤트
+        //         chart.plotContainer.events.on("click", function (ev) {
+        //             const point = chart.plotContainer.toLocal(ev.point);
+
+        //             const xVal = xAxis.positionToValue(
+        //                 xAxis.toAxisPosition(point.x / chart.plotContainer.width())
+        //             );
+
+        //             const yVal = yAxis.positionToValue(
+        //                 yAxis.toAxisPosition(point.y / chart.plotContainer.height())
+        //             );
+
+        //             let closest = null;
+        //             let minDiff = Number.MAX_VALUE;
+
+        //             // ✅ Loop safely using am5.array.each
+        //             am5.array.each(series.dataItems, function (item) {
+        //                 const itemX = item.get("valueX");
+        //                 const diff = Math.abs(itemX - xVal);
+
+        //                 if (diff < minDiff) {
+        //                     closest = item;
+        //                     minDiff = diff;
+        //                 }
+        //             });
+
+        //             if (closest) {
+        //                 const closestX = closest.get("valueX");
+        //                 const closestY = closest.get("valueY");
+        //                 const dateStr = new Date(closestX).toLocaleDateString("en-US");
+
+        //                 console.log("🟢 Closest Data Point:");
+        //                 console.log("🕓 X (date):", dateStr);
+        //                 console.log("📈 Y (value):", closestY);
+        //                 console.log("📦 Raw Data:", closest.dataContext);
+        //                 const date = new Date(closestX);
+        //                 const month = date.getMonth() + 1;
+        //                 const day = date.getDate();
+        //                 $("#public-score-date").html(`${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일 점수는 ${closestY}점이에요.`);
+
+        //             } else {
+        //                 console.log("⚠️ No data points found.");
+        //             }
+        //         });
+
+
+        //         chart.set("scrollbarX", am5.Scrollbar.new(root, {
+        //             orientation: "horizontal"
+        //         }));
+
+        //         const data = [];
+        //         const reverseData = _data.reverse();
+
+
+        //         for (let i = 0; i < reverseData.length; i++) {
+        //             const item = reverseData[i];
+        //             const safeScore = item.safeScore || 0;
+        //             const fuelScore = item.fuelScore || 0;
+        //             const ecoScore = item.ecoScore || 0;
+        //             const publicScore = Math.round((safeScore + fuelScore + ecoScore) / 3);
+
+        //             var _date2 = new Date(item.scoreDateTs);
+        //             _date2.setHours(0, 0, 0, 0);
+
+        //             data.push({
+        //                 date: _date2.getTime(),
+        //                 value: publicScore
+        //             });
+        //         }
+
+
+
+
+        //         series.data.setAll(data);
+        //         series.appear(1000);
+        //         chart.appear(1000, 100);
+        //     }
+
+
+        //     function createSafeScoreChart_OG(chartId, color) {
+        //         const root = am5.Root.new(chartId);
+        //         root._logo.dispose();
+        //         root.locale = am5locales_ko_KR;
+        //         root.setThemes([am5themes_Animated.new(root)]);
+
+        //         const chart = root.container.children.push(am5xy.XYChart.new(root, {
+        //             panX: true,
+        //             panY: true,
+        //             wheelX: "panX",
+        //             wheelY: "zoomX",
+        //             pinchZoomX: true,
+        //             paddingLeft: 0
+        //         }));
+
+        //         const cursor = chart.set("cursor", am5xy.XYCursor.new(root, {
+        //             behavior: "none"
+        //         }));
+        //         cursor.lineY.set("visible", false);
+
+        //         const xAxis = chart.xAxes.push(am5xy.DateAxis.new(root, {
+        //             baseInterval: {
+        //                 timeUnit: "day",
+        //                 count: 1
+        //             },
+        //             maxDeviation: 0.5,
+        //             renderer: am5xy.AxisRendererX.new(root, {
+        //                 minGridDistance: 80,
+        //                 minorGridEnabled: true,
+        //                 pan: "zoom"
+        //             }),
+        //             tooltip: am5.Tooltip.new(root, {
+        //                 labelText: "{valueX.formatDate('MM월 dd일')}"
+        //             })
+        //         }));
+
+
+        //         const yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
+        //             min: 0,
+        //             max: 100,
+        //             strictMinMax: true,
+        //             renderer: am5xy.AxisRendererY.new(root, {
+        //                 pan: "zoom"
+        //             })
+        //         }));
+
+        //         const series = chart.series.push(am5xy.SmoothedXLineSeries.new(root, {
+        //             name: "Series",
+        //             xAxis: xAxis,
+        //             yAxis: yAxis,
+        //             valueYField: "value",
+        //             valueXField: "date",
+        //             sequencedInterpolation: true,
+        //             tooltip: am5.Tooltip.new(root, {
+        //                 labelText: "{valueY}"
+        //             })
+        //         }));
+
+        //         series.strokes.template.setAll({
+        //             strokeWidth: 2,
+        //             stroke: am5.color(color)
+        //         });
+
+        //         series.bullets.push(function () {
+        //             return am5.Bullet.new(root, {
+        //                 locationY: 0,
+        //                 sprite: am5.Circle.new(root, {
+        //                     radius: 4,
+        //                     stroke: root.interfaceColors.get("background"),
+        //                     strokeWidth: 2,
+        //                     fill: am5.color(color)
+        //                 })
+        //             });
+        //         });
+        //         ///제일 가까운 데이터 포인트를 찾는 클릭 이벤트
+        //         chart.plotContainer.events.on("click", function (ev) {
+        //             const point = chart.plotContainer.toLocal(ev.point);
+
+        //             const xVal = xAxis.positionToValue(
+        //                 xAxis.toAxisPosition(point.x / chart.plotContainer.width())
+        //             );
+
+        //             const yVal = yAxis.positionToValue(
+        //                 yAxis.toAxisPosition(point.y / chart.plotContainer.height())
+        //             );
+
+        //             let closest = null;
+        //             let minDiff = Number.MAX_VALUE;
+
+        //             // ✅ Loop safely using am5.array.each
+        //             am5.array.each(series.dataItems, function (item) {
+        //                 const itemX = item.get("valueX");
+        //                 const diff = Math.abs(itemX - xVal);
+
+        //                 if (diff < minDiff) {
+        //                     closest = item;
+        //                     minDiff = diff;
+        //                 }
+        //             });
+
+        //             if (closest) {
+        //                 const closestX = closest.get("valueX");
+        //                 const closestY = closest.get("valueY");
+        //                 const dateStr = new Date(closestX).toLocaleDateString("en-US");
+
+        //                 console.log("🟢 Closest Data Point:");
+        //                 console.log("🕓 X (date):", dateStr);
+        //                 console.log("📈 Y (value):", closestY);
+        //                 console.log("📦 Raw Data:", closest.dataContext);
+        //                 const date = new Date(closestX);
+        //                 const month = date.getMonth() + 1;
+        //                 const day = date.getDate();
+        //                 $("#safe-score-date").html(`${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일 점수는 ${closestY}점이에요.`);
+
+        //             } else {
+        //                 console.log("⚠️ No data points found.");
+        //             }
+        //         });
+
+
+        //         chart.set("scrollbarX", am5.Scrollbar.new(root, {
+        //             orientation: "horizontal"
+        //         }));
+
+        //         const data = [];
+        //         _data.map(item => {
+        //             data.push({
+        //                 date: item.scoreDate,
+        //                 value: item.safeScore
+        //             });
+        //         });
+        //         series.data.setAll(data);
+        //         series.appear(1000);
+        //         chart.appear(1000, 100);
+        //     }
+
+        //     function createFuelScoreChart_OG(chartId, color) {
+        //         const root = am5.Root.new(chartId);
+        //         root._logo.dispose();
+        //         root.locale = am5locales_ko_KR;
+        //         root.setThemes([am5themes_Animated.new(root)]);
+
+        //         const chart = root.container.children.push(am5xy.XYChart.new(root, {
+        //             panX: true,
+        //             panY: true,
+        //             wheelX: "panX",
+        //             wheelY: "zoomX",
+        //             pinchZoomX: true,
+        //             paddingLeft: 0
+        //         }));
+
+        //         const cursor = chart.set("cursor", am5xy.XYCursor.new(root, {
+        //             behavior: "none"
+        //         }));
+        //         cursor.lineY.set("visible", false);
+
+        //         const xAxis = chart.xAxes.push(am5xy.DateAxis.new(root, {
+        //             baseInterval: {
+        //                 timeUnit: "day",
+        //                 count: 1
+        //             },
+        //             maxDeviation: 0.5,
+        //             renderer: am5xy.AxisRendererX.new(root, {
+        //                 minGridDistance: 80,
+        //                 minorGridEnabled: true,
+        //                 pan: "zoom"
+        //             }),
+        //             tooltip: am5.Tooltip.new(root, {
+        //                 labelText: "{valueX.formatDate('yyyy년 MM월 dd일')}"
+        //             })
+        //         }));
+
+        //         const yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
+        //             min: 0,
+        //             max: 100,
+        //             strictMinMax: true,
+        //             renderer: am5xy.AxisRendererY.new(root, {
+        //                 pan: "zoom"
+        //             })
+        //         }));
+
+        //         const series = chart.series.push(am5xy.SmoothedXLineSeries.new(root, {
+        //             name: "Series",
+        //             xAxis: xAxis,
+        //             yAxis: yAxis,
+        //             valueYField: "value",
+        //             valueXField: "date",
+        //             sequencedInterpolation: true,
+        //             tooltip: am5.Tooltip.new(root, {
+        //                 labelText: "{valueY}"
+        //             })
+        //         }));
+
+        //         series.strokes.template.setAll({
+        //             strokeWidth: 2,
+        //             stroke: am5.color(color)
+        //         });
+
+        //         series.bullets.push(function () {
+        //             return am5.Bullet.new(root, {
+        //                 locationY: 0,
+        //                 sprite: am5.Circle.new(root, {
+        //                     radius: 4,
+        //                     stroke: root.interfaceColors.get("background"),
+        //                     strokeWidth: 2,
+        //                     fill: am5.color(color)
+        //                 })
+        //             });
+        //         });
+        //         ///제일 가까운 데이터 포인트를 찾는 클릭 이벤트
+        //         chart.plotContainer.events.on("click", function (ev) {
+        //             const point = chart.plotContainer.toLocal(ev.point);
+
+        //             const xVal = xAxis.positionToValue(
+        //                 xAxis.toAxisPosition(point.x / chart.plotContainer.width())
+        //             );
+
+        //             const yVal = yAxis.positionToValue(
+        //                 yAxis.toAxisPosition(point.y / chart.plotContainer.height())
+        //             );
+
+        //             let closest = null;
+        //             let minDiff = Number.MAX_VALUE;
+
+        //             // ✅ Loop safely using am5.array.each
+        //             am5.array.each(series.dataItems, function (item) {
+        //                 const itemX = item.get("valueX");
+        //                 const diff = Math.abs(itemX - xVal);
+
+        //                 if (diff < minDiff) {
+        //                     closest = item;
+        //                     minDiff = diff;
+        //                 }
+        //             });
+
+        //             if (closest) {
+        //                 const closestX = closest.get("valueX");
+        //                 const closestY = closest.get("valueY");
+        //                 const dateStr = new Date(closestX).toLocaleDateString("en-US");
+
+        //                 console.log("🟢 Closest Data Point:");
+        //                 console.log("🕓 X (date):", dateStr);
+        //                 console.log("📈 Y (value):", closestY);
+        //                 console.log("📦 Raw Data:", closest.dataContext);
+        //                 const date = new Date(closestX);
+        //                 const month = date.getMonth() + 1;
+        //                 const day = date.getDate();
+        //                 $("#fuel-score-date").html(`${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일 점수는 ${closestY}점이에요.`);
+
+        //             } else {
+        //                 console.log("⚠️ No data points found.");
+        //             }
+        //         });
+
+
+
+        //         chart.set("scrollbarX", am5.Scrollbar.new(root, {
+        //             orientation: "horizontal"
+        //         }));
+
+        //         const data = [];
+        //         _data.map(item => {
+        //             data.push({
+        //                 date: item.scoreDate,
+        //                 value: item.fuelScore
+        //             });
+        //         });
+        //         series.data.setAll(data);
+        //         series.appear(1000);
+        //         chart.appear(1000, 100);
+        //     }
+
+        //     function createEcoScoreChart_OG(chartId, color) {
+        //         const root = am5.Root.new(chartId);
+        //         root._logo.dispose();
+        //         root.locale = am5locales_ko_KR;
+        //         root.setThemes([am5themes_Animated.new(root)]);
+
+        //         const chart = root.container.children.push(am5xy.XYChart.new(root, {
+        //             panX: true,
+        //             panY: true,
+        //             wheelX: "panX",
+        //             wheelY: "zoomX",
+        //             pinchZoomX: true,
+        //             paddingLeft: 0
+        //         }));
+
+        //         const cursor = chart.set("cursor", am5xy.XYCursor.new(root, {
+        //             behavior: "none"
+        //         }));
+        //         cursor.lineY.set("visible", false);
+
+        //         const xAxis = chart.xAxes.push(am5xy.DateAxis.new(root, {
+        //             baseInterval: {
+        //                 timeUnit: "day",
+        //                 count: 1
+        //             },
+        //             maxDeviation: 0.5,
+        //             renderer: am5xy.AxisRendererX.new(root, {
+        //                 minGridDistance: 80,
+        //                 minorGridEnabled: true,
+        //                 pan: "zoom"
+        //             }),
+        //             tooltip: am5.Tooltip.new(root, {
+        //                 labelText: "{valueX.formatDate('yyyy년 MM월 dd일')}"
+        //             })
+        //         }));
+
+        //         const yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
+        //             min: 0,
+        //             max: 100,
+        //             strictMinMax: true,
+        //             renderer: am5xy.AxisRendererY.new(root, {
+        //                 pan: "zoom"
+        //             })
+        //         }));
+
+        //         const series = chart.series.push(am5xy.SmoothedXLineSeries.new(root, {
+        //             name: "Series",
+        //             xAxis: xAxis,
+        //             yAxis: yAxis,
+        //             valueYField: "value",
+        //             valueXField: "date",
+        //             sequencedInterpolation: true,
+        //             tooltip: am5.Tooltip.new(root, {
+        //                 labelText: "{valueY}"
+        //             })
+        //         }));
+
+        //         series.strokes.template.setAll({
+        //             strokeWidth: 2,
+        //             stroke: am5.color(color)
+        //         });
+
+        //         series.bullets.push(function () {
+        //             return am5.Bullet.new(root, {
+        //                 locationY: 0,
+        //                 sprite: am5.Circle.new(root, {
+        //                     radius: 4,
+        //                     stroke: root.interfaceColors.get("background"),
+        //                     strokeWidth: 2,
+        //                     fill: am5.color(color),
+
+        //                 })
+        //             });
+        //         });
+
+        //         chart.plotContainer.events.on("click", function (ev) {
+        //             const point = chart.plotContainer.toLocal(ev.point);
+
+        //             const xVal = xAxis.positionToValue(
+        //                 xAxis.toAxisPosition(point.x / chart.plotContainer.width())
+        //             );
+
+        //             const yVal = yAxis.positionToValue(
+        //                 yAxis.toAxisPosition(point.y / chart.plotContainer.height())
+        //             );
+
+        //             let closest = null;
+        //             let minDiff = Number.MAX_VALUE;
+
+        //             // ✅ Loop safely using am5.array.each
+        //             am5.array.each(series.dataItems, function (item) {
+        //                 const itemX = item.get("valueX");
+        //                 const diff = Math.abs(itemX - xVal);
+
+        //                 if (diff < minDiff) {
+        //                     closest = item;
+        //                     minDiff = diff;
+        //                 }
+        //             });
+
+        //             if (closest) {
+        //                 const closestX = closest.get("valueX");
+        //                 const closestY = closest.get("valueY");
+        //                 const dateStr = new Date(closestX).toLocaleDateString("en-US");
+
+        //                 console.log("🟢 Closest Data Point:");
+        //                 console.log("🕓 X (date):", dateStr);
+        //                 console.log("📈 Y (value):", closestY);
+        //                 console.log("📦 Raw Data:", closest.dataContext);
+        //                 const date = new Date(closestX);
+        //                 const month = date.getMonth() + 1;
+        //                 const day = date.getDate();
+        //                 $("#eco-score-date").html(`${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일 점수는 ${closestY}점이에요.`);
+
+        //             } else {
+        //                 console.log("⚠️ No data points found.");
+        //             }
+        //         });
+
+
+
+        //         chart.set("scrollbarX", am5.Scrollbar.new(root, {
+        //             orientation: "horizontal"
+        //         }));
+
+        //         // 데이터 생성
+        //         const data = [];
+
+        //         _data.map(item => {
+        //             data.push({
+        //                 date: item.scoreDate,
+        //                 value: item.ecoScore
+        //             });
+        //         });
+        //         series.data.setAll(data);
+        //         series.appear(1000);
+        //         chart.appear(1000, 100);
+        //     }
+        // 
         })
     </script>
 </body>
