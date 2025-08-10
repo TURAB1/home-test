@@ -2,2004 +2,607 @@
 <html lang="ko">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>운전점수 분석</title>
-    <link href="https://fonts.googleapis.com/css2?family=Pretendard&display=swap" rel="stylesheet" />
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="title" content="차량운행 관리 서비스 VIEW CAR" />
+    <meta name="description" content="" />
 
-    <link href="css/front.css" rel="stylesheet" type="text/css" />
-    <link href="css/common.css" rel="stylesheet" type="text/css" />
+    <title>차량운행 관리 서비스 VIEW CAR</title>
+    <script src="js/jquery-2.2.4.min.js" type="text/javascript"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    <script src="component/header/header.js"></script>
+    <script src="component/footer/footer.js"></script>
+    <script src="js/common.js"></script>
 
-    <style>
-        body {
-            font-family: 'Pretendard', sans-serif;
-            font-size: 1.2rem;
-            margin: 0;
-            background-color: #f5f5f5;
-            background: #fff;
-        }
+    <link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/notosanskr.css" />
+    <link rel="stylesheet" href="css/jquery-ui.min.css" />
+    <link rel="stylesheet" href="css/styleko.css" />
+    <link rel="stylesheet" href="css/stylenew.css" />
+    <link rel="stylesheet" href="css/styledev.css" />
 
-        .container {
-            /* max-width: 480px; */
-            max-width: 100vw;
-            margin: 0 auto;
-            padding: 20px;
-            background: #fff;
-            min-height: 100vh;
-        }
-
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-weight: bold;
-            font-size: 1.3rem;
-            margin-bottom: 1.3rem;
-        }
-
-        .back-button {
-            display: flex;
-            align-items: center;
-            padding: 8px;
-            font-size: 18px;
-            color: #222;
-            background-color: transparent;
-            border: none;
-            cursor: pointer;
-        }
-
-        .back-button svg {
-            width: 32px;
-            height: 32px;
-            fill: #222;
-        }
-
-        .header-title {
-            font-size: 1.3rem;
-            flex: 1;
-            text-align: left;
-            padding-left: 8px;
-        }
-
-        .close {
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        .Gauge {
-            width: 100%;
-            height: 500px;
-        }
-
-
-        .upper-section {
-            margin-top: 2rem;
-        }
-
-        .score-box {
-            color: #222;
-            font-size: 2.5rem;
-            font-weight: bold;
-
-        }
-
-        .score-diff {
-            color: gray;
-            font-size: 1.3rem;
-            ;
-        }
-
-        .sub-scores {
-            margin-top: 1rem;
-            font-size: 1.3rem;
-            ;
-            font-weight: 600;
-        }
-
-        .sub-score {
-            display: flex;
-            justify-content: space-between;
-            padding: 4px 0;
-        }
-
-        .score-delta {
-            color: gray;
-            font-size: 1rem;
-        }
-
-        .delta-up {
-            color: red;
-        }
-
-        .delta-down {
-            color: blue;
-        }
-
-        .section {
-            margin-top: 1.5rem;
-        }
-
-        .summary-box {
-            background: #f0f0f0;
-            border-radius: 6px;
-            padding: 10px;
-            font-size: 1.2rem;
-        }
-
-        /* .chart-placeholder {
-        height: 150px;
-        background: #f9f9f9;
-        border: 1px solid #ddd;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: #999;
-        margin-top: 10px;
-        } */
-
-        .highlight {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #000;
-        }
-
-        .subtext {
-            font-size: 1.2rem;
-            color: #666;
-            margin-top: 4px;
-        }
-
-        .lasttext {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #222;
-            margin-top: 4px;
-        }
-
-
-        .red-text {
-            color: red;
-        }
-
-        .blue-text {
-            color: blue;
-        }
-
-        .gray-box {
-            background: #f2f2f2;
-            padding: 10px;
-            border-radius: 8px;
-            margin-top: 10px;
-        }
-
-        .chart-container {
-            width: 100%;
-            max-width: 800px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
-        }
-
-        .chart-title {
-            font-size: 1.2rem;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-
-        .chart {
-            width: 100%;
-            height: 300px;
-        }
-    </style>
-
-    <script src="js/jquery-1.12.4.min.js" type="text/javascript"></script>
-    <script src="js/jquery-ui.min.js" type="text/javascript"></script>
-
-    <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
-    <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
-    <script src="https://cdn.amcharts.com/lib/5/radar.js"></script>
-    <script src="https://cdn.amcharts.com/lib/5/locales/ko_KR.js"></script>
-    <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
-    <!-- <script src="js/common.js" type="text/javascript"></script> -->
 </head>
 
 <body>
-    <now-loading></now-loading>
-    <header>
-        <div class="left">
-            <h2>운전점수</h2>
-        </div>
-        <div class="right">
-            <button class="btn-ico corpType1 d-none"><i class="ico-add"></i></button>
-            <button class="btn-ico d-none" id="BtnTrash"><i class="ico-trash"></i></button>
-            <button class="btn-ico"><i class="ico-menu"></i></button>
-        </div>
-    </header>
-    <script>
-        $('.ico-add').on('click', function () {
-            location.href = 'car_add0.html?prev_page_check=Y';
-        });
-        $('.ico-menu').on('click', function () {
-            location.href = 'side_menu.html';
-        });
-        sessionStorage.setItem('last_page', 'driving_score.html');
+    <h1 class="hidden">차량운행 관리 서비스 VIEW CAR</h1>
 
-        // if (member_info.corp.corpType == '1') {
-        //     $('#BtnTrash').removeClass('d-none');
-        // }
-    </script>
-    <div class="container">
+    <!-- 바로가기 메뉴 -->
+    <dl id="skip-navigation">
+        <dt>바로가기메뉴</dt>
+        <dd>
+            <a href="#gnb" class="skip">사이트 메뉴 바로가기</a>
+        </dd>
+        <dd>
+            <a href="#container" class="skip">본문 바로가기</a>
+        </dd>
+    </dl>
+    <!--/ 바로가기 메뉴 -->
 
-        <div class="upper-section">
-            <br />
-            <div class="score-box"></div>
-            <br />
-            <div class="score-diff">첫번째 날짜보다 <span class="highlight">8점</span> ▲</div>
-
-            <div class="sub-scores">
-                <div class="sub-score">
-                    <span>안전점수</span>
-                    <span id="safe-score"></span>
+    <div id="wrap">
+        <header-0></header-0>
+        <section id="container">
+            <div id="sub-container">
+                <div class="page-header">
+                    <h2>처리장 설정</h2>
+                    <span>처리장 정보를 설정하실 수 있습니다.</span>
                 </div>
-                <div class="sub-score">
-                    <span>경제점수</span>
-                    <span id="fuel-score"></span>
+                <div id="contents-page" class="vehicle-page">
+                    <div class="">
+                        <!-- 상단 상태값 -->
+                        <div class="top-state clr">
+                            <div class="item">
+
+                                <span>
+                                    등록 시설
+                                    <strong>2</strong>대
+                                </span>
+                            </div>
+
+                            <div class="time">
+                                <span>2025/07/04</span>
+                                <span>09:57</span>
+                                <span>기준</span>
+                                <button class="btn btn04">새로고침</button>
+                            </div>
+                        </div>
+                        <!--/ 상단 상태값 -->
+
+                        <h3 class="tit2 mgt30">처리장 등록</h3>
+                        <div class="box-register">
+                            처리장 정보를 등록해주세요. 해당 센터에 방문 시, 1순위 성상을 처리한 것으로 자동 판정됩니다.</br>
+                            ※ 예: A처리장에 "음식물(1순위), 대형(2순위)" 성상이 등록된 경우, 이 처리장 방문 시 '음식물' 성상이 처리된 것으로 간주합니다.
+
+                            <div class="right">
+                                <button class="btn btn01" id="modal3-open">처리장 등록</button>
+                            </div>
+                        </div>
+
+                        <!-- table 버튼 -->
+                        <div class="btn-function row-2">
+                            <div class="right">
+                                <button class="img-btn delete">삭제</button>
+                                <select name="">
+                                    <option value="">10건씩 보기</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!--/ table 버튼 -->
+
+                        <table class="table list mgt20" id="main-table">
+                            <caption>처리장 등록 리스트</caption>
+                            <colgroup>
+                                <col style="width:8%" />
+                                <col style="width:26%" />
+                                <col style="width:30%" />
+                                <col style="width:12%" />
+                                <col style="width:24%" />
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th scope="col"><input type="checkbox" /></th>
+                                    <th scope="col">시설명</th>
+                                    <th scope="col">주소</th>
+                                    <th scope="col">담당 성상</th>
+                                    <th scope="col">상세</th>
+                                </tr>
+                            </thead>
+                            <script>
+                                $(document).ready(function () {
+                                    const data = [
+                                        {
+                                            "depotName": "1음식물쓰레기소각장",
+                                            "address": "경기도 성남시 수정구 판교로1234 처리장",
+                                            "arrWorkTypes": [
+                                                { "workType": "1", "priority": 1 },
+                                                { "workType": "3", "priority": 2 }
+                                            ]
+                                        },
+                                        {
+                                            "depotName": "2OO시 자원순환센터",
+                                            "address": "경기도 성남시 수정구 한국로22 OO시 자원순환센터",
+                                            "arrWorkTypes": [
+                                                { "workType": "2", "priority": 1 }
+                                            ]
+                                        },
+                                        {
+                                            "depotName": "3OO처리장",
+                                            "address": "경기도 성남시 수정구 한국로123",
+                                            "arrWorkTypes": [
+                                                { "workType": "3", "priority": 2 },
+                                                { "workType": "4", "priority": 1 }
+                                            ]
+                                        }
+                                    ];
+
+                                    // const _key = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS2V5IjoiYTUzOWUxODQtZmVlOC00ZjNlLTgyMTgtMjNhODkwMTZhNGQ1IiwiZXhwaXJlZCI6MTc1NDcyMDQxNSwiY29ycEtleSI6IjM0OWQ0Yzk0LTcwZTktMTFmMC04MDg0LTAyNDJhYzE0MDAwMiIsImNvcnBUeXBlIjoiMTIiLCJzZXJ2aWNlR3JhZGUiOiIzIn0.g-rYY25fNaXquax6PGS6EZKMMrlIkVEn9zqxgtpp9BA"
+                                    // let _data = []
+                                    // let depotName = "";
+                                    // let arrWorkTypes = [];
+                                    // $.ajax({
+                                    //     url: "http://localhost/api/1/cleanerB/garbageDepot",
+                                    //     method: "GET",
+                                    //     headers: {
+                                    //         key: _key,
+                                    //         "Content-Type": "application/json"
+                                    //     },
+                                    //     success: function (data) {
+                                    //         _data = data['result']
+                                    //         console.log(_data)
+
+                                            const $table = $('#main-table'); // make sure your <table> exists
+
+                                            data.forEach((item, index) => {
+                                                let workTypeList = '';
+                                                let workTypeDetail = '';
+                                                let indexIcon = '';
+
+                                                item.arrWorkTypes.forEach((item2, i) => {
+                                                    if (item2.workType == "0")
+                                                        workTypeDetail = "일반쓰래기";
+                                                    else if (item2.workType == "1")
+                                                        workTypeDetail = "음식물"
+                                                    else if (item2.workType == "2")
+                                                        workTypeDetail = "재활용"
+                                                    else if (item2.workType == "3")
+                                                        workTypeDetail = "대형"
+                                                    else if (item2.workType == "4")
+                                                        workTypeDetail = "노면청소";
+                                                    if (i == 0)
+                                                        indexIcon = "<strong class='title w40'>①</strong>";
+                                                    else if (i == 1)
+                                                        indexIcon = "<strong class='title w40'>②</strong>";
+                                                    else if (i == 2)
+                                                        indexIcon = "<strong class='title w40'>③</strong>";
+                                                    else if (i == 3)
+                                                        indexIcon = "<strong class='title w40'>④</strong>";
+                                                    workTypeList += `
+                                                <li>
+                                                    ${indexIcon}
+                                                    <span>${workTypeDetail}</span>
+                                                </li>`;
+                                                });
+                                                const $tbody = $(`
+                                            <tbody>
+                                                <tr>
+                                                    <td><input type="checkbox" /></td>
+                                                    <td>${item.depotName}</td>
+                                                    <td>${item.address}</td>
+                                                    <td class="left">
+                                                        <div class="driving-info">
+                                                            <ul>
+                                                                ${workTypeList}
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                                    <td class="open-modal" style="cursor: pointer; color: blue;">[상세/수정페이지]</td>
+                                                </tr>
+                                            </tbody>
+                                        `);
+                                                $table.append($tbody);
+                                            });
+
+                                    //     },
+                                    //     error: function () {
+                                    //         console.error("데이터를 불러오는 데 실패했습니다.");
+                                    //     }
+
+                                    // })
+
+
+
+
+                                })   
+                            </script>
+                            <!-- <tbody id="garbage-depot">
+                                <tr>
+                                    <td><input type="checkbox" /></td>
+                                    <td>음식물쓰레기소각장</td>
+                                    <td>경기도 성남시 수정구 판교로1234 처리장</td>
+                                    <td class="left">
+                                        <div class="driving-info">
+                                            <ul>
+                                                <li>
+                                                    <strong class="title w40">①</strong>
+                                                    <span>음식물</span>
+                                                </li>
+                                                <li>
+                                                    <strong class="title w40">②</strong>
+                                                    <span>대형</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                    <td class="open-modal" style="cursor: pointer; color: blue;">[상세/수정페이지]</td>
+                                </tr>
+                            </tbody>
+                            <tbody>
+                                <tr>
+                                    <td><input type="checkbox" /></td>
+                                    <td>OO시 자원순환센터</td>
+                                    <td>경기도 성남시 수정구 한국로22 OO시 자원순환센터</td>
+                                    <td class="left">
+                                        <div class="driving-info with-btn">
+                                            <ul>
+                                                <li>
+                                                    <strong class="title w40">①</strong>
+                                                    <span>재활용</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                    <td class="open-modal" style="cursor: pointer; color: blue;">[상세/수정페이지]</td>
+                                </tr>
+                            </tbody>
+                            <tbody>
+                                <tr>
+                                    <td><input type="checkbox" /></td>
+                                    <td>OO처리장</td>
+                                    <td>경기도 성남시 수정구 한국로123</td>
+                                    <td class="left">
+                                        <div class="driving-info with-btn">
+                                            <ul>
+                                                <li>
+                                                    <strong class="title w40">②</strong>
+                                                    <span>대형</span>
+                                                </li>
+                                                <li>
+                                                    <strong class="title w40">①</strong>
+                                                    <span>노면청소</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                    <td class="open-modal" style="cursor: pointer; color: blue;">[상세/수정페이지]</td>
+                                </tr>
+                            </tbody> -->
+                        </table>
+                    </div>
                 </div>
-                <div class="sub-score">
-                    <span>에코점수</span>
-                    <span id="eco-score"></span>
+                <!--/ 콘텐츠 본문 -->
+            </div>
+            <!-- 처리장 등록 -->
+            <div class="modal" id="modal2-dialog" title="처리장 등록">
+
+                <div class="flex">
+                    <div class="lefttab">
+                        <table class="table mb20">
+                            <colgroup>
+                                <col style="width: 30%;">
+                                <col style="width: 35%;">
+                                <col style="width: 35%;">
+                            </colgroup>
+
+                            <tbody>
+                                <tr>
+                                    <th scope="row">처리장명</th>
+                                    <td colspan="2">
+                                        <input type="text" placeholder="처리장명을 입력해 주세요." id="depot-name">
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td colspan="3">
+                                        <h2 class="etc-tit">처리장 위치</h2>
+                                    </td>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td colspan="2">
+                                        <input type="text" placeholder="지도에서 선택해 주세요." id="depot-address">
+                                    </td>
+                                    <td>
+                                        <select id="radiusSelect">
+                                            <option value="">선택해주세요</option>
+                                            <option value="250m">250m</option>
+                                            <option value="300m">300m</option>
+                                            <option value="350m">350m</option>
+                                            <option value="400m">400m</option>
+                                            <option value="450m">450m</option>
+                                            <option value="500m">500m</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">
+                                        <div class="mgt3 red">지도상에서 마우스 좌클릭으로 지정할 수 있습니다.</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">
+                                        <h2 class="etc-tit">담당 성상</h2>
+                                    </td>
+                                </tr>
+
+                                <tr id="waste-type-row">
+                                    <td colspan="2" id="waste-select-container">
+                                        <select id="workTypeSelect">
+                                            <option value="">성상을 선택하세요</option>
+                                            <option value="0">일반 쓰레기</option>
+                                            <option value="1">음식물 쓰레기</option>
+                                            <option value="2">재활용 쓰레기</option>
+                                            <option value="3">대형 폐기물</option>
+                                            <option value="4">노면 청소</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        &nbsp;
+                                        <button type="button" class="btn-img plus">추가</button> &nbsp;
+                                        <button type="button" class="btn-img minus">삭제</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">
+                                        <div class="mgt3 red">해당 처리장에서 취급하는 성상과, 성상별 우선순위를 지정합니다.
+                                            해당 처리장에 방문 시, 1순위 성상을 처리한 것으로 자동 판정됩니다.</div>
+                                        ※ 예: A처리장에 "음식물(1순위), 대형(2순위)" 성상이 등록된 경우, 이 처리장 방문 시 '음식물' 성상이 처리된 것으로 간주합니다.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                    <div class="right-map">
+                        <div id="daumRoughmapContainer1533601510591"
+                            class="root_daum_roughmap root_daum_roughmap_landing  map" style="height:200px">
+                            <iframe id="mapFrame" style="width:100%;height: 200px"></iframe>
+                        </div>
+                        <!-- <div class="map">
+                            <iframe
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d25357.461822122736!2d127.10473640699269!3d37.39733480314603!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x357ca7fe934881c7%3A0x30db2f32566ac8fb!2z6rK96riw64-EIOyEseuCqOyLnCDrtoTri7nqtawg7YyQ6rWQ66Gc!5e0!3m2!1sko!2skr!4v1534812939236"
+                                width="100%" height="100%" frameborder="0" style="border:0" allowfullscreen></iframe>
+                        </div> -->
+                    </div>
+
                 </div>
+                <div class="btn-bottom">
+                    <button class="btn btn02 md">취소</button>
+                    <button class="btn btn03 md">등록완료</button>
+                </div>
+
             </div>
+            <!-- // 처리장 등록-->
+        </section>
 
-            <div class="Gauge"></div>
-        </div>
-
-        <div class="section">
-            <p>최근 90일간의 주행을 토대로 분석한 결과예요.</p>
-            <div class="gray-box">
-                <div id="distance">주행거리: 1,714km</div>
-                <div id="duration">주행시간: 72회</div>
-                <div id="trip-count">주행횟수: 56시간</div>
-            </div>
-        </div>
-
-        <div class="section">
-            <p id="public-score-summary">전체적으로 점수가 <span class="highlight">[10점]</span>이나 상승했어요!</p>
-            <div class="chart-container">
-                <div class="chart-title">종합점수</div>
-                <div id="chartdiv1" class="chart"></div>
-            </div>
-            <!-- <div class="chart-placeholder">[전체 점수 차트 영역]</div> -->
-            <div class="subtext" id="public-score-date"></div>
-        </div>
-
-        <div class="section">
-            <p>안전점수 <span class="highlight" id="today-safe-score"></span></p>
-            <div class="chart-container">
-                <div class="chart-title">안전점수</div>
-                <div id="chartdiv2" class="chart"></div>
-            </div>
-            <!-- <div class="chart-placeholder">[안전 점수 차트 영역]</div> -->
-            <div class="subtext" id="safe-score-date"></div>
-        </div>
-
-        <div class="section">
-            <p id="safe-hard-accel-score"><span class="highlight">최다 감점 항목 |</span> 급가속 -6점</p>
-            <div class="subtext">
-                장시간 운전은 피로 누적으로 사고 위험을 높일 수 있으니,<br>
-                적절히 휴식을 취하는 걸 권장 드려요.
-            </div>
-        </div>
-
-        <div class="section">
-            <p>경제점수 <span class="highlight" id="today-fuel-score"></span></p>
-            <div class="chart-container">
-                <div class="chart-title">경제점수</div>
-                <div id="chartdiv3" class="chart"></div>
-            </div>
-            <!-- <div class="chart-placeholder">[안전 점수 차트 영역]</div> -->
-            <div class="subtext" id="fuel-score-date"></div>
-        </div>
-
-        <div class="section">
-            <p id="fuel-hard-accel-score"><span class="highlight">최다 감점 항목 |</span> 급가속 -6점</p>
-            <div class="subtext">
-                장시간 운전은 피로 누적으로 사고 위험을 높일 수 있으니,<br>
-                적절히 휴식을 취하는 걸 권장 드려요.
-            </div>
-        </div>
-
-        <div class="section">
-            <p>에코점수 <span class="highlight" id="today-eco-score"></span></p>
-            <div class="chart-container">
-                <div class="chart-title">에코점수</div>
-                <div id="chartdiv4" class="chart"></div>
-            </div>
-            <!-- <div class="chart-placeholder">[안전 점수 차트 영역]</div> -->
-            <div class="subtext" id="eco-score-date"></div>
-        </div>
-
-        <div class="section">
-            <p id="eco-hard-accel-score"><span class="highlight">최다 감점 항목 |</span> 급가속 -6점</p>
-            <div class="subtext">
-                장시간 운전은 피로 누적으로 사고 위험을 높일 수 있으니,<br>
-                적절히 휴식을 취하는 걸 권장 드려요.
-            </div>
-        </div>
-
-        <br />
-
-        <div class="lasttext">더 자세한 운전점수 분석결과는 뷰카 웹사이트에서 확인하실 수 있습니다.</div>
-
-
-        <!-- // floating layer -->
-        <div class="fixed-navigation">
-            <div id="nav_div"></div>
-        </div>
+        <footer-0></footer-0>
+        <!--/ 하단 -->
     </div>
 
     <script>
-        $(function () {
-            createPublicScoreChart("chartdiv1", 0x222222); // 그래프 1
-            createSafeScoreChart("chartdiv2", 0xE73846); // 그래프 2
-            createFuelScoreChart("chartdiv3", 0xA150CB); // 그래프 3
-            createEcoScoreChart("chartdiv4", 0x68B2C2); // 그래프 4 
-            let _key = sessionStorage.getItem('token');
-            let _data = [];
-            console.log(_key, 'token=>');
-            $.ajax({
-                url: "http://localhost/api/1/score/public/daily?limit=30%",
-                method: "GET",
-                headers: {
-                    key: _key,
-                    "Content-Type": "application/json"
-                },
-                success: function (data) {
-                    console.log(data['result'], 'success');
-                    //  console.log(data['result'].reverse(), 'reverse');
-                    _data = data['result'];
-                    if (_data.length > 0) {
-                        const todaySafeScore = _data[_data.length - 1]?.safeScore || 0;
-                        const todayFuelScore = _data[_data.length - 1]?.fuelScore || 0;
-                        const todayEcoScore = _data[_data.length - 1]?.ecoScore || 0;
-                        const prevDaySafeScore = _data[_data.length - 2]?.safeScore || 0;
-                        const prevDayFuelScore = _data[_data.length - 2]?.fuelScore || 0;
-                        const prevDayEcoScore = _data[_data.length - 2]?.ecoScore || 0;
-                        const firstDaySafeScore = _data[0]?.safeScore || 0;
-                        const firstDayFuelScore = _data[0]?.fuelScore || 0;
-                        const firstDayEcoScore = _data[0]?.ecoScore || 0;
-                        const todaySafeHardAccelScore = _data[_data.length - 1]?.safeHardAccelScore || 0;
-                        const todayFuelHardAccelScore = _data[_data.length - 1]?.fuelHardAccelScore || 0;
-                        const todayEcoHardAccelScore = _data[_data.length - 1]?.ecoHardAccelScore || 0;
-                        const date = new Date();
-                        const month = date.getMonth() + 1;  // getMonth() returns 0~11
-                        const day = date.getDate();
-                        const safeScoreDiff = todaySafeScore - prevDaySafeScore;
-                        const fuelScoreDiff = todayFuelScore - prevDayFuelScore;
-                        const ecoScoreDiff = todayEcoScore - prevDayEcoScore;
 
-                        const todayPublicScore = ((todaySafeScore + todayFuelScore + todayEcoScore) / 3).toFixed(0);
-                        const firstDayPublicScore = ((firstDaySafeScore + firstDayFuelScore + firstDayEcoScore) / 3).toFixed(0);
-                        const firstDayVsTodayDiff = todayPublicScore - firstDayPublicScore;
-
-                        $(".score-box").html(`${todayPublicScore}점`);
-                        if (todayPublicScore > firstDayPublicScore) {
-                            $(".score-diff").html(`${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일 <span class="highlight"> ${Math.abs(firstDayVsTodayDiff)}점</span> ▲`);
-                            $("#public-score-summary").html(`전체적으로 점수가 <span class="highlight">${Math.abs(firstDayVsTodayDiff)}점</span>이나 상승했어요!`);
-                        } else if (todayPublicScore === firstDayPublicScore) {
-                            $(".score-diff").html(`${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일 <span class="highlight">${Math.abs(firstDayVsTodayDiff)}점</span>-`);
-                            $("#public-score-summary").html(`전체적으로 점수가  유지되었어요!`);
-                        }
-                        else {
-                            $(".score-diff").html(`${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일 <span class="highlight"> ${Math.abs(firstDayVsTodayDiff)}점</span>▼`);
-                            $("#public-score-summary").html(`전체적으로 점수가 <span class="highlight">${Math.abs(firstDayVsTodayDiff)}점</span>이나 떨어졌습니다!`);
-                        }
-
-                        if (todaySafeScore > prevDaySafeScore)
-                            $("#safe-score").html(`${todaySafeScore} (<span class="delta-up">${Math.abs(safeScoreDiff)} ▲</span>)`);
-                        else if (todaySafeScore === prevDaySafeScore)
-                            $("#safe-score").html(`${todaySafeScore} (<span class="delta-up">${Math.abs(safeScoreDiff)}-</span>)`);
-                        else
-                            $("#safe-score").html(`${todaySafeScore} (<span class="delta-down">${Math.abs(safeScoreDiff)} ▼</span>)`);
-                        if (todayFuelScore > prevDayFuelScore)
-                            $("#fuel-score").html(`${todayFuelScore} (<span class="delta-up">${Math.abs(fuelScoreDiff)} ▲</span>)`);
-                        else if (todayFuelScore === prevDayFuelScore)
-                            $("#fuel-score").html(`${todayFuelScore} (<span class="delta-up">${Math.abs(fuelScoreDiff)}-</span>)`);
-                        else
-                            ("#fuel-score").html(`${todayFuelScore} (<span class="delta-down">${Math.abs(fuelScoreDiff)} ▼</span>)`);
-                        if (todayEcoScore > prevDayEcoScore)
-                            $("#eco-score").html(`${todayEcoScore} (<span class="delta-up">${Math.abs(ecoScoreDiff)} ▲</span>)`);
-                        else if (todayEcoScore === prevDayEcoScore)
-                            $("#eco-score").html(`${todayEcoScore} (<span class="delta-up">${Math.abs(ecoScoreDiff)}-</span>)`);
-                        else
-                            $("#eco-score").html(`${todayEcoScore} (<span class="delta-down">${Math.abs(ecoScoreDiff)} ▼</span>)`);
-
-                        $("#distance").html(`주행거리: ${_data[_data.length - 1]?.total90dDistKm || ""}km`);
-                        $("#duration").html(`주행시간: ${_data[_data.length - 1]?.total90dHour || ""}시간`);
-                        $("#trip-count").html(`주행횟수: ${_data[_data.length - 1]?.total90dTripCnt || ""}회`);
-                        $("#today-safe-score").html(`${todaySafeScore}점`);
-                        $("#today-fuel-score").html(`${todayFuelScore}점`);
-                        $("#today-eco-score").html(`${todayEcoScore}점`);
-                        $("#public-score-date").html(`${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일 점수는 ${todayPublicScore}점이에요.`);
-                        $("#safe-score-date").html(`${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일 점수는 ${todaySafeScore}점이에요.`);
-                        $("#fuel-score-date").html(`${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일 점수는 ${todayFuelScore}점이에요.`);
-                        $("#eco-score-date").html(`${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일 점수는 ${todayEcoScore}점이에요.`);
-                        $("#safe-hard-accel-score").html(`<span class="highlight">최다 감점 항목 |</span> 급가속 -${todaySafeHardAccelScore.toFixed(1)}점`);
-                        $("#fuel-hard-accel-score").html(`<span class="highlight">최다 감점 항목 |</span> 급가속 -${todayFuelHardAccelScore.toFixed(1)}점`);
-                        $("#eco-hard-accel-score").html(`<span class="highlight">최다 감점 항목 |</span> 급가속 -${todayEcoHardAccelScore.toFixed(1)}점`);
-
-
-                        am5.ready(
-                            function () {
-                                createGaugeChart();
-                                createPublicScoreChart("chartdiv1", 0x222222);// 그래프 1
-                                createSafeScoreChart("chartdiv2", 0xE73846) // 그래프 2
-                                createFuelScoreChart("chartdiv3", 0xA150CB); // 그래프 3
-                                createEcoScoreChart("chartdiv4", 0x68B2C2); // 그래프 4
-                            })
-
-                    } else {
-                        // Show a message or hide the chart area
-                        document.querySelector('.Gauge').innerHTML = '<div style="text-align:center;color:#888;">데이터가 없습니다.</div>';
-                        document.getElementById('chartdiv1').innerHTML = '<div style="text-align:center;color:#888;">데이터가 없습니다.</div>';
-                        document.getElementById('chartdiv2').innerHTML = '<div style="text-align:center;color:#888;">데이터가 없습니다.</div>';
-                        document.getElementById('chartdiv3').innerHTML = '<div style="text-align:center;color:#888;">데이터가 없습니다.</div>';
-                        document.getElementById('chartdiv4').innerHTML = '<div style="text-align:center;color:#888;">데이터가 없습니다.</div>';
-
-                    }
-                },
-                error: function () {
-                    console.error("데이터를 불러오는 데 실패했습니다.");
-                }
-            });
-
-            $('#nav_div').load('inc/nav.html', function () {
-                $('.m3').addClass('active');
-            });
-
-            function createGaugeChart() {
-                var root = am5.Root.new(document.querySelector(".Gauge"));
-                root._logo.dispose();
-                root.locale = am5locales_ko_KR;
-                root.setThemes([am5themes_Animated.new(root)]);
-
-                var chart = root.container.children.push(am5radar.RadarChart.new(root, {
-                    panX: false,
-                    panY: false,
-                    wheelX: "panX",
-                    wheelY: "zoomX",
-                    innerRadius: am5.percent(20),
-                    startAngle: -90,
-                    endAngle: 180
-                }));
-
-                var data = [{
-                    category: "안전점수",
-                    value: _data[_data.length - 1]?.safeScore || 0,
-                    full: 100,
-                    columnSettings: {
-                        fill: am5.color(0xE73846)
-                    }
-                }, {
-                    category: "경제 점수",
-                    value: _data[_data.length - 1]?.fuelScore || 0,
-                    full: 100,
-                    columnSettings: {
-                        fill: am5.color(0xA150CB)
-                    }
-                }, {
-                    category: "에코 점수",
-                    value: _data[_data.length - 1]?.ecoScore || 0,
-                    full: 100,
-                    columnSettings: {
-                        fill: am5.color(0x68B2C2)
-                    }
-                }];
-
-                var cursor = chart.set("cursor", am5radar.RadarCursor.new(root, {
-                    behavior: "zoomX"
-                }));
-                cursor.lineY.set("visible", false);
-
-                var xRenderer = am5radar.AxisRendererCircular.new(root, {});
-                xRenderer.labels.template.setAll({
-                    radius: 10
-                });
-                xRenderer.grid.template.setAll({
-                    forceHidden: true
-                });
-
-                var xAxis = chart.xAxes.push(am5xy.ValueAxis.new(root, {
-                    renderer: xRenderer,
-                    min: 0,
-                    max: 100,
-                    strictMinMax: true,
-                    numberFormat: "#점",
-                    tooltip: am5.Tooltip.new(root, {})
-                }));
-
-                var yRenderer = am5radar.AxisRendererRadial.new(root, {
-                    minGridDistance: 20
-                });
-                yRenderer.labels.template.setAll({
-                    centerX: am5.p100,
-                    fontWeight: "500",
-                    fontSize: 18,
-                    templateField: "columnSettings",
-                    text: "{category} ({valueX}점)"
-                });
-                yRenderer.grid.template.setAll({
-                    forceHidden: true
-                });
-
-                var yAxis = chart.yAxes.push(am5xy.CategoryAxis.new(root, {
-                    categoryField: "category",
-                    renderer: yRenderer
-                }));
-                yAxis.data.setAll(data.map(item => ({
-                    ...item,
-                    valueX: item.value
-                })));
-
-                var series1 = chart.series.push(am5radar.RadarColumnSeries.new(root, {
-                    xAxis: xAxis,
-                    yAxis: yAxis,
-                    clustered: false,
-                    valueXField: "full",
-                    categoryYField: "category",
-                    fill: root.interfaceColors.get("alternativeBackground")
-                }));
-                series1.columns.template.setAll({
-                    width: am5.p100,
-                    fillOpacity: 0.08,
-                    strokeOpacity: 0,
-                    cornerRadius: 20
-                });
-                series1.data.setAll(data);
-
-                var series2 = chart.series.push(am5radar.RadarColumnSeries.new(root, {
-                    xAxis: xAxis,
-                    yAxis: yAxis,
-                    clustered: false,
-                    valueXField: "value",
-                    categoryYField: "category"
-                }));
-                series2.columns.template.setAll({
-                    width: am5.p100,
-                    strokeOpacity: 0,
-                    tooltipText: "{category}: {valueX}점",
-                    cornerRadius: 20,
-                    templateField: "columnSettings"
-                });
-                series2.data.setAll(data);
-
-                series1.appear(1000);
-                series2.appear(1000);
-                chart.appear(1000, 100);
-            }
-            function createPublicScoreChart(chartId, color) {
-                const root = am5.Root.new(chartId);
-                root._logo.dispose();
-                root.locale = am5locales_ko_KR;
-                root.setThemes([am5themes_Animated.new(root)]);
-
-                const chart = root.container.children.push(am5xy.XYChart.new(root, {
-                    panX: false,
-                    panY: true,
-                    wheelX: "panX",
-                    wheelY: "none",
-                    pinchZoomX: true,
-                    paddingLeft: 0
-                }));
-
-                const cursor = chart.set("cursor", am5xy.XYCursor.new(root, {
-                    behavior: "none"
-                }));
-                cursor.lineY.set("visible", false);
-
-                // X Axis (Category)
-                const xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
-                    categoryField: "label",
-                    renderer: am5xy.AxisRendererX.new(root, {
-                        minGridDistance: 80,
-                        minorGridEnabled: true,
-                        pan: "zoom"
-                    }),
-                    tooltip: am5.Tooltip.new(root, {
-                        labelText: "{category}"
-                    })
-                }));
-
-                // Y Axis
-                const yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
-                    min: 0,
-                    max: 100,
-                    strictMinMax: true,
-                    renderer: am5xy.AxisRendererY.new(root, {
-                        pan: "zoom"
-                    })
-                }));
-
-                // Series
-                const series = chart.series.push(am5xy.SmoothedXLineSeries.new(root, {
-                    name: "Series",
-                    xAxis: xAxis,
-                    yAxis: yAxis,
-                    valueYField: "value",
-                    categoryXField: "label",
-                    sequencedInterpolation: true,
-                    tooltip: am5.Tooltip.new(root, {
-                        labelText: "{valueY}"
-                    })
-                }));
-
-                series.strokes.template.setAll({
-                    strokeWidth: 2,
-                    stroke: am5.color(color)
-                });
-
-                series.bullets.push(function (root, series, dataItem) {
-                    const circle = am5.Circle.new(root, {
-                        radius: 5,
-                        fill: am5.color(color),
-                        strokeWidth: 2,
-                        stroke: root.interfaceColors.get("background"),
-                        interactive: true,
-                        cursorOverStyle: "pointer"
-                    });
-
-                    return am5.Bullet.new(root, {
-                        locationY: 0.5,
-                        sprite: circle
-                    });
-                });
-
-                // Click to find closest data point by index
-                chart.plotContainer.events.on("click", function (ev) {
-                    const point = chart.plotContainer.toLocal(ev.point);
-                    const x = point.x;
-
-                    const axisRenderer = xAxis.get("renderer");
-                    if (!axisRenderer) {
-                        console.warn("❌ X Axis renderer not found.");
-                        return;
-                    }
-
-                    const categories = xAxis.dataItems;
-                    let closestItem = null;
-                    let minDistance = Number.MAX_VALUE;
-
-                    categories.forEach((dataItem) => {
-                        const category = dataItem.get("category");
-                        if (!category) return;
-
-                        const categoryPosition = xAxis.categoryToPosition(category);
-                        const categoryX = axisRenderer.positionToCoordinate(categoryPosition);
-
-                        const distance = Math.abs(x - categoryX);
-
-                        if (distance < minDistance) {
-                            minDistance = distance;
-                            closestItem = dataItem;
-                        }
-                    });
-
-                    if (closestItem) {
-                        const data = closestItem.dataContext;
-                        const label = data.label;
-                        const value = data.value;
-                        const originalDate = data.originalDate;
-
-                        const date = new Date(originalDate);
-                        const month = date.getMonth() + 1;
-                        const day = date.getDate();
-
-                        $("#public-score-date").html(
-                            `${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일 점수는 ${value}점이에요.`
-                        );
-
-                        console.log("🟢 Closest Data Point (via axis position):");
-                        console.log("🗓 Label:", label);
-                        console.log("📈 Y (value):", value);
-                        console.log("📦 Raw Data:", data);
-                    } else {
-                        console.log("⚠️ No category data matched.");
-                    }
-                });
-
-                // Scrollbar
-                chart.set("scrollbarX", am5.Scrollbar.new(root, {
-                    orientation: "horizontal"
-                }));
-
-                // Parse and set data
-                const data = [];
-                // const reverseData = [..._data].reverse();  // safer than mutating
-
-                const dateObj = new Date();
-                dateObj.setHours(0, 0, 0, 0);
-                for (let i = 0; i < 15; i++) {
-                    // const item = reverseData[i];
-                    // const safeScore = item.safeScore || 0;
-                    // const fuelScore = item.fuelScore || 0;
-                    // const ecoScore = item.ecoScore || 0;
-                    // const publicScore = Math.round((safeScore + fuelScore + ecoScore) / 3);
-
-                    // const dateObj = new Date(item.scoreDateTs);
-                    //    const dateObj = new Date();
-                    //     dateObj.setHours(0, 0, 0, 0);
-
-                    const month = dateObj.getMonth() + 1;
-                    const day = dateObj.getDate();
-                    const label = `${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일`;
-
-                    data.push({
-                        label,
-                        value: Math.floor(Math.random() * 100),
-                        originalDate: dateObj.getTime()  // used for click response
-                    });
-                    dateObj.setDate(dateObj.getDate() + 1);
-                }
-
-                xAxis.data.setAll(data);
-                series.data.setAll(data);
-
-                series.appear(1000);
-                chart.appear(1000, 100);
-            }
-
-            function createSafeScoreChart(chartId, color) {
-                const root = am5.Root.new(chartId);
-                root._logo.dispose();
-                root.locale = am5locales_ko_KR;
-                root.setThemes([am5themes_Animated.new(root)]);
-
-                const chart = root.container.children.push(am5xy.XYChart.new(root, {
-                    panX: false,
-                    panY: true,
-                    wheelX: "panX",
-                    wheelY: "none",
-                    pinchZoomX: true,
-                    paddingLeft: 0
-                }));
-
-                const cursor = chart.set("cursor", am5xy.XYCursor.new(root, {
-                    behavior: "none"
-                }));
-                cursor.lineY.set("visible", false);
-
-                // X Axis (Category)
-                const xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
-                    categoryField: "label",
-                    renderer: am5xy.AxisRendererX.new(root, {
-                        minGridDistance: 80,
-                        minorGridEnabled: true,
-                        pan: "zoom"
-                    }),
-                    tooltip: am5.Tooltip.new(root, {
-                        labelText: "{category}"
-                    })
-                }));
-
-                // Y Axis
-                const yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
-                    min: 0,
-                    max: 100,
-                    strictMinMax: true,
-                    renderer: am5xy.AxisRendererY.new(root, {
-                        pan: "zoom"
-                    })
-                }));
-
-                // Series
-                const series = chart.series.push(am5xy.SmoothedXLineSeries.new(root, {
-                    name: "Series",
-                    xAxis: xAxis,
-                    yAxis: yAxis,
-                    valueYField: "value",
-                    categoryXField: "label",
-                    sequencedInterpolation: true,
-                    tooltip: am5.Tooltip.new(root, {
-                        labelText: "{valueY}"
-                    })
-                }));
-
-                series.strokes.template.setAll({
-                    strokeWidth: 2,
-                    stroke: am5.color(color)
-                });
-
-                series.bullets.push(function (root, series, dataItem) {
-                    const circle = am5.Circle.new(root, {
-                        radius: 5,
-                        fill: am5.color(color),
-                        strokeWidth: 2,
-                        stroke: root.interfaceColors.get("background"),
-                        interactive: true,
-                        cursorOverStyle: "pointer"
-                    });
-
-                    return am5.Bullet.new(root, {
-                        locationY: 0.5,
-                        sprite: circle
-                    });
-                });
-
-                // Click to find closest data point by index
-                chart.plotContainer.events.on("click", function (ev) {
-                    const point = chart.plotContainer.toLocal(ev.point);
-                    const x = point.x;
-
-                    const axisRenderer = xAxis.get("renderer");
-                    if (!axisRenderer) {
-                        console.warn("❌ X Axis renderer not found.");
-                        return;
-                    }
-
-                    const categories = xAxis.dataItems;
-                    let closestItem = null;
-                    let minDistance = Number.MAX_VALUE;
-
-                    categories.forEach((dataItem) => {
-                        const category = dataItem.get("category");
-                        if (!category) return;
-
-                        const categoryPosition = xAxis.categoryToPosition(category);
-                        const categoryX = axisRenderer.positionToCoordinate(categoryPosition);
-
-                        const distance = Math.abs(x - categoryX);
-
-                        if (distance < minDistance) {
-                            minDistance = distance;
-                            closestItem = dataItem;
-                        }
-                    });
-
-                    if (closestItem) {
-                        const data = closestItem.dataContext;
-                        const label = data.label;
-                        const value = data.value;
-                        const originalDate = data.originalDate;
-
-                        const date = new Date(originalDate);
-                        const month = date.getMonth() + 1;
-                        const day = date.getDate();
-
-                        $("#safe-score-date").html(
-                            `${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일 점수는 ${value}점이에요.`
-                        );
-
-                        console.log("🟢 Closest Data Point (via axis position):");
-                        console.log("🗓 Label:", label);
-                        console.log("📈 Y (value):", value);
-                        console.log("📦 Raw Data:", data);
-                    } else {
-                        console.log("⚠️ No category data matched.");
-                    }
-                });
-
-                // Scrollbar
-                chart.set("scrollbarX", am5.Scrollbar.new(root, {
-                    orientation: "horizontal"
-                }));
-
-                // Parse and set data
-                const data = [];
-                // const reverseData = [..._data].reverse();  // safer than mutating
-
-                const dateObj = new Date();
-                dateObj.setHours(0, 0, 0, 0);
-                for (let i = 0; i < 15; i++) {
-                    // const item = reverseData[i];
-                    // const safeScore = item.safeScore 
-
-                    // const dateObj = new Date(item.scoreDateTs);
-                    //    const dateObj = new Date();
-                    //     dateObj.setHours(0, 0, 0, 0);
-
-                    const month = dateObj.getMonth() + 1;
-                    const day = dateObj.getDate();
-                    const label = `${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일`;
-
-                    data.push({
-                        label,
-                        value: Math.floor(Math.random() * 100),
-                        originalDate: dateObj.getTime()  // used for click response
-                    });
-                    dateObj.setDate(dateObj.getDate() + 1);
-                }
-
-                xAxis.data.setAll(data);
-                series.data.setAll(data);
-
-                series.appear(1000);
-                chart.appear(1000, 100);
-            }
-            function createFuelScoreChart(chartId, color) {
-                const root = am5.Root.new(chartId);
-                root._logo.dispose();
-                root.locale = am5locales_ko_KR;
-                root.setThemes([am5themes_Animated.new(root)]);
-
-                const chart = root.container.children.push(am5xy.XYChart.new(root, {
-                    panX: false,
-                    panY: true,
-                    wheelX: "panX",
-                    wheelY: "none",
-                    pinchZoomX: true,
-                    paddingLeft: 0
-                }));
-
-                const cursor = chart.set("cursor", am5xy.XYCursor.new(root, {
-                    behavior: "none"
-                }));
-                cursor.lineY.set("visible", false);
-
-                // X Axis (Category)
-                const xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
-                    categoryField: "label",
-                    renderer: am5xy.AxisRendererX.new(root, {
-                        minGridDistance: 80,
-                        minorGridEnabled: true,
-                        pan: "zoom"
-                    }),
-                    tooltip: am5.Tooltip.new(root, {
-                        labelText: "{category}"
-                    })
-                }));
-
-                // Y Axis
-                const yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
-                    min: 0,
-                    max: 100,
-                    strictMinMax: true,
-                    renderer: am5xy.AxisRendererY.new(root, {
-                        pan: "zoom"
-                    })
-                }));
-
-                // Series
-                const series = chart.series.push(am5xy.SmoothedXLineSeries.new(root, {
-                    name: "Series",
-                    xAxis: xAxis,
-                    yAxis: yAxis,
-                    valueYField: "value",
-                    categoryXField: "label",
-                    sequencedInterpolation: true,
-                    tooltip: am5.Tooltip.new(root, {
-                        labelText: "{valueY}"
-                    })
-                }));
-
-                series.strokes.template.setAll({
-                    strokeWidth: 2,
-                    stroke: am5.color(color)
-                });
-
-                series.bullets.push(function (root, series, dataItem) {
-                    const circle = am5.Circle.new(root, {
-                        radius: 5,
-                        fill: am5.color(color),
-                        strokeWidth: 2,
-                        stroke: root.interfaceColors.get("background"),
-                        interactive: true,
-                        cursorOverStyle: "pointer"
-                    });
-
-                    return am5.Bullet.new(root, {
-                        locationY: 0.5,
-                        sprite: circle
-                    });
-                });
-
-                // Click to find closest data point by index
-                chart.plotContainer.events.on("click", function (ev) {
-                    const point = chart.plotContainer.toLocal(ev.point);
-                    const x = point.x;
-
-                    const axisRenderer = xAxis.get("renderer");
-                    if (!axisRenderer) {
-                        console.warn("❌ X Axis renderer not found.");
-                        return;
-                    }
-
-                    const categories = xAxis.dataItems;
-                    let closestItem = null;
-                    let minDistance = Number.MAX_VALUE;
-
-                    categories.forEach((dataItem) => {
-                        const category = dataItem.get("category");
-                        if (!category) return;
-
-                        const categoryPosition = xAxis.categoryToPosition(category);
-                        const categoryX = axisRenderer.positionToCoordinate(categoryPosition);
-
-                        const distance = Math.abs(x - categoryX);
-
-                        if (distance < minDistance) {
-                            minDistance = distance;
-                            closestItem = dataItem;
-                        }
-                    });
-
-                    if (closestItem) {
-                        const data = closestItem.dataContext;
-                        const label = data.label;
-                        const value = data.value;
-                        const originalDate = data.originalDate;
-
-                        const date = new Date(originalDate);
-                        const month = date.getMonth() + 1;
-                        const day = date.getDate();
-
-                        $("#fuel-score-date").html(
-                            `${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일 점수는 ${value}점이에요.`
-                        );
-
-                        console.log("🟢 Closest Data Point (via axis position):");
-                        console.log("🗓 Label:", label);
-                        console.log("📈 Y (value):", value);
-                        console.log("📦 Raw Data:", data);
-                    } else {
-                        console.log("⚠️ No category data matched.");
-                    }
-                });
-
-                // Scrollbar
-                chart.set("scrollbarX", am5.Scrollbar.new(root, {
-                    orientation: "horizontal"
-                }));
-
-                // Parse and set data
-                const data = [];
-                // const reverseData = [..._data].reverse();  // safer than mutating
-
-                const dateObj = new Date();
-                dateObj.setHours(0, 0, 0, 0);
-                for (let i = 0; i < 15; i++) {
-                    // const item = reverseData[i];
-                    // const fuelScore = item.fuelScore 
-                    // const dateObj = new Date(item.scoreDateTs);
-                    //    const dateObj = new Date();
-                    //     dateObj.setHours(0, 0, 0, 0);
-
-                    const month = dateObj.getMonth() + 1;
-                    const day = dateObj.getDate();
-                    const label = `${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일`;
-
-                    data.push({
-                        label,
-                        value: Math.floor(Math.random() * 100),
-                        originalDate: dateObj.getTime()  // used for click response
-                    });
-                    dateObj.setDate(dateObj.getDate() + 1);
-                }
-
-                xAxis.data.setAll(data);
-                series.data.setAll(data);
-
-                series.appear(1000);
-                chart.appear(1000, 100);
-            }
-            function createEcoScoreChart(chartId, color) {
-                const root = am5.Root.new(chartId);
-                root._logo.dispose();
-                root.locale = am5locales_ko_KR;
-                root.setThemes([am5themes_Animated.new(root)]);
-
-                const chart = root.container.children.push(am5xy.XYChart.new(root, {
-                    panX: false,
-                    panY: true,
-                    wheelX: "panX",
-                    wheelY: "none",
-                    pinchZoomX: true,
-                    paddingLeft: 0
-                }));
-
-                const cursor = chart.set("cursor", am5xy.XYCursor.new(root, {
-                    behavior: "none"
-                }));
-                cursor.lineY.set("visible", false);
-
-                // X Axis (Category)
-                const xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
-                    categoryField: "label",
-                    renderer: am5xy.AxisRendererX.new(root, {
-                        minGridDistance: 80,
-                        minorGridEnabled: true,
-                        pan: "zoom"
-                    }),
-                    tooltip: am5.Tooltip.new(root, {
-                        labelText: "{category}"
-                    })
-                }));
-
-                // Y Axis
-                const yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
-                    min: 0,
-                    max: 100,
-                    strictMinMax: true,
-                    renderer: am5xy.AxisRendererY.new(root, {
-                        pan: "zoom"
-                    })
-                }));
-
-                // Series
-                const series = chart.series.push(am5xy.SmoothedXLineSeries.new(root, {
-                    name: "Series",
-                    xAxis: xAxis,
-                    yAxis: yAxis,
-                    valueYField: "value",
-                    categoryXField: "label",
-                    sequencedInterpolation: true,
-                    tooltip: am5.Tooltip.new(root, {
-                        labelText: "{valueY}"
-                    })
-                }));
-
-                series.strokes.template.setAll({
-                    strokeWidth: 2,
-                    stroke: am5.color(color)
-                });
-
-                series.bullets.push(function (root, series, dataItem) {
-                    const circle = am5.Circle.new(root, {
-                        radius: 5,
-                        fill: am5.color(color),
-                        strokeWidth: 2,
-                        stroke: root.interfaceColors.get("background"),
-                        interactive: true,
-                        cursorOverStyle: "pointer"
-                    });
-
-                    return am5.Bullet.new(root, {
-                        locationY: 0.5,
-                        sprite: circle
-                    });
-                });
-
-                // Click to find closest data point by index
-                chart.plotContainer.events.on("click", function (ev) {
-                    const point = chart.plotContainer.toLocal(ev.point);
-                    const x = point.x;
-
-                    const axisRenderer = xAxis.get("renderer");
-                    if (!axisRenderer) {
-                        console.warn("❌ X Axis renderer not found.");
-                        return;
-                    }
-
-                    const categories = xAxis.dataItems;
-                    let closestItem = null;
-                    let minDistance = Number.MAX_VALUE;
-
-                    categories.forEach((dataItem) => {
-                        const category = dataItem.get("category");
-                        if (!category) return;
-
-                        const categoryPosition = xAxis.categoryToPosition(category);
-                        const categoryX = axisRenderer.positionToCoordinate(categoryPosition);
-
-                        const distance = Math.abs(x - categoryX);
-
-                        if (distance < minDistance) {
-                            minDistance = distance;
-                            closestItem = dataItem;
-                        }
-                    });
-
-                    if (closestItem) {
-                        const data = closestItem.dataContext;
-                        const label = data.label;
-                        const value = data.value;
-                        const originalDate = data.originalDate;
-
-                        const date = new Date(originalDate);
-                        const month = date.getMonth() + 1;
-                        const day = date.getDate();
-
-                        $("#eco-score-date").html(
-                            `${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일 점수는 ${value}점이에요.`
-                        );
-
-                        console.log("🟢 Closest Data Point (via axis position):");
-                        console.log("🗓 Label:", label);
-                        console.log("📈 Y (value):", value);
-                        console.log("📦 Raw Data:", data);
-                    } else {
-                        console.log("⚠️ No category data matched.");
-                    }
-                });
-
-                // Scrollbar
-                chart.set("scrollbarX", am5.Scrollbar.new(root, {
-                    orientation: "horizontal"
-                }));
-
-                // Parse and set data
-                const data = [];
-                // const reverseData = [..._data].reverse();  // safer than mutating
-
-                const dateObj = new Date();
-                dateObj.setHours(0, 0, 0, 0);
-                for (let i = 0; i < 15; i++) {
-                    // const item = reverseData[i];
-                    // const ecoScore = item.ecoScore
-                    // const dateObj = new Date(item.scoreDateTs);
-                    //    const dateObj = new Date();
-                    //     dateObj.setHours(0, 0, 0, 0);
-
-                    const month = dateObj.getMonth() + 1;
-                    const day = dateObj.getDate();
-                    const label = `${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일`;
-
-                    data.push({
-                        label,
-                        value: Math.floor(Math.random() * 100),
-                        originalDate: dateObj.getTime()  // used for click response
-                    });
-                    dateObj.setDate(dateObj.getDate() + 1);
-                }
-
-                xAxis.data.setAll(data);
-                series.data.setAll(data);
-
-                series.appear(1000);
-                chart.appear(1000, 100);
-            }
-    
-        //     function createPublicScoreChart2(chartId, color) {
-        //         const root = am5.Root.new(chartId);
-        //         root._logo.dispose();
-        //         root.setThemes([am5themes_Animated.new(root)]);
-
-        //         const chart = root.container.children.push(am5xy.XYChart.new(root, {
-        //             panX: false,
-        //             panY: true,
-        //             wheelX: "panX",
-        //             wheelY: "none",
-        //             pinchZoomX: true,
-        //             paddingLeft: 0
-        //         }));
-        //         const cursor = chart.set("cursor", am5xy.XYCursor.new(root, {
-        //             behavior: "none"
-        //         }));
-        //         cursor.lineY.set("visible", false);
-        //         // ✅ X Axis: CategoryAxis for names
-        //         const xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
-        //             categoryField: "name",
-        //             renderer: am5xy.AxisRendererX.new(root, {
-        //                 minGridDistance: 50,
-        //                 minorGridEnabled: true,
-        //                 pan: "zoom"
-        //             }),
-        //             tooltip: am5.Tooltip.new(root, {
-        //                 labelText: "{name}"  // ← 허버링 시
-        //             })
-        //         }));
-
-        //         // ✅ Y Axis: ValueAxis for numeric values
-        //         const yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
-        //             min: 0,
-        //             max: 100,
-        //             strictMinMax: true,
-        //             renderer: am5xy.AxisRendererY.new(root, {
-        //                 pan: "zoom"
-        //             })
-        //         }));
-
-        //         // ✅ Series: Column chart (can be changed to line if needed)
-        //         const series = chart.series.push(am5xy.SmoothedXLineSeries.new(root, {
-        //             name: "Series",
-        //             xAxis: xAxis,
-        //             yAxis: yAxis,
-        //             valueYField: "value",
-        //             categoryXField: "name",
-        //             sequencedInterpolation: true,
-        //             tooltip: am5.Tooltip.new(root, {
-        //                 labelText: "{categoryX}: {valueY}점"
-        //             })
-        //         }));
-
-        //         series.bullets.push(function () {
-        //             return am5.Bullet.new(root, {
-        //                 sprite: am5.Circle.new(root, {
-        //                     radius: 5,
-        //                     fill: am5.color(color),
-        //                     strokeWidth: 2,
-        //                     stroke: root.interfaceColors.get("background")
-        //                 })
-        //             });
-        //         });
-        //         ///제일 가까운 데이터 포인트를 찾는 클릭 이벤트
-        //         chart.plotContainer.events.on("click", function (ev) {
-        //             const point = chart.plotContainer.toLocal(ev.point);
-
-        //             const xVal = xAxis.positionToValue(
-        //                 xAxis.toAxisPosition(point.x / chart.plotContainer.width())
-        //             );
-
-        //             const yVal = yAxis.positionToValue(
-        //                 yAxis.toAxisPosition(point.y / chart.plotContainer.height())
-        //             );
-
-        //             let closest = null;
-        //             let minDiff = Number.MAX_VALUE;
-
-        //             // ✅ Loop safely using am5.array.each
-        //             am5.array.each(series.dataItems, function (item) {
-        //                 const itemX = item.get("valueX");
-        //                 const diff = Math.abs(itemX - xVal);
-
-        //                 if (diff < minDiff) {
-        //                     closest = item;
-        //                     minDiff = diff;
-        //                 }
+        // $(document).ready(function () {
+
+        //     const _key = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS2V5IjoiYTUzOWUxODQtZmVlOC00ZjNlLTgyMTgtMjNhODkwMTZhNGQ1IiwiZXhwaXJlZCI6MTc1NDcyMDQxNSwiY29ycEtleSI6IjM0OWQ0Yzk0LTcwZTktMTFmMC04MDg0LTAyNDJhYzE0MDAwMiIsImNvcnBUeXBlIjoiMTIiLCJzZXJ2aWNlR3JhZGUiOiIzIn0.g-rYY25fNaXquax6PGS6EZKMMrlIkVEn9zqxgtpp9BA"
+        //     let _data = []
+        //     let depotName = "";
+        //     let arrWorkTypes = [];
+        //     $.ajax({
+        //         url: "http://localhost/api/1/cleanerB/garbageDepot",
+        //         method: "GET",
+        //         headers: {
+        //             key: _key,
+        //             "Content-Type": "application/json"
+        //         },
+        //         success: function (data) {
+        //             _data = data['result']
+        //             console.log(_data)
+        //             const $table = $('table'); // make sure your <table> exists
+
+        //             data['result'].forEach((item, index) => {
+        //                 let workTypeList = '';
+        //                 let workTypeDetail = '';
+        //                 let indexIcon = '';
+
+        //                 item.arrWorkTypes.forEach((item2, i) => {
+        //                     if (item2.workType == "0")
+        //                         workTypeDetail = "일반쓰래기";
+        //                     else if (item2.workType == "1")
+        //                         workTypeDetail = "음식물"
+        //                     else if (item2.workType == "2")
+        //                         workTypeDetail = "재활용"
+        //                     else if (item2.workType == "3")
+        //                         workTypeDetail = "대형"
+        //                     else if (item2.workType == "4")
+        //                         workTypeDetail = "노면청소"
+        //                     if (i == 0)
+        //                         indexIcon = "①";
+        //                     else if (i == 1)
+        //                         indexIcon = "②";
+        //                     else if (i == 2)
+        //                         indexIcon = "③";
+        //                     else if (i == 3)
+        //                         indexIcon = "④";
+
+
+        //                     workTypeList += `
+        //                             <li>
+        //                                 <strong class="title w40">${indexIcon}</strong>
+        //                                 <span>${workTypeDetail}</span>
+        //                             </li>`;
+        //                 });
+
+        //                 const $tbody = $(`
+        //                     <tbody>
+        //                         <tr>
+        //                             <td><input type="checkbox" /></td>
+        //                             <td>${item.depotName}</td>
+        //                             <td>경기도 성남시 수정구 판교로1234 처리장</td>
+        //                             <td class="left">
+        //                                 <div class="driving-info">
+        //                                     <ul>
+
+        //                                         <li>
+        //                              ${workTypeList}
+        //                                         </li>
+
+
+        //                                     </ul>
+        //                                 </div>
+        //                             </td>
+        //                             <td class="open-modal" style="cursor: pointer; color: blue;">[상세/수정페이지]</td>
+        //                         </tr>
+        //                     </tbody>
+        //            `);
+        //                 $table.append($tbody);
         //             });
 
-        //             if (closest) {
-        //                 const closestX = closest.get("valueX");
-        //                 const closestY = closest.get("valueY");
-        //                 //const dateStr = new Date(closestX).toLocaleDateString("en-US");
+        //             f1()
 
-        //                 console.log("🟢 Closest Data Point:");
-        //                 // console.log("🕓 X (date):", dateStr);
-        //                 console.log("📈 Y (value):", closestY);
-        //                 // console.log("📦 Raw Data:", closest.dataContext);
-        //                 // const date = new Date(closestX);
-        //                 // const month = date.getMonth() + 1;
-        //                 // const day = date.getDate();
-        //                 // $("#public-score-date").html(`${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일 점수는 ${closestY}점이에요.`);
-
-        //             } else {
-        //                 console.log("⚠️ No data points found.");
-        //             }
-        //         });
-
-
-        //         chart.set("scrollbarX", am5.Scrollbar.new(root, {
-        //             orientation: "horizontal"
-        //         }));
-        //         // ✅ Data setup
-        //         _data2 = [
-        //             { name: "John", value: 72 },
-        //             { name: "Mary", value: 85 },
-        //             { name: "Alice", value: 60 }
-        //             ,
-        //             { name: "Bob", value: 91 },
-        //             { name: "Mary1", value: 84 }
-        //             ,
-        //             { name: "John2", value: 75 },
-        //             { name: "Alice3", value: 65 },
-        //             { name: "Bob4", value: 88 },
-        //             { name: "John5", value: 80 },
-        //             { name: "Mary6", value: 90 },
-        //             { name: "Alice7", value: 70 },
-        //             { name: "Bob8", value: 95 },
-        //             { name: "John9", value: 78 },
-        //             { name: "Marys", value: 82 },
-        //             { name: "Alicee", value: 60 },
-        //             { name: "Bobb", value: 91 }
-        //         ];
-        //         const data = [];
-        //         _data2.map(item => {
-        //             data.push({
-        //                 name: item.name,
-        //                 value: item.value,
-        //                 // value: Math.floor(Math.random() * 100)
-        //             });
-        //         });
-
-
-
-        //         series.data.setAll(data);
-        //         xAxis.data.setAll(data);
-
-        //         series.appear(1000);
-        //         chart.appear(1000, 100);
-        //     }
-
-        //     function createPublicScoreChart_Og(chartId, color) {
-        //         const root = am5.Root.new(chartId);
-        //         root._logo.dispose();
-        //         root.locale = am5locales_ko_KR;
-        //         root.setThemes([am5themes_Animated.new(root)]);
-
-        //         const chart = root.container.children.push(am5xy.XYChart.new(root, {
-        //             panX: false,
-        //             panY: true,
-        //             wheelX: "panX",
-        //             wheelY: "none",
-        //             pinchZoomX: true,
-        //             paddingLeft: 0
-        //         }));
-
-        //         const cursor = chart.set("cursor", am5xy.XYCursor.new(root, {
-        //             behavior: "none"
-        //         }));
-        //         cursor.lineY.set("visible", false);
-
-        //         const xAxis = chart.xAxes.push(am5xy.DateAxis.new(root, {
-        //             baseInterval: {
-        //                 timeUnit: "day",
-        //                 count: 1
-        //             },
-        //             maxDeviation: 0.5,
-        //             renderer: am5xy.AxisRendererX.new(root, {
-        //                 minGridDistance: 80,
-        //                 minorGridEnabled: true,
-        //                 pan: "zoom"
-        //             }),
-        //             tooltip: am5.Tooltip.new(root, {
-        //                 labelText: "{value.formatDate('MM/dd')}"  // ← 허버링 시
-        //             })
-        //         }));
-
-        //         // xAxis.get("renderer").labels.template.setAll({
-        //         //     oversizedBehavior: "wrap",
-        //         //     text: "{value}", // 기본값은 그대로 두고
-        //         //     populateText: true // 내부 텍스트 생성을 강제함
-        //         // });
-
-        //         // xAxis.get("renderer").labels.template.adapters.add("text", function (text, target) {
-        //         //     const value = target.dataItem?.get("value");
-
-        //         //     if (!value) return "";
-
-        //         //     const date = new Date(value);
-        //         //     const month = date.getMonth() + 1;
-        //         //     const day = date.getDate();
-
-        //         //     return `${month}월 ${day}일`; // ✅ 원하는 형식
-        //         // });
-
-
-
-
-        //         const yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
-        //             min: 0,
-        //             max: 100,
-        //             strictMinMax: true,
-        //             renderer: am5xy.AxisRendererY.new(root, {
-        //                 pan: "zoom"
-        //             })
-        //         }));
-
-        //         const series = chart.series.push(am5xy.SmoothedXLineSeries.new(root, {
-        //             name: "Series",
-        //             xAxis: xAxis,
-        //             yAxis: yAxis,
-        //             valueYField: "value",
-        //             valueXField: "date",
-        //             sequencedInterpolation: true,
-        //             tooltip: am5.Tooltip.new(root, {
-        //                 labelText: "{valueY}"
-        //             })
-        //         }));
-
-        //         series.strokes.template.setAll({
-        //             strokeWidth: 2,
-        //             stroke: am5.color(color)
-        //         });
-
-        //         series.bullets.push(function (root, series, dataItem) {
-        //             const circle = am5.Circle.new(root, {
-        //                 radius: 5,
-        //                 fill: am5.color(color),
-        //                 strokeWidth: 2,
-        //                 stroke: root.interfaceColors.get("background"),
-        //                 interactive: true,               // ✅ 필수
-        //                 cursorOverStyle: "pointer"      // ✅ 시각적 피드백
-        //             });
-
-        //             return am5.Bullet.new(root, {
-        //                 locationY: 0.5,
-        //                 sprite: circle
-        //             });
-        //         });
-        //         // /// Add click event anywhere on the chart
-        //         // chart.plotContainer.events.on("click", function (ev) {
-        //         //     // Convert pixel position to relative axis position (0 to 1)
-        //         //     const point = chart.plotContainer.toLocal(ev.point);
-        //         //     const xAxisValue = xAxis.positionToValue(xAxis.toAxisPosition(point.x / chart.plotContainer.width()));
-        //         //     const yAxisValue = yAxis.positionToValue(yAxis.toAxisPosition(point.y / chart.plotContainer.height()));
-        //         //     const dateStr = new Date(xAxisValue).toLocaleDateString("en-US");
-
-        //         //     console.log("📍 Clicked chart at:");
-        //         //     console.log("🕓 X (date):", dateStr);
-        //         //     console.log("📈 Y (value):", yAxisValue.toFixed(2));
-        //         // });
-        //         ///제일 가까운 데이터 포인트를 찾는 클릭 이벤트
-        //         chart.plotContainer.events.on("click", function (ev) {
-        //             const point = chart.plotContainer.toLocal(ev.point);
-
-        //             const xVal = xAxis.positionToValue(
-        //                 xAxis.toAxisPosition(point.x / chart.plotContainer.width())
-        //             );
-
-        //             const yVal = yAxis.positionToValue(
-        //                 yAxis.toAxisPosition(point.y / chart.plotContainer.height())
-        //             );
-
-        //             let closest = null;
-        //             let minDiff = Number.MAX_VALUE;
-
-        //             // ✅ Loop safely using am5.array.each
-        //             am5.array.each(series.dataItems, function (item) {
-        //                 const itemX = item.get("valueX");
-        //                 const diff = Math.abs(itemX - xVal);
-
-        //                 if (diff < minDiff) {
-        //                     closest = item;
-        //                     minDiff = diff;
-        //                 }
-        //             });
-
-        //             if (closest) {
-        //                 const closestX = closest.get("valueX");
-        //                 const closestY = closest.get("valueY");
-        //                 const dateStr = new Date(closestX).toLocaleDateString("en-US");
-
-        //                 console.log("🟢 Closest Data Point:");
-        //                 console.log("🕓 X (date):", dateStr);
-        //                 console.log("📈 Y (value):", closestY);
-        //                 console.log("📦 Raw Data:", closest.dataContext);
-        //                 const date = new Date(closestX);
-        //                 const month = date.getMonth() + 1;
-        //                 const day = date.getDate();
-        //                 $("#public-score-date").html(`${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일 점수는 ${closestY}점이에요.`);
-
-        //             } else {
-        //                 console.log("⚠️ No data points found.");
-        //             }
-        //         });
-
-
-        //         chart.set("scrollbarX", am5.Scrollbar.new(root, {
-        //             orientation: "horizontal"
-        //         }));
-
-        //         const data = [];
-        //         const reverseData = _data.reverse();
-
-
-        //         for (let i = 0; i < reverseData.length; i++) {
-        //             const item = reverseData[i];
-        //             const safeScore = item.safeScore || 0;
-        //             const fuelScore = item.fuelScore || 0;
-        //             const ecoScore = item.ecoScore || 0;
-        //             const publicScore = Math.round((safeScore + fuelScore + ecoScore) / 3);
-
-        //             var _date2 = new Date(item.scoreDateTs);
-        //             _date2.setHours(0, 0, 0, 0);
-
-        //             data.push({
-        //                 date: _date2.getTime(),
-        //                 value: publicScore
-        //             });
+        //         },
+        //         error: function () {
+        //             console.error("데이터를 불러오는 데 실패했습니다.");
         //         }
 
-
-
-
-        //         series.data.setAll(data);
-        //         series.appear(1000);
-        //         chart.appear(1000, 100);
-        //     }
-
-
-        //     function createSafeScoreChart_OG(chartId, color) {
-        //         const root = am5.Root.new(chartId);
-        //         root._logo.dispose();
-        //         root.locale = am5locales_ko_KR;
-        //         root.setThemes([am5themes_Animated.new(root)]);
-
-        //         const chart = root.container.children.push(am5xy.XYChart.new(root, {
-        //             panX: true,
-        //             panY: true,
-        //             wheelX: "panX",
-        //             wheelY: "zoomX",
-        //             pinchZoomX: true,
-        //             paddingLeft: 0
-        //         }));
-
-        //         const cursor = chart.set("cursor", am5xy.XYCursor.new(root, {
-        //             behavior: "none"
-        //         }));
-        //         cursor.lineY.set("visible", false);
-
-        //         const xAxis = chart.xAxes.push(am5xy.DateAxis.new(root, {
-        //             baseInterval: {
-        //                 timeUnit: "day",
-        //                 count: 1
-        //             },
-        //             maxDeviation: 0.5,
-        //             renderer: am5xy.AxisRendererX.new(root, {
-        //                 minGridDistance: 80,
-        //                 minorGridEnabled: true,
-        //                 pan: "zoom"
-        //             }),
-        //             tooltip: am5.Tooltip.new(root, {
-        //                 labelText: "{valueX.formatDate('MM월 dd일')}"
-        //             })
-        //         }));
-
-
-        //         const yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
-        //             min: 0,
-        //             max: 100,
-        //             strictMinMax: true,
-        //             renderer: am5xy.AxisRendererY.new(root, {
-        //                 pan: "zoom"
-        //             })
-        //         }));
-
-        //         const series = chart.series.push(am5xy.SmoothedXLineSeries.new(root, {
-        //             name: "Series",
-        //             xAxis: xAxis,
-        //             yAxis: yAxis,
-        //             valueYField: "value",
-        //             valueXField: "date",
-        //             sequencedInterpolation: true,
-        //             tooltip: am5.Tooltip.new(root, {
-        //                 labelText: "{valueY}"
-        //             })
-        //         }));
-
-        //         series.strokes.template.setAll({
-        //             strokeWidth: 2,
-        //             stroke: am5.color(color)
-        //         });
-
-        //         series.bullets.push(function () {
-        //             return am5.Bullet.new(root, {
-        //                 locationY: 0,
-        //                 sprite: am5.Circle.new(root, {
-        //                     radius: 4,
-        //                     stroke: root.interfaceColors.get("background"),
-        //                     strokeWidth: 2,
-        //                     fill: am5.color(color)
-        //                 })
-        //             });
-        //         });
-        //         ///제일 가까운 데이터 포인트를 찾는 클릭 이벤트
-        //         chart.plotContainer.events.on("click", function (ev) {
-        //             const point = chart.plotContainer.toLocal(ev.point);
-
-        //             const xVal = xAxis.positionToValue(
-        //                 xAxis.toAxisPosition(point.x / chart.plotContainer.width())
-        //             );
-
-        //             const yVal = yAxis.positionToValue(
-        //                 yAxis.toAxisPosition(point.y / chart.plotContainer.height())
-        //             );
-
-        //             let closest = null;
-        //             let minDiff = Number.MAX_VALUE;
-
-        //             // ✅ Loop safely using am5.array.each
-        //             am5.array.each(series.dataItems, function (item) {
-        //                 const itemX = item.get("valueX");
-        //                 const diff = Math.abs(itemX - xVal);
-
-        //                 if (diff < minDiff) {
-        //                     closest = item;
-        //                     minDiff = diff;
-        //                 }
-        //             });
-
-        //             if (closest) {
-        //                 const closestX = closest.get("valueX");
-        //                 const closestY = closest.get("valueY");
-        //                 const dateStr = new Date(closestX).toLocaleDateString("en-US");
-
-        //                 console.log("🟢 Closest Data Point:");
-        //                 console.log("🕓 X (date):", dateStr);
-        //                 console.log("📈 Y (value):", closestY);
-        //                 console.log("📦 Raw Data:", closest.dataContext);
-        //                 const date = new Date(closestX);
-        //                 const month = date.getMonth() + 1;
-        //                 const day = date.getDate();
-        //                 $("#safe-score-date").html(`${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일 점수는 ${closestY}점이에요.`);
-
-        //             } else {
-        //                 console.log("⚠️ No data points found.");
-        //             }
-        //         });
-
-
-        //         chart.set("scrollbarX", am5.Scrollbar.new(root, {
-        //             orientation: "horizontal"
-        //         }));
-
-        //         const data = [];
-        //         _data.map(item => {
-        //             data.push({
-        //                 date: item.scoreDate,
-        //                 value: item.safeScore
-        //             });
-        //         });
-        //         series.data.setAll(data);
-        //         series.appear(1000);
-        //         chart.appear(1000, 100);
-        //     }
-
-        //     function createFuelScoreChart_OG(chartId, color) {
-        //         const root = am5.Root.new(chartId);
-        //         root._logo.dispose();
-        //         root.locale = am5locales_ko_KR;
-        //         root.setThemes([am5themes_Animated.new(root)]);
-
-        //         const chart = root.container.children.push(am5xy.XYChart.new(root, {
-        //             panX: true,
-        //             panY: true,
-        //             wheelX: "panX",
-        //             wheelY: "zoomX",
-        //             pinchZoomX: true,
-        //             paddingLeft: 0
-        //         }));
-
-        //         const cursor = chart.set("cursor", am5xy.XYCursor.new(root, {
-        //             behavior: "none"
-        //         }));
-        //         cursor.lineY.set("visible", false);
-
-        //         const xAxis = chart.xAxes.push(am5xy.DateAxis.new(root, {
-        //             baseInterval: {
-        //                 timeUnit: "day",
-        //                 count: 1
-        //             },
-        //             maxDeviation: 0.5,
-        //             renderer: am5xy.AxisRendererX.new(root, {
-        //                 minGridDistance: 80,
-        //                 minorGridEnabled: true,
-        //                 pan: "zoom"
-        //             }),
-        //             tooltip: am5.Tooltip.new(root, {
-        //                 labelText: "{valueX.formatDate('yyyy년 MM월 dd일')}"
-        //             })
-        //         }));
-
-        //         const yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
-        //             min: 0,
-        //             max: 100,
-        //             strictMinMax: true,
-        //             renderer: am5xy.AxisRendererY.new(root, {
-        //                 pan: "zoom"
-        //             })
-        //         }));
-
-        //         const series = chart.series.push(am5xy.SmoothedXLineSeries.new(root, {
-        //             name: "Series",
-        //             xAxis: xAxis,
-        //             yAxis: yAxis,
-        //             valueYField: "value",
-        //             valueXField: "date",
-        //             sequencedInterpolation: true,
-        //             tooltip: am5.Tooltip.new(root, {
-        //                 labelText: "{valueY}"
-        //             })
-        //         }));
-
-        //         series.strokes.template.setAll({
-        //             strokeWidth: 2,
-        //             stroke: am5.color(color)
-        //         });
-
-        //         series.bullets.push(function () {
-        //             return am5.Bullet.new(root, {
-        //                 locationY: 0,
-        //                 sprite: am5.Circle.new(root, {
-        //                     radius: 4,
-        //                     stroke: root.interfaceColors.get("background"),
-        //                     strokeWidth: 2,
-        //                     fill: am5.color(color)
-        //                 })
-        //             });
-        //         });
-        //         ///제일 가까운 데이터 포인트를 찾는 클릭 이벤트
-        //         chart.plotContainer.events.on("click", function (ev) {
-        //             const point = chart.plotContainer.toLocal(ev.point);
-
-        //             const xVal = xAxis.positionToValue(
-        //                 xAxis.toAxisPosition(point.x / chart.plotContainer.width())
-        //             );
-
-        //             const yVal = yAxis.positionToValue(
-        //                 yAxis.toAxisPosition(point.y / chart.plotContainer.height())
-        //             );
-
-        //             let closest = null;
-        //             let minDiff = Number.MAX_VALUE;
-
-        //             // ✅ Loop safely using am5.array.each
-        //             am5.array.each(series.dataItems, function (item) {
-        //                 const itemX = item.get("valueX");
-        //                 const diff = Math.abs(itemX - xVal);
-
-        //                 if (diff < minDiff) {
-        //                     closest = item;
-        //                     minDiff = diff;
-        //                 }
-        //             });
-
-        //             if (closest) {
-        //                 const closestX = closest.get("valueX");
-        //                 const closestY = closest.get("valueY");
-        //                 const dateStr = new Date(closestX).toLocaleDateString("en-US");
-
-        //                 console.log("🟢 Closest Data Point:");
-        //                 console.log("🕓 X (date):", dateStr);
-        //                 console.log("📈 Y (value):", closestY);
-        //                 console.log("📦 Raw Data:", closest.dataContext);
-        //                 const date = new Date(closestX);
-        //                 const month = date.getMonth() + 1;
-        //                 const day = date.getDate();
-        //                 $("#fuel-score-date").html(`${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일 점수는 ${closestY}점이에요.`);
-
-        //             } else {
-        //                 console.log("⚠️ No data points found.");
-        //             }
-        //         });
-
-
-
-        //         chart.set("scrollbarX", am5.Scrollbar.new(root, {
-        //             orientation: "horizontal"
-        //         }));
-
-        //         const data = [];
-        //         _data.map(item => {
-        //             data.push({
-        //                 date: item.scoreDate,
-        //                 value: item.fuelScore
-        //             });
-        //         });
-        //         series.data.setAll(data);
-        //         series.appear(1000);
-        //         chart.appear(1000, 100);
-        //     }
-
-        //     function createEcoScoreChart_OG(chartId, color) {
-        //         const root = am5.Root.new(chartId);
-        //         root._logo.dispose();
-        //         root.locale = am5locales_ko_KR;
-        //         root.setThemes([am5themes_Animated.new(root)]);
-
-        //         const chart = root.container.children.push(am5xy.XYChart.new(root, {
-        //             panX: true,
-        //             panY: true,
-        //             wheelX: "panX",
-        //             wheelY: "zoomX",
-        //             pinchZoomX: true,
-        //             paddingLeft: 0
-        //         }));
-
-        //         const cursor = chart.set("cursor", am5xy.XYCursor.new(root, {
-        //             behavior: "none"
-        //         }));
-        //         cursor.lineY.set("visible", false);
-
-        //         const xAxis = chart.xAxes.push(am5xy.DateAxis.new(root, {
-        //             baseInterval: {
-        //                 timeUnit: "day",
-        //                 count: 1
-        //             },
-        //             maxDeviation: 0.5,
-        //             renderer: am5xy.AxisRendererX.new(root, {
-        //                 minGridDistance: 80,
-        //                 minorGridEnabled: true,
-        //                 pan: "zoom"
-        //             }),
-        //             tooltip: am5.Tooltip.new(root, {
-        //                 labelText: "{valueX.formatDate('yyyy년 MM월 dd일')}"
-        //             })
-        //         }));
-
-        //         const yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
-        //             min: 0,
-        //             max: 100,
-        //             strictMinMax: true,
-        //             renderer: am5xy.AxisRendererY.new(root, {
-        //                 pan: "zoom"
-        //             })
-        //         }));
-
-        //         const series = chart.series.push(am5xy.SmoothedXLineSeries.new(root, {
-        //             name: "Series",
-        //             xAxis: xAxis,
-        //             yAxis: yAxis,
-        //             valueYField: "value",
-        //             valueXField: "date",
-        //             sequencedInterpolation: true,
-        //             tooltip: am5.Tooltip.new(root, {
-        //                 labelText: "{valueY}"
-        //             })
-        //         }));
-
-        //         series.strokes.template.setAll({
-        //             strokeWidth: 2,
-        //             stroke: am5.color(color)
-        //         });
-
-        //         series.bullets.push(function () {
-        //             return am5.Bullet.new(root, {
-        //                 locationY: 0,
-        //                 sprite: am5.Circle.new(root, {
-        //                     radius: 4,
-        //                     stroke: root.interfaceColors.get("background"),
-        //                     strokeWidth: 2,
-        //                     fill: am5.color(color),
-
-        //                 })
-        //             });
-        //         });
-
-        //         chart.plotContainer.events.on("click", function (ev) {
-        //             const point = chart.plotContainer.toLocal(ev.point);
-
-        //             const xVal = xAxis.positionToValue(
-        //                 xAxis.toAxisPosition(point.x / chart.plotContainer.width())
-        //             );
-
-        //             const yVal = yAxis.positionToValue(
-        //                 yAxis.toAxisPosition(point.y / chart.plotContainer.height())
-        //             );
-
-        //             let closest = null;
-        //             let minDiff = Number.MAX_VALUE;
-
-        //             // ✅ Loop safely using am5.array.each
-        //             am5.array.each(series.dataItems, function (item) {
-        //                 const itemX = item.get("valueX");
-        //                 const diff = Math.abs(itemX - xVal);
-
-        //                 if (diff < minDiff) {
-        //                     closest = item;
-        //                     minDiff = diff;
-        //                 }
-        //             });
-
-        //             if (closest) {
-        //                 const closestX = closest.get("valueX");
-        //                 const closestY = closest.get("valueY");
-        //                 const dateStr = new Date(closestX).toLocaleDateString("en-US");
-
-        //                 console.log("🟢 Closest Data Point:");
-        //                 console.log("🕓 X (date):", dateStr);
-        //                 console.log("📈 Y (value):", closestY);
-        //                 console.log("📦 Raw Data:", closest.dataContext);
-        //                 const date = new Date(closestX);
-        //                 const month = date.getMonth() + 1;
-        //                 const day = date.getDate();
-        //                 $("#eco-score-date").html(`${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일 점수는 ${closestY}점이에요.`);
-
-        //             } else {
-        //                 console.log("⚠️ No data points found.");
-        //             }
-        //         });
-
-
-
-        //         chart.set("scrollbarX", am5.Scrollbar.new(root, {
-        //             orientation: "horizontal"
-        //         }));
-
-        //         // 데이터 생성
-        //         const data = [];
-
-        //         _data.map(item => {
-        //             data.push({
-        //                 date: item.scoreDate,
-        //                 value: item.ecoScore
-        //             });
-        //         });
-        //         series.data.setAll(data);
-        //         series.appear(1000);
-        //         chart.appear(1000, 100);
-        //     }
-        // 
-        })
+        //     })
+        //     $(".img-btn.delete").on("click", function () {
+        //         const $checkedRows = $("table.table input[type='checkbox']:checked").closest("tr");
+
+        //         if ($checkedRows.length === 0) {
+        //             alert("삭제할 항목을 선택해주세요.");
+        //             return;
+        //         }
+
+        //         if (confirm("선택한 항목을 삭제하시겠습니까?")) {
+        //             $checkedRows.remove();
+        //         }
+        //     });
+        //     $("#depot-name").on("input", function () {
+        //         depotName = $(this).val();   // get input value
+        //         console.log("User typed:", depotName);
+        //     });
+        //     $("#radiusSelect").on("change", function () {
+        //         const selectedValue = $(this).val();          // gets the value attribute
+        //         const selectedText = $(this).find(":selected").text(); // gets visible text
+
+        //         console.log("Value:", selectedValue);
+        //         console.log("Text:", selectedText);
+        //     });
+        //     $("#workTypeSelect").on("change", function () {
+        //         const selectedValue = $(this).val();          // gets the value attribute
+        //         const selectedText = $(this).find(":selected").text(); // gets visible text
+        //            arrWorkTypes.push({
+        //          workType: selectedValue,priority:1})
+        //         console.log("Value:", selectedValue);
+        //         console.log("Text:", selectedText);
+        //     });
+        //     // //지도 데이터 처리 시작
+        //     // $V4.http_post("/api/1/addrPointSearch", { addr: addr }, {
+        //     //     requestMethod: "GET"
+        //     //     , success: function (r) {
+        //     //         var radius = $("#fenceRadius").val();
+        //     //         if (_unitLengthMeter == 'yard') {
+        //     //             radius = parseInt(parseInt(radius) * 0.9144);
+        //     //         }
+        //     //         var d = r.result;
+        //     //         var vo = JSON.parse(d);
+        //     //         var lat = vo.coordinateInfo.coordinate[0].newLat;
+        //     //         var lon = vo.coordinateInfo.coordinate[0].newLon;
+        //     //         var mapFrame = $("#mapFrame").get(0).contentWindow;
+        //     //         mapFrame.move(lon, lat, radius);
+        //     //         setAddr(addr);
+        //     //         setLonLat(lon, lat, radius);
+        //     //     }
+        //     // });
+        //     //     var setAddr = function (addr) {
+        //     //         $("#fenceAddress").val(addr);
+        //     //         $('.dialogAddress').val(addr);//등록 스케줄 리스트 pop 주소 노출
+        //     //     }
+        //     //     var setLonLat = function (lon, lat, radius) {
+        //     //         $("#lon").val(lon);
+        //     //         $("#lat").val(lat);
+        //     //         $("#radius").val(radius);
+        //     //     }
+        //      // //지도 데이터 처리 끝
+        // });
+
+
+        // 공통 성상 옵션
+        const wasteOptions = `
+        <option value="">성상을 선택하세요</option>
+        <option>일반 쓰레기</option>
+        <option>음식물 쓰레기</option>
+        <option>재활용 쓰레기</option>
+        <option>대형 폐기물</option>
+        <option>노면 청소</option> `;
+        f1();
+        function f1() {
+
+            // 추가 버튼 클릭 시
+            $(".plus").on("click", function () {
+                const currentCount = $("#waste-select-container select").length;
+
+                if (currentCount >= 4) {
+                    alert("최대 4개까지 등록할 수 있습니다.");
+                    return;
+                }
+
+                const newSelect = $('<div class="select-wrapper" style="margin-top: 5px;"><select>' +
+                    wasteOptions + '</select></div>');
+                $("#waste-select-container").append(newSelect);
+            });
+
+            // 삭제 버튼 클릭 시
+            $(".minus").on("click", function () {
+                const selects = $("#waste-select-container .select-wrapper");
+                if (selects.length > 0) {
+                    selects.last().remove(); // 마지막 추가된 select만 제거
+                } else {
+                    alert("더 이상 삭제할 수 없습니다.");
+                }
+            });
+            $("#modal2-open, #modal3-open, .open-modal").on("click", function () {
+                $("#modal2-dialog").dialog({
+                    autoOpen: true,
+                    show: {
+                        duration: 500
+                    },
+                    width: '940',
+                    modal: true
+                });
+            });
+        };
+
+        // $(function () {
+        //     // 달력
+        //     $("#start-date").datepicker({
+        //         dateformat: 'yy-mm-dd'
+        //     });
+
+        //     $("#end-date").datepicker({
+        //         dateformat: 'yy-mm-dd'
+        //     });
+        // });
+
+        // $("#modal2-open, #modal3-open, .open-modal").on("click", function () {
+        //     $("#modal2-dialog").dialog({
+        //         autoOpen: true,
+        //         show: {
+        //             duration: 500
+        //         },
+        //         width: '940',
+        //         modal: true
+        //     });
+        // });
     </script>
 </body>
 
