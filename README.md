@@ -1,9 +1,50 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-<%@ page import="v4.web.vo.GarbageDepotVO" %>
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="title" content="차량운행 관리 서비스 VIEW CAR" />
+    <meta name="description" content="" />
+
+    <title>차량운행 관리 서비스 VIEW CAR</title>
+
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/jquery-ui.min.js"></script>
+    <script src="../component/header/header.js"></script>
+    <script src="../component/footer/footer.js"></script>
+    <script src="../js/common.js"></script>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/notosanskr.css" />
+    <link rel="stylesheet" href="../css/jquery-ui.min.css" />
+    <link rel="stylesheet" href="../css/styleko.css" />
+    <link rel="stylesheet" href="../css/stylenew.css" />
+    <link rel="stylesheet" href="../css/styledev.css" />
+
+</head>
+
+<body>
+
+    <h1 class="hidden">차량운행 관리 서비스 VIEW CAR</h1>
+
+    <!-- 바로가기 메뉴 -->
+    <dl id="skip-navigation">
+        <dt>바로가기메뉴</dt>
+        <dd>
+            <a href="#gnb" class="skip">사이트 메뉴 바로가기</a>
+        </dd>
+        <dd>
+            <a href="#container" class="skip">본문 바로가기</a>
+        </dd>
+    </dl>
+    <!--/ 바로가기 메뉴 -->
+
+    <div id="wrap">
+        <!-- 상단 -->
+        <header-0></header-0>
+        <!--/ 상단 -->
+
+
 
 <!-- 본문 -->
         <div class="map-wrap box-layout">
@@ -428,6 +469,13 @@
 		</div>
 	</div>
     
+
+        <!-- 하단 -->
+        <footer-0></footer-0>
+        <!--/ 하단 -->
+ </div>
+
+
     <script type="text/javascript">
 
     let depotData,depotType1,depotType2,depotType3,_defaultUnloadCnt, depotKey1,depotKey2,depotKey3;
@@ -541,7 +589,7 @@ $(function(){
 	
 	//추가작업
 	
-		$V4.http_post("/api/1/cleanerB/garbageDepot", {},
+		/*$V4.http_post("/api/1/cleanerB/garbageDepot", {},
 				{
 			requestMethod : "GET", 
 			success : function(rtv)
@@ -551,8 +599,12 @@ $(function(){
 					$("#getId").val(rtv.result[0].depotKey);
 					depotData=rtv.result
 					const _arrWorkTypes=depotData.arrWorkTypes
-					console.log(depotData)
-					
+					console.log(depotData)*/
+					const depotData=[
+                        {depotKey:"DPT001", depotName:"ssss", arrWorkTypes:[{workType:"0"},{workType:"1"},{workType:"2"}]},
+                        {depotKey:"DPT002", depotName:"관악IC3", arrWorkTypes:[{workType:"1"}]},
+                        {depotKey:"DPT003", depotName:"관악IC", arrWorkTypes:[{workType:"2"}]}
+                    ]
 				    let $select = $('#garbageDepotSelect1,#garbageDepotSelect2,#garbageDepotSelect3');
 				    $select.empty();
 				    $select.append('<option value="">처리장 선택</option>');
@@ -567,15 +619,18 @@ $(function(){
 
 				    $select.on('change', function() {
 				    	 const $allSelects = $('select[id^="garbageDepotSelect"]');
-				    	//let selectedDepotKey = $(this).val();            
+				    	let selectedDepotKey = $(this).val(); 
+                        const priority = $(this).data('priority');
+                        let selectId = $(this).attr("id");           
 				        let selectedDepotName = $(this).find("option:selected").text();
+               
+                            console.log("tagid",priority,selectId,selectedDepotKey);
 				  
 				        
 
 				        let chosenValues = [];
 				        $allSelects.each(function () {
-				        	let selectedDepotKey = $(this).val();
-				            const priority = $(this).data('priority');
+                           	let selectedDepotKey = $(this).val(); 
 				            if (selectedDepotKey) {
 				                if (chosenValues.includes(selectedDepotKey)) {
 				                    //alert("이미 선택된 성상입니다.");
@@ -607,11 +662,11 @@ $(function(){
 								        		    $select1.append(
 								        		        $('<option>', {
 								        		            value: item2.workType,
-								        		            text: item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_NORMAL%>'?'일반쓰레기'
-								        		            		:item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_FOOD%>'?'음식물쓰레기'
-								        		            		:item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_RECYCLE%>'?'재활용쓰레기'
-								        		            		:item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_LARGE%>'?'대형'
-						        		            				:item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_ROAD%>'?'노면청소'
+								        		            text: item2.workType=='0'?'일반쓰레기'
+								        		            		:item2.workType=='1'?'음식물쓰레기'
+								        		            		:item2.workType=='2'?'재활용쓰레기'
+								        		            		:item2.workType=='3'?'대형'
+						        		            				:item2.workType=='4'?'노면청소'
 								        		            		:''
 								        		        })
 								        		    );
@@ -629,7 +684,6 @@ $(function(){
 								           if(priority==2)
 								           {  
 								        	   depotKey2 = selectedDepotKey
-								        	   $('#garbageSelect1').val(depotType1 );
 								        		let $select2 = $('#garbageSelect2');
 								        		$select2.empty();
 								        		const selectedDepot = depotData.find(item => item.depotKey === depotKey2);
@@ -641,11 +695,11 @@ $(function(){
 								        		    $select2.append(
 								        		        $('<option>', {
 								        		            value: item2.workType,
-								        		            text: item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_NORMAL%>'?'일반쓰레기'
-								        		            		:item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_FOOD%>'?'음식물쓰레기'
-								        		            		:item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_RECYCLE%>'?'재활용쓰레기'
-								        		            		:item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_LARGE%>'?'대형'
-						        		            				:item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_ROAD%>'?'노면청소'
+								        		            text: item2.workType=='0'?'일반쓰레기'
+								        		            		:item2.workType=='1'?'음식물쓰레기'
+								        		            		:item2.workType=='2'?'재활용쓰레기'
+								        		            		:item2.workType=='3'?'대형'
+						        		            				:item2.workType=='4'?'노면청소'
 								        		            		:''
 								        		        })
 								        		    );
@@ -673,11 +727,11 @@ $(function(){
 								        		    $select3.append(
 								        		        $('<option>', {
 								        		            value: item2.workType,
-								        		            text: item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_NORMAL%>'?'일반쓰레기'
-								        		            		:item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_FOOD%>'?'음식물쓰레기'
-								        		            		:item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_RECYCLE%>'?'재활용쓰레기'
-								        		            		:item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_LARGE%>'?'대형'
-						        		            				:item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_ROAD%>'?'노면청소'
+								        		            text: item2.workType=='0'?'일반쓰레기'
+								        		            		:item2.workType=='1'?'음식물쓰레기'
+								        		            		:item2.workType=='2'?'재활용쓰레기'
+								        		            		:item2.workType=='3'?'대형'
+						        		            				:item2.workType=='4'?'노면청소'
 								        		            		:''
 								        		        })
 								        		    );
@@ -700,11 +754,15 @@ $(function(){
 				    });
 
 
-				} else {
+				/*} else {
 					$("#getId").val("");
 				}
 			}
-		});
+		}); */
+
+
+
+
    /* $("#garbageDepotSelect1,#garbageDepotSelect2,#garbageDepotSelect3").on("change", function () {
         const $allSelects = $('select[id^="garbageDepotSelect"]');
         const selectedValue = $(this).val();
@@ -1630,5 +1688,7 @@ function secToHHMM(sec){
 	return (LPAD(h+"",'0',2)) +':'+ (LPAD(m+"",'0',2));
 }
 </script>
-    
-    
+
+ </body>
+
+</html>
