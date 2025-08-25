@@ -3,11 +3,12 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ page import="v4.web.vo.GarbageDepotVO" %>
 
 <!-- 본문 -->
         <div class="map-wrap box-layout">
 			<div class="title">
-				<h3 class="tit3">작업 스케줄 등록</h3>
+				<h3 class="tit3">작업 스케줄 등록 </h3>
 				<div class="btn-closed">
 					<a href="" class="icon-spr">닫기</a>
 				</div>
@@ -18,8 +19,8 @@
 						<table class="table" >
 							<caption>배차정보 리스트</caption>
 							<colgroup>
-								<col style="width:40%" />
-								<col style="width:60%" />
+								<col style="width:38%" />
+								<col style="width:63%" />
 							</colgroup>
 							<tbody>
 								<tr>
@@ -48,76 +49,61 @@
 									</td>-->
 								</tr>
 				                <tr>
+				                    <td>
+                                        <select id="garbageDepotSelect1" data-priority="1">
+                                        </select>
+                                    </td>
                                     <td>
                                         <select id="garbageSelect1" data-priority="1">
                                             <option value="">성상을 선택하세요</option>
-								<option value="0">일반 쓰레기</option>
-								<option value="1">음식물 쓰레기</option>
-								<option value="2">재활용 쓰레기</option>
-								<option value="3">대형 폐기물</option>
-								<option value="4">노면 청소</option>
+											<option value="0">일반 쓰레기</option>
+											<option value="1">음식물 쓰레기</option>
+											<option value="2">재활용 쓰레기</option>
+											<option value="3">대형 폐기물</option>
+											<option value="4">노면 청소</option>
                                         </select>
                                     </td>
-                                    <td>
-                                        <select id="garbageDepotSelect1">
-                                            <option value="">처리장 선택</option>
-                                            <option>A</option>
-                                            <option>B</option>
-                                            <option>C</option>
-                                            <option>D</option>
-                                            <option>E</option>
-                                        </select>
-                                    </td>
+
                                 </tr>
                                 <tr>
+                                     <td>
+                                        <select id="garbageDepotSelect2" data-priority="2">
+                                        </select>
+                                    </td>
                                     <td>
                                         <select id="garbageSelect2" data-priority="2">
                                             <option value="">성상을 선택하세요</option>
-								<option value="0">일반 쓰레기</option>
-								<option value="1">음식물 쓰레기</option>
-								<option value="2">재활용 쓰레기</option>
-								<option value="3">대형 폐기물</option>
-								<option value="4">노면 청소</option>
+											<option value="0">일반 쓰레기</option>
+											<option value="1">음식물 쓰레기</option>
+											<option value="2">재활용 쓰레기</option>
+											<option value="3">대형 폐기물</option>
+											<option value="4">노면 청소</option>
                                         </select>
                                     </td>
-                                    <td>
-                                        <select id="garbageDepotSelect2">
-                                            <option value="">처리장 선택</option>
-                                            <option>A</option>
-                                            <option>B</option>
-                                            <option>C</option>
-                                            <option>D</option>
-                                            <option>E</option>
-                                        </select>
-                                    </td>
+
                                 </tr>
                                 <tr>
+                                     <td>
+                                        <select id="garbageDepotSelect3" data-priority="3" >
+                                        </select>
+                                    </td>
                                     <td>
                                         <select id="garbageSelect3" data-priority="3">
                                             <option value="">성상을 선택하세요</option>
-								<option value="0">일반 쓰레기</option>
-								<option value="1">음식물 쓰레기</option>
-								<option value="2">재활용 쓰레기</option>
-								<option value="3">대형 폐기물</option>
-								<option value="4">노면 청소</option>
+											<option value="0">일반 쓰레기</option>
+											<option value="1">음식물 쓰레기</option>
+											<option value="2">재활용 쓰레기</option>
+											<option value="3">대형 폐기물</option>
+											<option value="4">노면 청소</option>
                                         </select>
                                     </td>
-                                    <td>
-                                        <select id="garbageDepotSelect3" >
-                                            <option value="">처리장 선택</option>
-                                            <option>A</option>
-                                            <option>B</option>
-                                            <option>C</option>
-                                            <option>D</option>
-                                            <option>E</option>
-                                        </select>
-                                    </td>
+
                                 </tr>
                                     
 								<tr>
 									<td colspan="2">
 										<div class="set-info">
-											<div class="img"><img src="/common/new/img/vehicle/L47.png"></div>
+											<div class="img" id="test-data"><img src="/common/new/img/vehicle/L47.png"></div>
 											<div class="info">
 												<div class="inp-box" id="BtnCarChoice">
 													<p class="tit">차량번호</p>
@@ -444,7 +430,7 @@
     
     <script type="text/javascript">
 
-    let depotType1,depotType2,depotType3,_defaultUnloadCnt;
+    let depotData,depotType1,depotType2,depotType3,_defaultUnloadCnt, depotKey1,depotKey2,depotKey3;
     
 	var _selVehicle,_selUser;
 	
@@ -553,9 +539,174 @@ $(function(){
 	});
 	
 	
-	//추가 작업
-    $("#garbageSelect1,#garbageSelect2,#garbageSelect3").on("change", function () {
-        const $allSelects = $('select[id^="garbageSelect"]');
+	//추가작업
+	
+		$V4.http_post("/api/1/cleanerB/garbageDepot", {},
+				{
+			requestMethod : "GET", 
+			success : function(rtv)
+			{
+				console.log("📦 처리장 목록 조회!:", rtv);
+				if (rtv.result) {
+					$("#getId").val(rtv.result[0].depotKey);
+					depotData=rtv.result
+					const _arrWorkTypes=depotData.arrWorkTypes
+					console.log(depotData)
+					
+				    let $select = $('#garbageDepotSelect1,#garbageDepotSelect2,#garbageDepotSelect3');
+				    $select.empty();
+				    $select.append('<option value="">처리장 선택</option>');
+				    depotData.forEach(function(item) {
+				        $select.append(
+				            $('<option>', {
+				                value: item.depotKey,
+				                text: item.depotName
+				            })
+				        );
+				    });
+
+				    $select.on('change', function() {
+				    	 const $allSelects = $('select[id^="garbageDepotSelect"]');
+				    	//let selectedDepotKey = $(this).val();            
+				        let selectedDepotName = $(this).find("option:selected").text();
+				  
+				        
+
+				        let chosenValues = [];
+				        $allSelects.each(function () {
+				        	let selectedDepotKey = $(this).val();
+				            const priority = $(this).data('priority');
+				            if (selectedDepotKey) {
+				                if (chosenValues.includes(selectedDepotKey)) {
+				                    //alert("이미 선택된 성상입니다.");
+				                    $(this).val(""); // reset duplicate
+				                    selectedDepotKey=""
+				                    if(priority== 1)
+				                    	depotKey1='';
+				                        depotType1='';
+				                    if(priority== 2)
+				                    	depotKey2='';
+				                        depotType2='';
+				                    if(priority== 3)
+				                    	depotKey3='';
+				                        depotType3='';
+				                } else {
+				                    chosenValues.push(selectedDepotKey);
+							        if (selectedDepotKey !== '') {
+								           if(priority==1){
+								        	   depotKey1 = selectedDepotKey
+								        		let $select1 = $('#garbageSelect1');
+								        		$select1.empty();
+								        		const selectedDepot = depotData.find(item => item.depotKey === depotKey1);
+								        		console.log("arrWorkTypes",selectedDepot.arrWorkTypes);
+								        		$select1.append($('<option>', {
+								        			  value: "",
+								        			  text: "성상을 선택하세요"
+								        			}));
+								        		selectedDepot.arrWorkTypes.forEach(function(item2) {
+								        		    $select1.append(
+								        		        $('<option>', {
+								        		            value: item2.workType,
+								        		            text: item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_NORMAL%>'?'일반쓰레기'
+								        		            		:item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_FOOD%>'?'음식물쓰레기'
+								        		            		:item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_RECYCLE%>'?'재활용쓰레기'
+								        		            		:item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_LARGE%>'?'대형'
+						        		            				:item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_ROAD%>'?'노면청소'
+								        		            		:''
+								        		        })
+								        		    );
+								        		});
+
+								        		// selection change event
+								        		$select1.on('change', function() {
+								        		    let workType = $(this).val();            // value (name)
+								        		    let workTypeDetail = $(this).find("option:selected").text(); // displayed text (score)
+				                                    depotType1=workType;
+								        		    console.log("SelWorkType",depotType1);
+								        		   
+								        		});
+								           }
+								           if(priority==2)
+								           {  
+								        	   depotKey2 = selectedDepotKey
+								        	   $('#garbageSelect1').val(depotType1 );
+								        		let $select2 = $('#garbageSelect2');
+								        		$select2.empty();
+								        		const selectedDepot = depotData.find(item => item.depotKey === depotKey2);
+								        		$select2.append($('<option>', {
+								        			  value: "",
+								        			  text: "성상을 선택하세요"
+								        			}));
+								        		selectedDepot.arrWorkTypes.forEach(function(item2) {
+								        		    $select2.append(
+								        		        $('<option>', {
+								        		            value: item2.workType,
+								        		            text: item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_NORMAL%>'?'일반쓰레기'
+								        		            		:item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_FOOD%>'?'음식물쓰레기'
+								        		            		:item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_RECYCLE%>'?'재활용쓰레기'
+								        		            		:item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_LARGE%>'?'대형'
+						        		            				:item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_ROAD%>'?'노면청소'
+								        		            		:''
+								        		        })
+								        		    );
+								        		});
+
+								        		// selection change event
+								        		$select2.on('change', function() {
+								        		    let workType = $(this).val();            // value (name)
+								        		    let workTypeDetail = $(this).find("option:selected").text(); // displayed text (score)
+				                                    depotType2=workType;
+								        		    console.log("SelWorkType",depotType2);
+								        		});
+								           }
+								           if(priority==3)
+								           {
+								        	   depotKey3 = selectedDepotKey
+								        		let $select3 = $('#garbageSelect3');
+								        		$select3.empty();
+								        		const selectedDepot = depotData.find(item => item.depotKey === depotKey3);
+								        		$select3.append($('<option>', {
+								        			  value: "",
+								        			  text: "성상을 선택하세요"
+								        			}));
+								        		selectedDepot.arrWorkTypes.forEach(function(item2) {
+								        		    $select3.append(
+								        		        $('<option>', {
+								        		            value: item2.workType,
+								        		            text: item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_NORMAL%>'?'일반쓰레기'
+								        		            		:item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_FOOD%>'?'음식물쓰레기'
+								        		            		:item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_RECYCLE%>'?'재활용쓰레기'
+								        		            		:item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_LARGE%>'?'대형'
+						        		            				:item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_ROAD%>'?'노면청소'
+								        		            		:''
+								        		        })
+								        		    );
+								        		});
+
+								        		// selection change event
+								        		$select3.on('change', function() {
+								        		    let workType = $(this).val();            // value (name)
+								        		    let workTypeDetail = $(this).find("option:selected").text(); // displayed text (score)
+				                                    depotType3=workType;
+								        		    console.log("SelWorkType",depotType3);
+								        		});
+								           }    	   
+								        }
+				                    console.log("chosen value:",chosenValues)
+				                }
+				            }
+				        });
+
+				    });
+
+
+				} else {
+					$("#getId").val("");
+				}
+			}
+		});
+   /* $("#garbageDepotSelect1,#garbageDepotSelect2,#garbageDepotSelect3").on("change", function () {
+        const $allSelects = $('select[id^="garbageDepotSelect"]');
         const selectedValue = $(this).val();
         const selectedText = $(this).find(":selected").text();
         const priority = $(this).data('priority');
@@ -570,10 +721,10 @@ $(function(){
         }
         if (selectedValue === "4") {
             // Disable all others except the one that triggered the change
-            $('select[id^="garbageSelect"]').not(this).prop('disabled', true).val('');
+            $('select[id^="garbageDepotSelect"]').not(this).prop('disabled', true).val('');
         } else {
             // Enable all selects again
-            $('select[id^="garbageSelect"]').prop('disabled', false);
+            $('select[id^="garbageDepotSelect"]').prop('disabled', false);
         }
         chosenValues = [];
         $allSelects.each(function () {
@@ -591,19 +742,25 @@ $(function(){
 
        // console.log("arrwork:", chosenValues);
     });
-    $("#garbageDepotSelect1").on("change", function () {
-        const valueSelect = $(this).val();
-        const garbageDepot = $(this).find(":selected").text();
-        console.log(garbageDepot)  
-    });
+
+   const data = [
+        { score: 1, name: "eric" },
+        { score: 2, name: "eric2" },
+        { score: 3, name: "eric2" },
+        { score: 4, name: "eric1" },
+        { score: 5, name: "2eric" },
+        { score: 6, name: "gveric" },
+        { score: 7, name: "eric" }
+    ];*/
+
+
     $("#unload-count").on("change", function() {
         const current = $(this).val();
         _defaultUnloadCnt=current
         
        
     });
-
-    
+  
    //--추가 작업 
 
 	$('input.time').timepicker(timepickerOpt);
@@ -712,7 +869,7 @@ $(function(){
 		$("#modal4").modal();
 	});
 	
-	$("#finalConfirm").on("click",function(ev){
+	$("#finalConfirm,#test-data").on("click",function(ev){
 		$(this).attr('disabled', true);
 		
 		var v = $('#frm').serializeObject(1);
@@ -730,39 +887,57 @@ $(function(){
 		v['dayThu'] = $("input[name=dayThu]").is(":checked")?1:0;
 		v['dayFri'] = $("input[name=dayFri]").is(":checked")?1:0;
 		v['daySat'] = $("input[name=daySat]").is(":checked")?1:0;
-		v['roop'] = $("input[name=roop]").is(":checked")?1:0;
+		//v['roop'] = $("input[name=roop]").is(":checked")?1:0;
 
-		if(v['roopStart']) v['roopStart'] = $("input[name=roopStart]").datepicker( "getDate" ).getTime();
-		if(v['roopEnd']) v['roopEnd'] = $("input[name=roopEnd]").datepicker( "getDate" ).getTime();
+		//if(v['roopStart']) v['roopStart'] = $("input[name=roopStart]").datepicker( "getDate" ).getTime();
+		//if(v['roopEnd']) v['roopEnd'] = $("input[name=roopEnd]").datepicker( "getDate" ).getTime();
 
-		v['taskAreaLat'] = temp.latLonRads.taskArea.lat;
-		v['taskAreaLon'] = temp.latLonRads.taskArea.lon;
-		v['taskAreaRadius'] = temp.latLonRads.taskArea.radius;
+		v['taskAreaLat'] = JSON.parse(temp.latLonRads.taskArea.lat);
+		v['taskAreaLon'] = JSON.parse(temp.latLonRads.taskArea.lon);
+		v['taskAreaRadius'] = JSON.parse(temp.latLonRads.taskArea.radius);
 
-		// v['taskDepotLat'] = temp.latLonRads.center.lat;
-		// v['taskDepotLon'] = temp.latLonRads.center.lon;
-		// v['taskDepotRadius'] = temp.latLonRads.center.radius;
 		
 		var arrPoints = [];
 		
 		$(".sorting").children("div").each(function(i){
 			arrPoints.push(
 				{addr : $(this).find("input[name=addr]").val()
-				,lat :  $(this).find("input[name=lat]").val()
-				,lon :  $(this).find("input[name=lon]").val()
-				,radius :  $(this).find("input[name=radius]").val()
+				,lat :  JSON.parse($(this).find("input[name=lat]").val())
+				,lon :  JSON.parse($(this).find("input[name=lon]").val())
+				,radius :  JSON.parse($(this).find("input[name=radius]").val())
 				,targetTs : HHMMtoSec($(this).find("input[name=targetTime]").val())
-				,idx :  i}
+				,idx :  i+1}
 			);
 		});
 		
 		v['arrTaskList'] = arrPoints;
 
 		v['taskDepotChk'] = $("input[name=taskDepotChk]").is(":checked")?1:0;
+		
+        v['defaultUnloadCnt']=JSON.parse(_defaultUnloadCnt)
+        v['depotKey1']=depotKey1?depotKey1:null
+        v['depotType1']=depotType1?depotType1:null
+        v['depotKey2']=depotKey2?depotKey2:null
+        v['depotType2']=depotType2?depotType2:null
+        v['depotKey3']=depotKey3?depotKey3:null
+        v['depotType3']=depotType3?depotType3:null
+	   console.log("등록 데이터",JSON.stringify(v))
+	   
+  			$V4.http_post("/api/1/cleanerB/task",v,{
+  				requestMethod : "POST",
+  				success : function(rtv){
+					console.log(rtv);
+					alert("저장되었습니다.");
+					$V4.move(null,'/config/geoTask/list');
+		    	}
+				,error : function(e){
+					console.log(e);
+					alert("알수없는 오류가 발생하였습니다.\n관리자에게 문의하여 주십시오.");
+					$(this).attr('disabled', false);
+				}
+			});
 
-		// console.log(v)
-
-		$V4.http_post("/api/1/cleaner/taskChecker",v,{
+		/*$V4.http_post("/api/1/cleaner/taskChecker",v,{
 			success : function(rtv){
 
 				//console.log(rtv);
@@ -776,7 +951,7 @@ $(function(){
 					$("#finalBreak").trigger("click");
 				}else{
 
-					$V4.http_post("/api/1/cleaner/task",v,{
+					$V4.http_post("/api/1/cleanerB/task",v,{
 						success : function(rtv){
 							console.log(rtv);
 							alert("저장되었습니다.");
@@ -797,7 +972,7 @@ $(function(){
 			,error : function(e){
 				console.log(e);
 			}
-		});
+		});*/
 	});
 	
 	
@@ -882,9 +1057,9 @@ $(function(){
 	   					if(getProperty(obj,'dayFri',0)) arrDay.push('금');
 	   					if(getProperty(obj,'daySat',0)) arrDay.push('토');
 	   					if(getProperty(obj,'daySun',0)) arrDay.push('일');
-	   					if(!isRoop){
+	   					/*if(!isRoop){
 	   						strHtml += new Date(roopStart).format('yyyy-MM-dd')+' 부터 '+new Date(roopEnd).format('yyyy-MM-dd')+' 까지</br>';
-	   					}
+	   					} */
 	   				
 	   					strHtml += arrDay.join(",");
 	   				strHtml += '</td>';
@@ -895,7 +1070,7 @@ $(function(){
 	   			return strHtml;
 	   		}
 	   		,limit : 10
-	   		,url : "/api/1/cleaner/origin/task"
+	   		,url : "/api/1/cleanerB/task"
 	   		,param : {}
 	   		,http_post_option : {
 	   			requestMethod : "GET"
@@ -1126,7 +1301,7 @@ $(function(){
 });
 
 function loadTask(seq){
-	$V4.http_post("/api/1/cleaner/origin/task/"+seq,{appendChild:true},{
+	$V4.http_post("/api/1/cleanerB/task/"+seq,{appendChild:true},{
 		requestMethod : "GET"
 		,success : function(rtv){
 			setTask(rtv['result']);		
@@ -1356,13 +1531,13 @@ function valid(){
 		strHtml += strHtmlAlertImg + '작업 요일을 선택해주세요.';		
 	}
 	
-	var isRoop = $("input[name=roop]").is(":checked");
+	/*  var isRoop = $("input[name=roop]").is(":checked");
 	if(!isRoop){
 		if ( !($.trim($("input[name=roopStart]").val()) && $.trim($("input[name=roopEnd]").val())) ){
 			if(strHtml) strHtml += '</br>';
 			strHtml += strHtmlAlertImg + '요일만 설정이 아닐경우 시작시간 종료시간을 입력해주세요.';
 		}
-	}
+	}*/
 
 
 	//요일만설정일때 날짜 필수
@@ -1378,12 +1553,20 @@ function valid(){
 		strHtml += strHtmlAlertImg + '작업지는 3 ~ 200개 여야 합니다.';
 	}
 
-	const taskDepotAddr = $('input[name="taskDepotAddr"]').val() // 자원순환센터가 지정되지 않았습니다.
+	/*const taskDepotAddr = $('input[name="taskDepotAddr"]').val() // 자원순환센터가 지정되지 않았습니다.
 	if(!taskDepotAddr) {
 		if(strHtml) strHtml += '</br>';
 		strHtml += strHtmlAlertImg + '자원순환센터가 지정되지 않았습니다.';
+	}*/
+	if(!depotKey1 && !depotKey2 && !depotKey3){
+		strHtml += strHtmlAlertImg + '처리장을  선택해주세요.';
 	}
-
+	if(!depotType1 && !depotType2 && !depotType3){
+		strHtml += strHtmlAlertImg + '성상을  선택해주세요.';
+	}
+	if(!_defaultUnloadCnt){
+		strHtml += strHtmlAlertImg + '일운행부담횟수를  선택해주세요.';
+	}
 	if(strHtml){
 		$("#modal3 .modal-txt").html(strHtml);
 		$("#modal3").modal();
