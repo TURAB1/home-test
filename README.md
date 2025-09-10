@@ -1,1716 +1,371 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-<%@ page import="v4.web.vo.GarbageDepotVO" %>
-<script type="text/javascript">
+<!DOCTYPE html>
+<html lang="ko">
 
-var _selVehicle,_selUser;
+<head>
+    <meta charset="utf-8">
+    <title>Smart City Mobile Web View</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="css/common.css" rel="stylesheet">
+    <link href="css/front.css" rel="stylesheet">
 
+    <script src="js/jquery-1.12.4.min.js" type="text/javascript"></script>
+    <script src="js/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="js/axios.min.js" type="text/javascript"></script>
 
-window.temp = {}
-window.temp.latLonRads = {
-	center: {
-		lat: '0',
-		lon: '0',
-		radius: '0'
-	},
-	taskArea: {
-		lat: '0',
-		lon: '0',
-		radius: '0'
-	},
-}
-window.temp.circles = []
-let depotType1,depotType2,depotType3,_defaultUnloadCnt;
-let depotKey1='';
-let depotKey2='';
-let depotKey3='';
+    <script src="js/common.js"></script>
+    <script src="js/api.lib.js"></script>
 
+    <script
+        src="https://apis.openapi.sk.com/tmap/jsv2?version=1&format=javascript&appKey=43e32609-b337-47d5-b058-7813f232c2d5">
+        </script>
+    <script>
+        var objMap;
+        const token = sessionStorage.getItem("token");
+        let _marker = [];
+        let _vehicles = [];
+        var currentInfoWindow = null;
 
-$(function(){
-	
-// 수정을 위한 조회부
-	var _seq = "${seq}";
-	function initFunction(key){
-	
-	$V4.http_post("/api/1/cleanerB/garbageDepot", {},
-		{
-			requestMethod : "GET", 
-			success : function(rtv) {
-			console.log("📦 처리장 목록 조회!:", rtv);
-			if (rtv.result) {
-				$("#getId").val(rtv.result[0].depotKey);
-				depotData=rtv.result
-				const _arrWorkTypes=depotData.arrWorkTypes
-				console.log(JSON.stringify(depotData))
-				
-			    let $select = $('#garbageDepotSelect1,#garbageDepotSelect2,#garbageDepotSelect3');
-			    $select.empty();
-			    $select.append('<option value="">처리장 선택</option>');
-			    depotData.forEach(function(item) {
-			        $select.append(
-			            $('<option>', {
-			                value: item.depotKey,
-			                text: item.depotName
-			            })
-			        );
-			    });
-
-			    $select.on('change', function() {
-			    	 const $allSelects = $('select[id^="garbageDepotSelect"]');
-			    	let _selectedDepotKey = $(this).val();            
-                    const priority = $(this).data('priority');
-                    let selectId = $(this).attr("id");           
-			        let selectedDepotName = $(this).find("option:selected").text();
-      
-                  		if(!_selectedDepotKey)
-			              {  
-			        
-		                    if(priority== 1){
-		                    	depotKey1='';
-		                        depotType1='';
-		                        console.log("no selection1")
-		                    }
-		                    if(priority== 2){
-		                    	depotKey2='';
-		                        depotType2='';
-		                        console.log("no selection2")
-		                
-		                    }
-		                    if(priority== 3){
-		                    	depotKey3='';
-		                        depotType3='';
-		                        console.log("no selection3")
-		                    }
-			              }
-			        let chosenValues = [];
-			        $allSelects.each(function () {
-			        	let selectedDepotKey = $(this).val();
-			            if (selectedDepotKey) {
-			                if (chosenValues.includes(selectedDepotKey)) {
-			                    //alert("이미 선택된 성상입니다.");
-			                    $(this).val(""); // reset duplicate
-			                    
-			                    if(priority== 1){
-			                    	depotKey1='';
-			                        depotType1='';
-			                        selectedDepotKey="";
-			                    }
-			                    if(priority== 2){
-			                    	depotKey2='';
-			                        depotType2='';
-			                        selectedDepotKey="";
-			                       // $('select[id=garbageSelect1]').val($('select[id=garbageSelect1]').val());
-			                       // console.log("2 충복",$('select[id=garbageSelect1]').val());
-			                    }
-			                    if(priority== 3){
-			                    	depotKey3='';
-			                        depotType3='';
-			                        selectedDepotKey="";
-			                    }
-			                } else {
-			                    chosenValues.push(selectedDepotKey);
-						        if (selectedDepotKey !== '') {
-							           if(priority==1){
-							        	   depotKey1 = selectedDepotKey
-							        	   console.log("depotKey1",depotKey1);
-							        		let $select1 = $('#garbageSelect1');
-							        		$select1.empty();
-							        		const selectedDepot = depotData.find(item => item.depotKey === depotKey1);
-							        		console.log("arrWorkTypes",selectedDepot.arrWorkTypes);
-							        		$select1.append($('<option>', {
-							        			  value: "",
-							        			  text: "성상을 선택하세요"
-							        			}));
-							        		selectedDepot.arrWorkTypes.forEach(function(item2) {
-							        		    $select1.append(
-							        		        $('<option>', {
-							        		            value: item2.workType,
-							        		            text: item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_NORMAL%>'?'일반쓰레기'
-							        		            		:item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_FOOD%>'?'음식물쓰레기'
-							        		            		:item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_RECYCLE%>'?'재활용쓰레기'
-							        		            		:item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_LARGE%>'?'대형'
-					        		            				:item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_ROAD%>'?'노면청소'
-							        		            		:''
-							        		        })
-							        		    );
-							        		});
-
-							        		// selection change event
-							        		$select1.on('change', function() {
-							        		    let workType = $(this).val();            // value (name)
-							        		    let workTypeDetail = $(this).find("option:selected").text(); // displayed text (score)
-			                                    depotType1=workType;
-							        		    console.log("SelWorkType1",depotType1);
-							        		   
-							        		});
-							           }
-							           if(priority==2)
-							           {  
-							        	   depotKey2 = selectedDepotKey
-							        
-							        		let $select2 = $('#garbageSelect2');
-							        		$select2.empty();
-							        		const selectedDepot = depotData.find(item => item.depotKey === depotKey2);
-							        		$select2.append($('<option>', {
-							        			  value: "",
-							        			  text: "성상을 선택하세요"
-							        			}));
-							        		selectedDepot.arrWorkTypes.forEach(function(item2) {
-							        		    $select2.append(
-							        		        $('<option>', {
-							        		            value: item2.workType,
-							        		            text: item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_NORMAL%>'?'일반쓰레기'
-							        		            		:item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_FOOD%>'?'음식물쓰레기'
-							        		            		:item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_RECYCLE%>'?'재활용쓰레기'
-							        		            		:item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_LARGE%>'?'대형'
-					        		            				:item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_ROAD%>'?'노면청소'
-							        		            		:''
-							        		        })
-							        		    );
-							        		});
-
-							        		// selection change event
-							        		$select2.on('change', function() {
-							        		    let workType = $(this).val();            // value (name)
-							        		    let workTypeDetail = $(this).find("option:selected").text(); // displayed text (score)
-			                                    depotType2=workType;
-							        		    console.log("SelWorkType2",depotType2);
-							        		});
-							           }
-							           if(priority==3)
-							           {
-							        	   depotKey3 = selectedDepotKey
-							        	   console.log("test here")
-							        		let $select3 = $('#garbageSelect3');
-							        		$select3.empty();
-							        		const selectedDepot = depotData.find(item => item.depotKey === depotKey3);
-							        		$select3.append($('<option>', {
-							        			  value: "",
-							        			  text: "성상을 선택하세요"
-							        			}));
-							        		selectedDepot.arrWorkTypes.forEach(function(item2) {
-							        		    $select3.append(
-							        		        $('<option>', {
-							        		            value: item2.workType,
-							        		            text: item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_NORMAL%>'?'일반쓰레기'
-							        		            		:item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_FOOD%>'?'음식물쓰레기'
-							        		            		:item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_RECYCLE%>'?'재활용쓰레기'
-							        		            		:item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_LARGE%>'?'대형'
-					        		            				:item2.workType=='<%=GarbageDepotVO.DEPOT_ABLIABLE_WORK_TYPE_ROAD%>'?'노면청소'
-							        		            		:''
-							        		        })
-							        		    );
-							        		});
-
-							        		// selection change event
-							        		$select3.on('change', function() {
-							        		    let workType = $(this).val();            // value (name)
-							        		    let workTypeDetail = $(this).find("option:selected").text(); // displayed text (score)
-			                                    depotType3=workType;
-							        		    console.log("SelWorkType3",depotType3);
-							        		});
-							           }    	   
-							        }
-			                    console.log("chosen value:",chosenValues)
-			                }
-			            
-			          }
-			        });
-
-			        
-			    });
-			    
-			    loadTask(key);
-			} else {
-				$("#getId").val("");
-			}
-		}
-	});
-	}
-	initFunction(_seq);
-	
-
-	// 좌측표 부분 높이 조절
-	$('.aside').css({
-		height: ($('.map-wrap').outerHeight() - $('.map-wrap .title').outerHeight() - 2) + 'px',
-		overflowY: 'auto',
-		overflowX: 'hidden'
-	})
-
-	// 자원순환센터 반경 option 추가
-	const $fenceRadius = $('#fenceRadius')
-	for(let i = 250 ; i <= 1000 ; i += 50){
-		$fenceRadius.append(`<option \${i === 250 ? 'selected' : ''} value="\${i}">\${i}m</option>`)
-	}
-	$fenceRadius.on('change', function(){
-		temp.latLonRads.center.radius = $(this).val()
-		$('input[name="taskDepotRadius"]').val($(this).val())
-	})
-	
-	
-	// $(".btnArrow").on("click",function(){
-	// 	var max = 255;
-	// 	var isUp = $(this).hasClass('btn-up');
-	// 	var cnt = $("#defaultUnloadCnt").val();
-	//
-	// 	cnt = cnt?parseInt(cnt):0;
-	//
-	// 	if(isUp) cnt += 1;
-	// 	else cnt -= 1;
-	//
-	// 	if (cnt < 0) cnt = 0;
-	// 	else if(cnt > max) cnt = max;
-	//
-	// 	$("#defaultUnloadCnt").val(cnt);
-	//
-	// });
-	
-	$(".numberMax").on("keyup",function(){
-		var val = $(this).val().replace(/[^0-9]/gi,"");
-		if(parseInt(val) > 255) val = 255;
-		$(this).val(val);
-	});
-	
-	$(".switch").on("click",function(){
-		var isChk = $(this).is(":checked");
-		if(isChk) $(".trDate").hide();
-		else $(".trDate").show();
-		
-		
-	});
-	
-	$( ".sorting" ).sortable({
-		update: function( event, ui ) {
-			//console.log(event);
-			//console.log(ui);
-			//var el = event.toElement;
-			
-			$(".sorting").children("div").each(function(i){
-				$(this).find("div.num").text(i+1);
-			});
-			
-		}	
-	});
-	
-	$('#addrs-tr').on("click",'.btn-del',function(){
-		
-		var targetDiv = $(this).closest('.box');
-		
-		var dataInfo = targetDiv.data("info");
-		if(dataInfo){
-			var info = base64ToJsonObj(dataInfo);
-			var mapFrame = $("#frame").get(0).contentWindow;
-	    	mapFrame.removePoint(info.idx);	
-		}
-		
-		
-		targetDiv.remove();
-		
-		$(".sorting").children("div").each(function(i){
-			$(this).find("div.num").text(i+1);
-		});
-		
-		if(!$(".sorting").children("div").length)  appendBox(null);
-		
-		
-		
-		
-	});
-	    $("#unload-count").on("change", function() {
-         _defaultUnloadCnt=$(this).val();
-        
-       
-    });
-	
-	$('input.time').timepicker(timepickerOpt);
+        $(document).ready(function () {
 
 
-	const setOutterCircle = function(){
-		const _circle = temp.circles;
-		const v = {}
-		const arrTaskList = []
-
-		for(var g in _circle){
-			const item = {}
-			// console.log(_circle[g]._shape_data.center)
-			item['lat'] = _circle[g]['_shape_data'].center['_lat']
-			item['lon'] = _circle[g]['_shape_data'].center['_lng']
-			item['radius'] = _circle[g]['_shape_data'].radius
-			arrTaskList.push(item)
-		}
-
-		v['arrTaskList'] = arrTaskList
-
-		// $V4.http_post("/common/json/test/testMapCircle.json",v,{
-		$V4.http_post("/api/1/cleaner/findMinimumEnclosingCircleWGS84",v,{
-			requestMethod:"POST"
-			,success : function(data){
-
-				// const obj = getProperty(data,"result");
-				// const lat = getProperty(data,"center.x",0);
-				// const lon = getProperty(data,"center.y",0);
-				// const radius = getProperty(data,"radius",0);
-
-				const taskArea = temp.latLonRads.taskArea;
-				taskArea.lat = '' + data.center.y;
-				taskArea.lon = '' + data.center.x;
-				taskArea.radius = '' + data.radius + 200;
-
-				// const radius = data.radius + 100;
-				//
-				// var circle = new Tmapv2.Circle({
-				//     center: new Tmapv2.LatLng(lat, lon), // 중심좌표
-				//     fillColor: "#FF0000", // 원 내부 색상
-				//     fillOpacity : 0.2, //원 내부 투명도
-				//     strokeColor: "#FF0000", // 테두리 색상
-				//     strokeWeight : 3, //테두리 두께
-				//     radius: radius, // 원의 반지름. 크기설정
-				//     map: objMap // 지도 객체
-				// });
-			}
-		});
-	}
-
-	
-	$('#btnMap').on("click",function(){
-		
-		if(valid()){
-			setOutterCircle()
-			if(warning()){
-				preview();
-			}
-			
-			
-		}
-	});
-	
-	$("#btnWaringContiue").on("click",function(){
-		$("#btnWaringBreak").trigger("click");
-		preview();
-	});
-
-	$("#previewBreak").on("click",function(){
-		$("#car-map").dialog("close");
-	});
-	
-	var preview = function(){
-		
-		$("#car-map").dialog({
-            autoOpen: true,
-            show: {
-                duration: 500
-            },
-            width: '600',
+            objMap = new Tmapv2.Map("mapDiv",
+                {
+                    width: "100%"
+                    , height: "100%"
+                    , animation: true
+                    , draggable: true
+                });
         });
-		
-		var param = {arrPoints : []};
-		
-		$(".sorting").children("div").each(function(i){
-			var dataInfo = $(this).data("info");
-			if(dataInfo){
-				var info = base64ToJsonObj(dataInfo);
-				param['arrPoints'].push({lat:info.lat , lon:info.lon , addr : info.addr , radius : 50 , idx : (i+1)});
-			}
-		});
-		
-		var _interval = setInterval(function(){
-			var mapFrame = $("#mapPreview").get(0).contentWindow;
-			if(mapFrame && mapFrame.drawPreview) {
-				clearInterval(_interval);
-				mapFrame.drawPreview(param);
-			}
-		},100);
-	}
-	
-	$("#previewConfirm").on("click",function(){
-		$("#finalConfirm").attr('disabled', false);
-		$("#modal4").modal();
-	});
-	
-	$("#finalConfirm,#test-data").on("click",function(ev){
-		$(this).attr('disabled', true);
-		
-		var v = $('#frm').serializeObject(1);
-		
-		delete v['lat'];
-		delete v['lon'];
-		delete v['radius'];
-		delete v['addr'];
-		delete v['targetTime'];
-		
-		v['daySun'] = $("input[name=daySun]").is(":checked")?1:0;
-		v['dayMon'] = $("input[name=dayMon]").is(":checked")?1:0;
-		v['dayTue'] = $("input[name=dayTue]").is(":checked")?1:0;
-		v['dayWed'] = $("input[name=dayWed]").is(":checked")?1:0;
-		v['dayThu'] = $("input[name=dayThu]").is(":checked")?1:0;
-		v['dayFri'] = $("input[name=dayFri]").is(":checked")?1:0;
-		v['daySat'] = $("input[name=daySat]").is(":checked")?1:0;
-		v['roop'] = $("input[name=roop]").is(":checked")?1:0;    
-		
-		if(v['roopStart']) v['roopStart'] = $("input[name=roopStart]").datepicker( "getDate" ).getTime();
-		if(v['roopEnd']) v['roopEnd'] = $("input[name=roopEnd]").datepicker( "getDate" ).getTime();
-
-		v['taskAreaLat'] = JSON.parse(temp.latLonRads.taskArea.lat);
-		v['taskAreaLon'] = JSON.parse(temp.latLonRads.taskArea.lon);
-		v['taskAreaRadius'] = JSON.parse(temp.latLonRads.taskArea.radius);
-
-		// v['taskDepotLat'] = temp.latLonRads.center.lat;
-		// v['taskDepotLon'] = temp.latLonRads.center.lon;
-		// v['taskDepotRadius'] = temp.latLonRads.center.radius;
-		
-		var arrPoints = [];
-		
-		$(".sorting").children("div").each(function(i){
-			arrPoints.push(
-				{addr : $(this).find("input[name=addr]").val()
-				,lat :  JSON.parse($(this).find("input[name=lat]").val())
-				,lon :  JSON.parse($(this).find("input[name=lon]").val())
-				,radius :  JSON.parse($(this).find("input[name=radius]").val())
-				,targetTs : HHMMtoSec($(this).find("input[name=targetTime]").val())
-				,idx :  (i+1)}
-			);
-		});
-		
-		v['arrTaskList'] = arrPoints;
-
-		v['taskDepotChk'] = $("input[name=taskDepotChk]").is(":checked")?1:0;
-		
-		v['defaultUnloadCnt']=JSON.parse(_defaultUnloadCnt)
-        v['depotKey1']=depotKey1?depotKey1:null
-        v['depotType1']=depotType1?depotType1:null
-        v['depotKey2']=depotKey2?depotKey2:null
-        v['depotType2']=depotType2?depotType2:null
-        v['depotKey3']=depotKey3?depotKey3:null
-        v['depotType3']=depotType3?depotType3:null
-	   console.log("수정 데이터",JSON.stringify(v))
-
-		$V4.http_post("/api/1/cleaner/taskChecker?ignoreSeq="+_seq,v,{
-			requestMethod : "POST"
-			,success : function(rtv){
-				
-				if(rtv['result']){
-					$("#modal3 .modal-txt").html("스케쥴명 : '"+rtv['result']['taskName']+"' 과 중복되어 등록불가능합니다.");
-					$(this).attr('disabled', false);
-					$("#modal3").modal();
-					$("#finalBreak").trigger("click");
-				}else{
-					
-					$V4.http_post("/api/1/cleanerB/task/"+_seq,v,{
-						requestMethod : "PUT"
-						,success : function(rtv){
-							alert("저장되었습니다.");
-							$V4.move(null,'/config/geoTask/list');
-				    	}
-						,error : function(e){
-							console.log(e);
-							$(this).attr('disabled', false);
-							alert("알수없는 오류가 발생하였습니다.\n관리자에게 문의하여 주십시오.");
-						}  
-					});
-					
-					
-				}
-				
-				
-				
-    			
-	    	}
-			,error : function(e){
-				console.log(e);
-			}  
-		});
-		
-
-		
-	});
-	
-	$("#pop_btnSearch").on("click",$.debounce(500,1,function(){
-		
-		var param = $("#pop_taskTable").commonLazy("getParam");
-		
-		var fillter = $("#car-schedule .btnTaskFillter.active").data('fillter');
-		
-		param['searchTaskType'] = fillter;
-		param['searchType'] = $("#pop_taskSearchType").val();
-		param['searchText'] = $.trim($("#pop_taskSearchText").val());		
-			
-		$('#pop_taskTable').commonLazy("setParam",param).search();
-		
-		
-	}));
-	
-	$("#pop_taskSearchText").on("keyup",function(e){
-		if(e.keyCode == 13) $("#pop_btnSearch").trigger("click");
-	});
-	
-	$("#car-schedule .btnTaskFillter").on("click",function(){
-		$("#car-schedule .btnTaskFillter").removeClass("active");
-		$(this).addClass("active");
-		$("#pop_btnSearch").trigger("click");
-	});
-	
-	$('#BtnCarSchedule').on("click",function(){
-		
-		var setting = {
-			thead :
-				[			
-					,'스케쥴성상'
-					,'차량 정보'
-					,'스케쥴명'
-					,'운전자'
-					,'작업기간'
-					,'불러오기'
-		   	    ]
-	   		,bodyHtml : function(data){
-	   			var strHtml = "";
-	   			for(var i in data.result){
-	   				var obj = data.result[i];
-	   				
-	   				strHtml += '<tr>';
-	   				
-	   				var taskType = getProperty(obj,"taskType","-1");
-					var taskTypeName = taskType=="0"?"일반쓰레기":taskType=="1"?"음식물쓰레기":taskType=="2"?"재활용쓰레기":taskType=="3"?"대형폐기물":taskType=="4"?"폐형광등 등 기타":taskType=="5"?"기동처리반":"";
-					var vehicle = getProperty(obj,"vehicle");
-	   				strHtml += '<td>'+taskTypeName+'</td>';
-	   				strHtml += '<td>';
-	   				strHtml += '  <div class="car-img d-flex" style="cursor: pointer;">';
-					strHtml += '  <span class="img"><img src="'+getCommonImgVehicle(vehicle,"S")+'" alt="" /></span>';
-
-					let modelNameText = getProperty(vehicle,"modelNameText","")
-					if(modelNameText === '재활용품수거차') modelNameText = '재활용품 수거차'
-					else if(modelNameText === '음식물쓰레기수거차') modelNameText = '음식물 쓰레기 수거차'
-					else if(modelNameText.length > 4 && modelNameText.indexOf(' ') === -1) { // 차종이 길지만 공백이 없는 경우에 공백 강제 추가
-						let divide4 = modelNameText.length/4|0
-						for(i = 0 ; i < divide4 ; i++) {
-							modelNameText = modelNameText.substring(0, 4*(i+1)+i) + ' ' + modelNameText.substring(4*(i+1)+i)
-						}
-					}
-					strHtml += '  <span class="num">'+modelNameText+'</br>'+getProperty(vehicle,"plateNum","")+'</span>';
-
-					strHtml += '  </div>';
-					strHtml += '</td>';
-	   				
-	   				
-	   				strHtml += '<td>'+getProperty(obj,'taskName','')+'</td>';
-	   				strHtml += '<td>'+getProperty(obj,'account.name','')+'</td>';
-	   				strHtml += '<td>';
-	   					var isRoop = getProperty(obj,'roop',0);
-	   					var roopStart = getProperty(obj,'roopStart',0);
-	   					var roopEnd = getProperty(obj,'roopEnd',0);
-	   					var arrDay = [];
-	   					if(getProperty(obj,'dayMon',0)) arrDay.push('월');
-	   					if(getProperty(obj,'dayTue',0)) arrDay.push('화');
-	   					if(getProperty(obj,'dayWed',0)) arrDay.push('수');
-	   					if(getProperty(obj,'dayThu',0)) arrDay.push('목');
-	   					if(getProperty(obj,'dayFri',0)) arrDay.push('금');
-	   					if(getProperty(obj,'daySat',0)) arrDay.push('토');
-	   					if(getProperty(obj,'daySun',0)) arrDay.push('일');
-	   					if(!isRoop){
-	   						strHtml += new Date(roopStart).format('yyyy-MM-dd')+' 부터 '+new Date(roopEnd).format('yyyy-MM-dd')+' 까지</br>';
-	   					}
-	   				
-	   					strHtml += arrDay.join(",");
-	   				strHtml += '</td>';
-	   				
-	   				strHtml += '<td><button class="states-value state05 btn-toggle btnTaskLoad" data-key="'+getProperty(obj,'seq')+'">불러오기</button></td>';
-	   				strHtml += '</tr>';
-	   			}
-	   			return strHtml;
-	   		}
-	   		,limit : 10
-	   		,url : "/api/1/cleanerB/task"
-	   		,param : {}
-	   		,http_post_option : {
-	   			requestMethod : "GET"
-	   			,header : {}
-	   		}
-	   		,initSearch : true //생성과 동시에 search		
-	   		,loadingBodyViewer : true //로딩중!! 표시됨
-	   		,debugMode : true
-		};
-		
-		$("#pop_taskTable").commonLazy(setting);
-		
-		
-		$("#car-schedule").dialog({
-            autoOpen: true,
-            show: {
-                duration: 500
-            },
-            width: '1000',
-        });	
-	});
-	
-	$("body").on("click",".btnTaskLoad",function(){
-		var key = $(this).data('key');
-		_seq=key
-		
-		//loadTask(key);
-		initFunction(key)
-		
-		$("#car-schedule").dialog('close');	
-	});
-	
-/////////////
-	$('.btnVehiclePop').on("click",function(){
-		
-		var setting = {
-			thead :
-				[			
-					,'차량정보'
-					,'차량 성상'
-					,'비고'
-					,'선택'
-		   	    ]
-	   		,bodyHtml : function(data){
-	   			var strHtml = "";
-	   			for(var i in data.result){
-	   				var obj = data.result[i];
-	   				
-	   				strHtml += '<tr>';
-	   				
-	   				var taskType = getProperty(obj,"cleanerType","-1");
-					var taskTypeName = taskType=="0"?"일반쓰레기":taskType=="1"?"음식물쓰레기":taskType=="2"?"재활용쓰레기":taskType=="3"?"대형폐기물":taskType=="4"?"폐형광등 등 기타":taskType=="5"?"기동처리반":"";
-					
-	   				strHtml += '<td>';
-	   				strHtml += '  <div class="car-img" style="cursor: pointer;">';
-					strHtml += '  <span class="img"><img src="'+getCommonImgVehicle(obj,"S")+'" alt="" /></span>';
-					strHtml += '  <span class="num">'+getProperty(obj,"modelNameText","")+'</br>'+getProperty(obj,"plateNum","")+'</span>';
-					strHtml += '  </div>';
-					strHtml += '</td>';
-	   				strHtml += '<td>'+taskTypeName+'</td>';
-	   				
-	   				
-	   				strHtml += '<td>'+getProperty(obj,'descript','')+'</td>';
-	   				strHtml += '<td><button class="states-value state05 btn-toggle btn_selVehicle" data-info="'+jsonObjToBase64(obj)+'">선택하기</button></td>';
-	   				strHtml += '</tr>';
-	   			}
-	   			return strHtml;
-	   		}
-	   		,limit : 10
-	   		,url : "/api/1/vehicle"
-	   		,param : {}
-	   		,http_post_option : {
-	   			requestMethod : "GET"
-	   			,header : {}
-	   		}
-	   		,initSearch : true //생성과 동시에 search		
-	   		,loadingBodyViewer : true //로딩중!! 표시됨
-	   		,debugMode : true
-		};
-		
-		$("#car-choice table").commonLazy(setting);
-		
-		$("#car-choice").dialog({
-            autoOpen: true,
-            show: {
-                duration: 500
-            },
-            width: '1000',
-        });	
-		
-		
-	});
-	
-	
-	
-	$("body").on("click",".btn_selVehicle",function(){
-		var info = base64ToJsonObj($(this).data("info"));
-		
-		_selVehicle = info;
-		
-		$('input[name="plateNum"]').val(info.plateNum);
-		$('input[name="vehicleKey"]').val(info.vehicleKey);
-		
-		$("#car-choice").dialog('close');	
-	});
-	
-	$("#pop_btnVeihcleSearch").on("click",$.debounce(500,1,function(){
-		
-		var param = $("#car-choice table").commonLazy("getParam");
-		
-		var fillter = $("#car-choice .btnTaskFillter.active").data('fillter');
-		
-		param['cleanerType'] = fillter;
-		param['searchType'] = $("#pop_vehicleSearchType").val();
-		param['searchText'] = $.trim($("#pop_vehicleSearchText").val());		
-			
-		$('#car-choice table').commonLazy("setParam",param).search();
-		
-		
-	}));
-	
-	$("#pop_vehicleSearchText").on("keyup",function(e){
-		if(e.keyCode == 13) $("#pop_btnVeihcleSearch").trigger("click");
-	});
-	
-	$("#car-choice .btnTaskFillter").on("click",function(){
-		$("#car-choice .btnTaskFillter").removeClass("active");
-		$(this).addClass("active");
-		$("#pop_btnVeihcleSearch").trigger("click");
-	});
-	///////////
-	
-	$('.btnUserPop').on("click",function(){
-		
-		var setting = {
-			thead :
-				[			
-					,'부서'
-					,'성명'
-					,'비고'
-					,'선택'
-		   	    ]
-	   		,bodyHtml : function(data){
-	   			var strHtml = "";
-	   			for(var i in data.result){
-	   				var obj = data.result[i];
-	   				
-	   				strHtml += '<tr>';
-	   				
-	   				
-					
-	   				strHtml += '<td>';
-	   				if(obj.group&&obj.group.parentGroupNm){
-	   					strHtml += (obj.group&&obj.group.parentGroupNm)?(convertNullString(obj.group.parentGroupNm)):"";
-						strHtml += (obj.group&&obj.group.groupNm)?("/"+convertNullString(obj.group.groupNm)):"";
-	   				}else{
-						strHtml += (obj.group&&obj.group.groupNm)?(convertNullString(obj.group.groupNm)):"";
-	   				}
-	   				
-					strHtml += '</td>';
-					
-	   				strHtml += '<td>'+getProperty(obj,'name','')+'</td>';
-	   				strHtml += '<td>'+getProperty(obj,'descript','')+'</td>';
-	   				strHtml += '<td><button class="states-value state05 btn-toggle btn_selUser" data-info="'+jsonObjToBase64(obj)+'">선택하기</button></td>';
-	   				strHtml += '</tr>';
-	   			}
-	   			return strHtml;
-	   		}
-	   		,limit : 10
-	   		,url : "/api/1/account"
-	   		,param : {}
-	   		,http_post_option : {
-	   			requestMethod : "GET"
-	   			,header : {}
-	   		}
-	   		,initSearch : true //생성과 동시에 search		
-	   		,loadingBodyViewer : true //로딩중!! 표시됨
-	   		,debugMode : true
-		};
-		
-		$("#car-user table").commonLazy(setting);
-		
-		$("#car-user").dialog({
-            autoOpen: true,
-            show: {
-                duration: 500
-            },
-            width: '800',
-        });	
-		
-		
-	});
-	
-	
-	
-	$("body").on("click",".btn_selUser",function(){
-		var info = base64ToJsonObj($(this).data("info"));
-		
-		_selUser = info;
-		
-		$('input[name="accountName"]').val(info.name);
-		$('input[name="accountKey"]').val(info.accountKey);
-		
-		$("#car-user").dialog('close');	
-	});
-	
-	$("#pop_btnUserSearch").on("click",$.debounce(500,1,function(){
-		
-		var param = $("#car-user table").commonLazy("getParam");
-		
-		param['searchType'] = $("#pop_userSearchType").val();
-		param['searchText'] = $.trim($("#pop_userSearchText").val());		
-			
-		$('#car-user table').commonLazy("setParam",param).search();
-		
-		
-	}));
-	
-	$("#pop_userSearchText").on("keyup",function(e){
-		if(e.keyCode == 13) $("#pop_btnUserSearch").trigger("click");
-	});
-});
-
-function loadTask(seq){
-	$V4.http_post("/api/1/cleanerB/task/"+seq,{appendChild:true},{
-		requestMethod : "GET"
-		,success : function(rtv){
-			
-			setTask(rtv['result']);
-			
-			
-			
-			
-		}
-		,error : function(e){
-			console.log(e);
-		}  
-	});
-}
-
-function setTask(obj){
-	
-	 depotKey1 = getProperty(obj,'garbageDepot1.depotKey');	
-	 depotType1 = getProperty(obj,'depotType1');
-	 depotKey2 = getProperty(obj,'garbageDepot2.depotKey');	
-	 depotType2 = getProperty(obj,'depotType2');
-	 depotKey3 = getProperty(obj,'garbageDepot3.depotKey');	
-	 depotType3 = getProperty(obj,'depotType3');
-	 console.log("test",depotKey1,depotKey2,depotKey3);
-	
-	 if(depotKey1 && depotType1) {
-
-		$("#garbageDepotSelect1").val(depotKey1);
-		//$("#garbageDepotSelect1").trigger('change');
-		$("#garbageSelect1").val(depotType1);
-		//$("#garbageSelect1").trigger("change");
-		
-	}else{
-		$("#garbageDepotSelect1").val("");
-		//$("#garbageDepotSelect1").trigger('change');
-		$("#garbageSelect1").val("");
-		//$("#garbageSelect1").trigger("change");	
-	}
-	if(depotKey2 && depotType2) {
-
-		$("#garbageDepotSelect2").val(depotKey2);
-		//$("#garbageDepotSelect2").trigger('change');
-		$("#garbageSelect2").val(depotType2);
-		//$("#garbageSelect2").trigger("change");
-		
-	}else{
-		$("#garbageDepotSelect2").val("");
-		//$("#garbageDepotSelect2").trigger('change');
-		$("#garbageSelect2").val("");
-		//$("#garbageSelect2").trigger("change");
-	
-	}
-	if(depotKey3 && depotType3) {
-
-		$("#garbageDepotSelect3").val(depotKey3);
-		//$("#garbageDepotSelect3").trigger('change');
-		$("#garbageSelect3").val(depotType3);
-		//$("#garbageSelect3").trigger("change");
-		
-		
-	}else{
-		$("#garbageDepotSelect3").val("");
-		//$("#garbageDepotSelect3").trigger('change');
-		$("#garbageSelect3").val("");
-		//$("#garbageSelect3").trigger("change");
-	}
-	
-	$("#unload-count").val(getProperty(obj,'defaultUnloadCnt'));
-	_defaultUnloadCnt=getProperty(obj,'defaultUnloadCnt')
-	
-	_selVehicle = getProperty(obj,'vehicle');
-
-	window.temp.latLonRads.center.lat = '' + getProperty(obj,'taskDepotLat',"0");
-	window.temp.latLonRads.center.lon = '' + getProperty(obj,'taskDepotLon',"0");
-	window.temp.latLonRads.center.radius = '' + getProperty(obj,'taskDepotRadius',"0");
-	$('#fenceRadius').val(window.temp.latLonRads.center.radius !== "0" ? window.temp.latLonRads.center.radius : "250")
-
-	window.temp.latLonRads.taskArea.lat = '' + getProperty(obj,'taskAreaLat',"0");
-	window.temp.latLonRads.taskArea.lon = '' + getProperty(obj,'taskAreaLon',"0");
-	window.temp.latLonRads.taskArea.radius = '' + getProperty(obj,'taskAreaRadius',"0");
-
-	const taskAreas = [];
-	const defaultCleanerArea = getProperty(obj, 'vehicle.defaultCleanerArea', []);
-
-	if(!defaultCleanerArea.length) defaultCleanerArea.push({
-		area : {lev3 : {areaNmKr : ''}}
-	})
-
-	for(const it of defaultCleanerArea) taskAreas.push(getProperty(it, 'area.lev3.areaNmKr'));
-
-	$('#cleanerArea').val(taskAreas.join(', '))
-
-	$("#taskName").val(getProperty(obj,'taskName'));
-	$("input[name=plateNum]").val(getProperty(obj,'vehicle.plateNum'));
-	$("input[name=vehicleKey]").val(getProperty(obj,'vehicle.vehicleKey'));
-	$("input[name=accountName]").val(getProperty(obj,'account.name'));
-	$("input[name=accountKey]").val(getProperty(obj,'account.accountKey'));
-	// $("input[name=defaultUnloadCnt]").val(getProperty(obj,'defaultUnloadCnt',0));
-	$("select[name=taskType]").val(getProperty(obj,'taskType'));
-	
-	if(getProperty(obj,'roop','0')=='1') {
-		$("input[name=roop]").prop("checked",true);
-		$(".trDate").hide();
-	}
-	if(getProperty(obj,'roopStart')) $("input[name=roopStart]").datepicker("setDate", new Date(getProperty(obj,'roopStart')) );
-	if(getProperty(obj,'roopEnd')) $("input[name=roopEnd]").datepicker("setDate", new Date(getProperty(obj,'roopEnd')) );
-	
-	if(getProperty(obj,'daySun')) $("input[name=daySun]").prop("checked",true);
-	if(getProperty(obj,'dayMon')) $("input[name=dayMon]").prop("checked",true);
-	if(getProperty(obj,'dayTue')) $("input[name=dayTue]").prop("checked",true);
-	if(getProperty(obj,'dayWed')) $("input[name=dayWed]").prop("checked",true);
-	if(getProperty(obj,'dayThu')) $("input[name=dayThu]").prop("checked",true);
-	if(getProperty(obj,'dayFri')) $("input[name=dayFri]").prop("checked",true);
-	if(getProperty(obj,'daySat')) $("input[name=daySat]").prop("checked",true);
-	
-	var _i = 0;
-	var mapFrame = $("#frame").get(0).contentWindow;
-	var _interval = setInterval(function(){
-		if(mapFrame && mapFrame.outerReset && mapFrame.isLoaded()) {
-			clearInterval(_interval);
-			mapFrame._o['initCenter'] = 1;
-			mapFrame.outerReset();
-			
-			$(".sorting").html("");
-			// appendBox(null);
-			
-			for(var i in getProperty(obj,'arrTaskList',[])){
-				var aTask = getProperty(obj,'arrTaskList',[])[i];
-
-				if(aTask['idx']) aTask['idx']++;
-				else aTask['idx'] = 1;
-
-				addPoint(aTask);
-				
-				mapFrame.addNewPoint(aTask['lat'],aTask['lon'],aTask['radius'],aTask['addr'],true);	
-			}
-
-			const taskDepotLat = '' + getProperty(obj,'taskDepotLat', "0")
-			const taskDepotLon = '' + getProperty(obj,'taskDepotLon', "0")
-			const taskDepotRadius = '' + getProperty(obj,'taskDepotRadius', "0")
-
-			$('.returnCenterLat').val(taskDepotLat);
-			$('.returnCenterLon').val(taskDepotLon);
-			$('.returnCenterRadius').val(taskDepotRadius);
-			$('.returnCenterAddr').val(getProperty(obj,'taskDepotAddr'));
-
-
-
-			if(getProperty(obj,'taskDepotChk') === '1') {
-				$('input[name=taskDepotChk]').attr('checked', true)
-			}
-
-			if(taskDepotLat !== "0" && taskDepotLon !== "0") {
-				var returnCenterObj = {}
-
-				returnCenterObj['lat'] = $('.returnCenterLat').val();
-				returnCenterObj['lon'] = $('.returnCenterLon').val();
-				returnCenterObj['radius'] = $('.returnCenterRadius').val();
-				returnCenterObj['addr'] = $('.returnCenterAddr').val();
-
-				window.temp.latLonRads.center.lat = taskDepotLat
-				window.temp.latLonRads.center.lon = taskDepotLon
-				window.temp.latLonRads.center.radius = taskDepotRadius
-
-				addPoint(returnCenterObj, 'returnCenter')
-
-				mapFrame.addNewPoint2(returnCenterObj['lat'], returnCenterObj['lon'], returnCenterObj['radius'], returnCenterObj['addr'],true);
-			}
-			mapFrame.setCenter();
-
-		}
-	},100);
-
-
-	
-	
-}
-
-
-
-var timepickerOpt = {
-	    timeFormat: 'HH:mm',
-	    zindex : 11,
-	    interval: 1,
-	    minTime: '3',
-	    maxTime: '8:00pm',
-	    defaultTime: '3',
-	    startTime: '03:00',
-	    dynamic: false,
-	    dropdown: true,
-	    scrollbar: true
-	};
-	
-function addPoint(obj,type){
-	$('.chk-border').removeClass('selected')
-
-	if(type == 'returnCenter'){
-		$('.clickableRC').addClass('selected');
-
-		$('.returnCenterRadius').val(getProperty(obj,'radius'))
-		$('.returnCenterLat').val(getProperty(obj,'lat'))
-		$('.returnCenterLon').val(getProperty(obj,'lon'))
-		$('.returnCenterAddr').val(getProperty(obj,'addr'))
-	}else {
-		var divCnt = $(".sorting").children("div").length;
-	
-		if(divCnt == 1){
-			if($(".sorting").children("div").find("input.inp").val()){
-				appendBox(obj);
-			}else{
-				$(".sorting").children("div").find("input.inp").val(getProperty(obj,"addr"));
-				$(".sorting").children("div").find("input[name=lat]").val(getProperty(obj,"lat"));
-				$(".sorting").children("div").find("input[name=lon]").val(getProperty(obj,"lon"));
-				$(".sorting").children("div").find("input[name=radius]").val(getProperty(obj,"radius"));
-				$(".sorting").children("div").data("info",jsonObjToBase64(obj));
-			}
-		}else{
-			appendBox(obj);
-		}
-		$('.addrs-sorting').scrollTop($('.sorting')[0].scrollHeight)
-		$('.clickable').addClass('selected');
-	}
-	
-}
-
-function addRoute(obj){
-	
-	$("#route").val(JSON.stringify(obj));
-
-}
-
-function appendBox(obj){
-	
-	var divCnt = $(".sorting").children("div").length;
-	
-	var targetTime;
-	if(obj && obj.hasOwnProperty("targetTs")) {
-		targetTime = secToHHMM(obj.targetTs);
-	}
-	var strHtml = '<div class="box">';
-		strHtml += '<div class="num">'+(divCnt+1)+'</div>' ;
-		strHtml += '<div class="addr"><input type="text" class="inp" value="'+getProperty(obj,"addr","")+'" placeholder="지도에서 선택해주세요." readonly name="addr"></div>';
-		strHtml += '<div class="time"><input type="text" class="time" placeholder="도착시간" name="targetTime"><input type="hidden" name="lat" value="'+getProperty(obj,"lat","")+'"><input type="hidden" name="lon" value="'+getProperty(obj,"lon","")+'"><input type="hidden" name="radius" value="'+getProperty(obj,"radius","")+'"></div>';
-		strHtml += '<button class="btn-del"></button>';
-		strHtml += '</div>';
-	
-	$(".sorting").append(strHtml);
-
-	if(obj) $(".sorting").children("div").last().data("info",jsonObjToBase64(obj));
-	
-	$(".sorting").children("div").last().find('input.time').timepicker(timepickerOpt);
-	targetTime?$(".sorting").children("div").last().find('input.time').val(targetTime):'';	
-		
-}
-
-function valid(){
-	var rtv = false;
-	
-	var strHtmlAlertImg = '<i><img src="${pageContext.request.contextPath}/common/new/img/common/ico_alert.png"></i>'; //스케줄과 차량의 성상이 다릅니다.
-	var strHtml = '';
-	
-	var taskName = $.trim($("#taskName").val()); //스케쥴 명을 입력해주세요.
-	if(!taskName) {
-		if(strHtml) strHtml += '</br>';
-		strHtml += strHtmlAlertImg + '스케쥴 명을 입력해주세요.';		
-	}
-	
-	
-	
-	var vehicleKey = $.trim($("input[name=vehicleKey]").val()); //차량을 선택해주세요.
-	if(!vehicleKey) {
-		if(strHtml) strHtml += '</br>';
-		strHtml += strHtmlAlertImg + '차량을 선택해주세요.';		
-	}
-	
-	var accountKey = $.trim($("input[name=accountKey]").val()); //운전자를 선택해주세요.
-	if(!accountKey) {
-		if(strHtml) strHtml += '</br>';
-		strHtml += strHtmlAlertImg + '운전자를 선택해주세요.';		
-	}
-	
-	// var defaultUnloadCnt = parseInt($("#defaultUnloadCnt").val()); //일일 운행부담횟수를 입력해주세요.
-	// if(!defaultUnloadCnt) {
-	// 	if(strHtml) strHtml += '</br>';
-	// 	strHtml += strHtmlAlertImg + '일일 운행부담횟수를 입력해주세요.';
-	// }
-	
-	var daySun = $("input[name=daySun]").is(":checked")?1:0;
-	var dayMon = $("input[name=dayMon]").is(":checked")?1:0;
-	var dayTue = $("input[name=dayTue]").is(":checked")?1:0;
-	var dayWed = $("input[name=dayWed]").is(":checked")?1:0;
-	var dayThu = $("input[name=dayThu]").is(":checked")?1:0;
-	var dayFri = $("input[name=dayFri]").is(":checked")?1:0;
-	var daySat = $("input[name=daySat]").is(":checked")?1:0;
-	//작업 요일을 선택해주세요.
-	if(!daySun && !dayMon && !dayTue && !dayWed && !dayThu && !dayFri && !daySat) {
-		if(strHtml) strHtml += '</br>';
-		strHtml += strHtmlAlertImg + '작업 요일을 선택해주세요.';		
-	}
-	
-	/*
-	var isRoop = $("input[name=roop]").is(":checked");
-	if(!isRoop){
-		if ( !($.trim($("input[name=roopStart]").val()) && $.trim($("input[name=roopEnd]").val())) ){
-			if(strHtml) strHtml += '</br>';
-			strHtml += strHtmlAlertImg + '요일만 설정이 아닐경우 시작시간 종료시간을 입력해주세요.';
-		}
-	}*/
-		
-	
-	var divCnt = $(".sorting").children("div").length;//작업지를 선택해주세요.
-	if(divCnt == 1 && !$(".sorting").children("div").find("input.inp").val()) {
-		if(strHtml) strHtml += '</br>';
-		strHtml += strHtmlAlertImg + '작업지를 선택해주세요.';		
-	}
-	
-	if(divCnt < 3 || divCnt > 200) {
-		if(strHtml) strHtml += '</br>';
-		strHtml += strHtmlAlertImg + '작업지는 3 ~ 200개 여야 합니다.';		
-	}
-
-	/*const taskDepotAddr = $('input[name="taskDepotAddr"]').val() // 자원순환센터가 지정되지 않았습니다.
-	if(!taskDepotAddr) {
-		if(strHtml) strHtml += '</br>';
-		strHtml += strHtmlAlertImg + '자원순환센터가 지정되지 않았습니다.';
-	}*/
-	if(!depotKey1 && !depotKey2 && !depotKey3){
-		strHtml += strHtmlAlertImg + '처리장을  선택해주세요.';
-	}
-	if(!depotType1 && !depotType2 && !depotType3){
-		strHtml += strHtmlAlertImg + '성상을  선택해주세요.';
-	}
-	if(!_defaultUnloadCnt){
-		strHtml += strHtmlAlertImg + '일운행부담횟수를  선택해주세요.';
-	}
-	if((depotKey1 && !depotType1)||(!depotKey1 && depotType1)){
-		strHtml += strHtmlAlertImg + '처리장 1 및 해당 성상   선택해주세요.';
-	}
-	if((depotKey2 && !depotType2)||(!depotKey2 && depotType2)){
-		strHtml += strHtmlAlertImg + '처리장 2 및 해당 성상   선택해주세요.';
-	}
-	if((depotKey3 && !depotType3)||(!depotKey3 && depotType3)){
-		strHtml += strHtmlAlertImg + '처리장 3 및 해당 성상   선택해주세요.';
-	}
-	
-	if(strHtml){
-		$("#modal3 .modal-txt").html(strHtml);
-		$("#modal3").modal();
-		return false;
-	}
-	
-	return true;
-	
-}
-
-function warning(){
-	var rtv = false;
-	var strHtmlAlertImg = '<i><img src="${pageContext.request.contextPath}/common/new/img/common/ico_alert.png"></i>'; 
-	var strHtml = '';
-	
-	var taskType = $("select[name=taskType]").val(); //스케줄과 차량의 성상이 다릅니다.
-	var vehicleCleanerType = getProperty(_selVehicle,'cleanerType','-1');
-	
-	if(taskType != vehicleCleanerType) {
-		if(strHtml) strHtml += '</br>';
-		strHtml += strHtmlAlertImg + '스케줄과 차량의 성상이 다릅니다.';		
-	}
-	
-	var prevSec = 0;
-	$(".sorting").children("div").each(function(i){
-		var time = $(this).find("input.time").val();
-		var sec = HHMMtoSec(time);
-		if(prevSec >= sec){
-			if(strHtml) strHtml += '</br>';
-			strHtml += strHtmlAlertImg + '작업지 도착시간이 정렬되어있지 않습니다. ( '+ (i+1) +'번 작업지)';
-		}
-		
-		prevSec = sec;
-		
-	});
-	
-	
-	if(strHtml){
-		$("#modal2 .modal-txt").html(strHtml);
-		$("#modal2").modal();
-		return false;
-	}
-	
-	return true;
-	
-}
-
-function HHMMtoSec(hhmm){
-	var hh = parseInt(hhmm.split(':')[0]);
-	var mm = parseInt(hhmm.split(':')[1]);
-	
-	return (hh*3600) + (mm * 60);
-}
-function secToHHMM(sec){
-	
-	var h = parseInt(sec/3600);
-	var m = parseInt(parseInt(sec%3600)/60);
-	
-	return (LPAD(h+"",'0',2)) +':'+ (LPAD(m+"",'0',2));
-}
-</script>
-
-<!-- 본문 -->
-        <div class="map-wrap box-layout">
-			<div class="title">
-				<h3 class="tit3">작업 스케줄 상세/수정</h3>
-
-				<%-- 순환센터 지정 임시 버튼 부분 --%>
-<%--				<button id="tempButton" onclick="temp.a()" style="border:1px solid #aaa;padding:10px">순환센터 지정 임시 버튼 (엔터키를 누르세요)</button>--%>
-<%--				<script>$('#tempButton').focus()</script>--%>
-				<%--/ 순환센터 지정 임시 버튼 부분 --%>
-
-				<div class="btn-closed">
-					<a href="" class="icon-spr">닫기</a>
-				</div>
-			</div>
-        	<div class="aside">
-        		<form id="frm" onsubmit="return false;">
-					<div class="scroll-box">
-						<table class="table">
-							<caption>배차정보 리스트</caption>
-							<colgroup>
-								<col style="width:38%" />
-								<col style="width:62%" />
-							</colgroup>
-							<tbody>
-								<tr>
-									<td colspan="2">
-										<div class="map-set-title">
-											<input type="text" placeholder="스케줄 명을 입력해주세요." id="taskName" name="taskName">
-											<input type="hidden" id="route" name="route">
-											<div class="right">
-												<button class="btn btn04 md" id="BtnCarSchedule">불러오기</button>
-											</div>
-										</div>
-
-									</td>
-								</tr>
-								<tr>
-									<th scope="row">스케줄 성상</th>
-									<!--원본<td class="text-right">
-										<select name="taskType">
-											<option value="0">일반 쓰레기</option>
-											<option value="1">음식물 쓰레기</option>
-											<option value="2">재활용 쓰레기</option>
-<%--											<option value="3">대형 폐기물</option>--%>
-<%--											<option value="4">대형광등 등 기타</option>--%>
-<%--											<option value="5">기동처리반</option>--%>
-										</select>
-									</td>-->
-								</tr>
-				               	<tr>
-				                    <td>
-                                        <select id="garbageDepotSelect1" data-priority="1">
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <select id="garbageSelect1" data-priority="1">
-
-                                            <option value="">성상을 선택하세요</option>
-										    <option value="0">일반 쓰레기</option>
-											<option value="1">음식물 쓰레기</option>
-											<option value="2">재활용 쓰레기</option>
-											<option value="3">대형 폐기물</option>
-											<option value="4">노면 청소</option>
-                                        </select>
-                                    </td>
-
-                                </tr>
-                                <tr>
-                                     <td>
-                                        <select id="garbageDepotSelect2" data-priority="2">
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <select id="garbageSelect2" data-priority="2">
-                                            <option value="">성상을 선택하세요</option>
-										    <option value="0">일반 쓰레기</option>
-											<option value="1">음식물 쓰레기</option>
-											<option value="2">재활용 쓰레기</option>
-											<option value="3">대형 폐기물</option>
-											<option value="4">노면 청소</option>
-                                        </select>
-                                    </td>
-
-                                </tr>
-                                <tr>
-                                     <td>
-                                        <select id="garbageDepotSelect3" data-priority="3" >
-                                        
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <select id="garbageSelect3" data-priority="3">
-                                            <option value="">성상을 선택하세요</option>
-										    <option value="0">일반 쓰레기</option>
-											<option value="1">음식물 쓰레기</option>
-											<option value="2">재활용 쓰레기</option>
-											<option value="3">대형 폐기물</option>
-											<option value="4">노면 청소</option>
-                                        </select>
-                                    </td>
-
-                                </tr>				
-								
-								<tr>
-									<td colspan="2">
-										<div class="set-info">
-											<div class="img" id="test-data"><img src="/common/new/img/vehicle/L47.png"></div>
-											<div class="info">
-												<div class="inp-box" id="BtnCarChoice">
-													<p class="tit">차량번호</p>
-													<input type="text" class="inp1 none-border" placeholder="차량번호" name="plateNum" readonly>
-													<input type="hidden" name="vehicleKey"/>
-													<button class="btn-srch btnVehiclePop"><span class="hidden">검색</span></button>
-												</div>
-												<div class="inp-box" id="BtnCarUser">
-													<p class="tit">운전자</p>
-													<input type="text" class="inp1 none-border" placeholder="운전자" value="" name="accountName" readonly>
-													<input type="hidden" name="accountKey"/>
-													<button class="btn-srch btnUserPop"><span class="hidden">검색</span></button>
-												</div>
-<%--												<div class="inp-box values">--%>
-<%--													<p class="tit" style="flex:0 0 120px;">일일 운행부담횟수</p>--%>
-<%--													<input type="text" class="inp1 numberMax" value="1" id="defaultUnloadCnt" name="defaultUnloadCnt">--%>
-<%--													<button class="btn-up btnArrow"></button>--%>
-<%--													<button class="btn-down btnArrow"></button>--%>
-<%--												</div>--%>
-												<div class="inp-box values">
-													<p class="tit">담당구역</p>
-													<input type="text" readonly class="inp1" id="cleanerArea" name="cleanerArea">
-												</div>
-											</div>
-
-										</div>
-									</td>
-								</tr>
-								<!-- 원본<tr>
-									<th scope="row">요일만 설정</th>
-									<td class="text-right">
-										<label><input type="checkbox" class="switch" name="roop"><p><em></em></p></label>
-									</td>
-								</tr>
-								<tr class="trDate">
-									<th scope="row">시작일자</th>
-									<td><input type="text" class="datePicker R-span" value="" name="roopStart"/></td>
-								</tr>
-								<tr class="trDate">
-									<th scope="row">종료일자</th>
-									<td><input type="text" class="datePicker R-span" value="" name="roopEnd"/></td>
-								</tr>
-								<tr>
-									<th scope="row">요일 설정</th>
-									<td>
-										<div class="days-chck">
-											<label><input type="checkbox" class="checkbox-day" name='daySun'><p>일</p></label>
-											<label><input type="checkbox" class="checkbox-day" name='dayMon'><p>월</p></label>
-											<label><input type="checkbox" class="checkbox-day" name='dayTue'><p>화</p></label>
-											<label><input type="checkbox" class="checkbox-day" name='dayWed'><p>수</p></label>
-											<label><input type="checkbox" class="checkbox-day" name='dayThu'><p>목</p></label>
-											<label><input type="checkbox" class="checkbox-day" name='dayFri'><p>금</p></label>
-											<label><input type="checkbox" class="checkbox-day" name='daySat'><p>토</p></label>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td colspan="2" class="chk-border clickableRC">
-										<input type="checkbox" class="select-checkbox" hidden>
-										<h3>자원순환센터</h3>
-<%--										<div class="addrs-tit">자원순환센터를 지정해주세요.(마우스 오른쪽 클릭)</div>--%>
-										<div class="addrs-sorting">
-											<div class="NOsorting">
-												<div class="inNout-box flex mb10">
-													<%--													<div class="inNout-text">자원순환센터</div>--%>
-													<div class="addr" style=" margin-left: auto;">
-														<input type="hidden" name="taskDepotLat"
-															   class="returnCenterLat">
-														<input type="hidden" name="taskDepotLon"
-															   class="returnCenterLon">
-														<input type="hidden" name="taskDepotRadius"
-															   class="returnCenterRadius">
-														<input type="text" name="taskDepotAddr"
-															   class="inp returnCenterAddr" readonly
-															   placeholder="지도에서 선택해주세요.">
-													</div>
-													<select id="fenceRadius">
-														<%--											<option value="">선택해주세요</option>--%>
-													</select>
-												</div>
-												<div class="addrs-tit">지도상에서 마우스 우클릭으로 지정할 수 있습니다.</div>
-												<div class="out-check flex mb5">
-													<input type="checkbox" name="taskDepotChk"> 자원순환센터에서 출발하지 않습니다
-
-													<span class="help">
-														<dl class="help-layer">
-														<dd>
-															자원순환센터에서 출발하지 않지만,<br />작업시작 전 자원순환센터를 방문하시는 경우 체크하세요.<br />자원순환센터 최초 방문 1회를<br />일일운행부담횟수에서 제외합니다.
-														</dd>
-													</dl>
-													</span>
-												</div>
-											</div>
-										</div>
-									</td>
-								</tr>-->
-								<tr>
-                                     <th scope="row">일운행부담횟수</th>
-                                      
-                                     <td style="text-align: right;">
-                                     <input type="number" id="unload-count" min="1" max="10" value="1">
-                                     </td>
-                                </tr>
-								<tr>
-									<th scope="row">요일 설정</th>
-									<td>
-										<div class="days-chck">
-											<label><input type="checkbox" class="checkbox-day" name='daySun'><p>일</p></label>
-											<label><input type="checkbox" class="checkbox-day" name='dayMon'><p>월</p></label>
-											<label><input type="checkbox" class="checkbox-day" name='dayTue'><p>화</p></label>
-											<label><input type="checkbox" class="checkbox-day" name='dayWed'><p>수</p></label>
-											<label><input type="checkbox" class="checkbox-day" name='dayThu'><p>목</p></label>
-											<label><input type="checkbox" class="checkbox-day" name='dayFri'><p>금</p></label>
-											<label><input type="checkbox" class="checkbox-day" name='daySat'><p>토</p></label>
-										</div>
-									</td>
-								</tr>
-								<tr id="addrs-tr">
-									<td colspan="2" class="chk-border clickable">
-										<h3>작업지</h3>
-										<%--										<div class="addrs-tit">자원순환센터를 제외한 작업지만 선택해주세요.</div>--%>
-										<div class="addrs-sorting">
-											<div class="sorting">
-												<div class="box">
-													<div class="num">1</div>
-													<div class="addr"><input type="text" class="inp"
-																			 placeholder="지도에서 선택해주세요." readonly
-																			 name="addr"></div>
-													<div class="time"><input type="text" class="time" placeholder="도착시간"
-																			 name="targetTime">
-														<input type="hidden" name="lat">
-														<input type="hidden" name="lon">
-														<input type="hidden" name="radius">
-													</div>
-													<button class="btn-del"></button>
-												</div>
-											</div>
-										</div>
-										<div class="addrs-tit">지도상에서 마우스 좌클릭으로 지정할 수 있습니다.
-											<br />자원순환센터를 제외한 작업지만 선택해주세요.</div>
-										<div class="addr-btns">
-											<button class="btn btn03 md" id="btnMap">등록</button>
-										</div>
-									</td>
-								</tr>
-							</tbody>
-
-
-						</table>
-					</div>
-				</form>
-        	</div>
-
-        	<iframe src="/index?cmd=/map/taskMap" width="100%" height="450" frameborder="0" style="border:0; width: calc(100% - 350px);" allowfullscreen id="frame"></iframe>
-        </div>
-        <!--/ 본문 -->
-        
-        
-        
-        
-        
-        
-    <div id="car-schedule" title="스케줄 불러오기" style="display: none">
-       	<div class="dialog-content">
-			<div class="top-search">
-				<select id="pop_taskSearchType">
-					<option value="">전체</option>
-					<option value="plateNum">차량번호</option>
-					<option value="taskName">스케쥴명</option>
-				</select>
-				<input type="text" placeholder="검색어를 입력해주세요." id="pop_taskSearchText">
-				<button class="btn btn03" id="pop_btnSearch">조회</button>
-			</div>
-			<div class="btn-function row-2">
-				<div class="left">
-					<div class="date">
-						<button class="active btnTaskFillter" data-fillter=''>전체</button>
-						<button class="btnTaskFillter" data-fillter='0'>일반 쓰레기</button>
-						<button class="btnTaskFillter" data-fillter='1'>음식물 쓰레기</button>
-						<button class="btnTaskFillter" data-fillter='2'>재활용 쓰레기</button>
-<%--						<button class="btnTaskFillter" data-fillter='3'>대형 폐기물</button>--%>
-<%--						<button class="btnTaskFillter" data-fillter='4'>폐형광등 등 기타</button>--%>
-<%--						<button class="btnTaskFillter" data-fillter='5'>기동처리반</button>--%>
-					</div>
-				</div>
-			</div>
-			
-			<div class="scroll-table">
-				<table class="table list mgt20" id="pop_taskTable"></table>
-			</div>
-
-
-		</div>
-	</div>
-    
-    <div id="car-choice" title="차량 선택" style="display: none">
-       	<div class="dialog-content">
-			<div class="top-search">
-				<select id="pop_vehicleSearchType">
-					<option value="">전체</option>
-					<option value="plateNum">차량번호</option>
-					<option value="modelMaster">모델명</option>
-					<option value="groupNm">부서명</option>
-				</select>
-				<input type="text" placeholder="검색어를 입력해주세요." id="pop_vehicleSearchText">
-				<button class="btn btn03" id="pop_btnVeihcleSearch">조회</button>
-			</div>
-			<div class="btn-function row-2">
-				<div class="left">
-					<div class="date">
-						<button class="active btnTaskFillter"  data-fillter=''>전체</button>
-						<button class="btnTaskFillter" data-fillter='0'>일반 쓰레기</button>
-						<button class="btnTaskFillter" data-fillter='1'>음식물 쓰레기</button>
-						<button class="btnTaskFillter" data-fillter='2'>재활용 쓰레기</button>
-<%--						<button class="btnTaskFillter" data-fillter='3'>대형 폐기물</button>--%>
-<%--						<button class="btnTaskFillter" data-fillter='4'>폐형광등 등 기타</button>--%>
-<%--						<button class="btnTaskFillter" data-fillter='5'>기동처리반</button>--%>
-					</div>
-				</div>
-			</div>
-			
-			<div class="scroll-table">
-				<table class="table list mgt20"></table>
-			</div>
-		</div>
-
-    </div>
-    
-    
-    
-    <div id="car-user" title="운전자 선택" style="display: none">
-       	<div class="dialog-content">
-			<div class="top-search">
-				<select id="pop_userSearchType">
-					<option value="">전체</option>
-					<option value="groupNm">부서명</option>
-					<option value="name">성명</option>
-					<option value="corpPosition">직급</option>
-				</select>
-				<input type="text" placeholder="검색어를 입력해주세요." id="pop_userSearchText">
-				<button class="btn btn03" id="pop_btnUserSearch">조회</button>
-			</div>
-			<div class="scroll-table">
-				<table class="table list mgt20"></table>
-			</div>
-		</div>
-
-    </div>
-    
-    <div id="car-map" title="작업구간 미리보기" style="display: none">
-       	<div class="dialog-content">
-			<div class="map-preview"><iframe src="/index?cmd=/map/taskMapPreview" width="100%" height="450" frameborder="0" style="border:0" allowfullscreen id="mapPreview"></iframe></div>			
-		</div>
-    
-   	 	<div class="btn-bottom">
-            <button class="btn btn04 md" id="previewBreak">취소</button>
-            <button class="btn btn03 md" id="previewConfirm">등록</button>
+    </script>
+</head>
+
+<body id="SCREEN-2">
+    <div id="wrap">
+        <div class="find-wrap">
+            <div class="map-area">
+                <div id="mapDiv" style="width:100%; height:100%;"></div>
+            </div>
         </div>
     </div>
-    
-  
-   
-    
-    
-    <div class="modal" id="modal2">
-		<div class="modal-dialog" style="width:450px">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h4>아래 내용을 확인해주세요.</h4>
-					<button class="close-modal" data-dismiss="modal">닫기</button>
-				</div>
-				<div class="modal-body">
-					<div class="modal-txt">
-						
-					</div>
-					<div class="modal-tit">계속 진행하시겠습니까?</div>
-					
-					<div class="modal-bottom flex">
-						<button class="btn btn04 md" data-dismiss="modal" id="btnWaringBreak">취소</button>
-						<button class="btn btn03 md" id="btnWaringContiue">선택하기</button>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	
-    <div class="modal" id="modal3">
-		<div class="modal-dialog" style="width:450px">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h4>아래 내용을 확인해주세요.</h4>
-					<!--<button class="close-modal" data-dismiss="modal">닫기</button>-->
-				</div>
-				<div class="modal-body">
-					<div class="modal-txt">
-						
-					</div>
-					
-					<div class="modal-bottom flex">
-						<button class="btn btn03 md" data-dismiss="modal">확인</button>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-   
-    <div class="modal" id="modal4">
-		<div class="modal-dialog" style="width:450px">
-			<div class="modal-content">
-				<!--
-				<div class="modal-header">
-					<h4>&nbsp;</h4>
-					<button class="close-modal" data-dismiss="modal">닫기</button>
-				</div>
-				-->
-				<div class="modal-body">
-					<div class="modal-tit">위 내용으로 스케줄을<br>등록하시겠습니까?</div>
-					<div class="modal-bottom flex">
-						<button class="btn btn04 md" data-dismiss="modal" id="finalBreak">취소</button>
-						<button class="btn btn03 md" id="finalConfirm">등록</button>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-    
-    
-    
-    
-    
-	
-	<script>
-		
-                
-		
-		$(function() {
-			$( "#draggable" ).draggable({ 
-				axis: "x",
-				containment: "parent"
-			});
-			
-			
-			
-			
-			
-			
-			
-		});
 
-	</script>
- ===================================================================================================================================================================
+    <!-- 상단 바 -->
+    <div class="top-bar">
+        <button class="back-btn"><img src="common/img/back.svg" alt="뒤로가기"></button>
+        <div id="dateText" class="date-text">2025-09-12</div>
+        <input type="date" id="datePicker" class="date-hidd en">
+    </div>
 
- [{"depotKey":"84723df3-2c12-4ff7-a08d-26d31edf7f1b","depotName":"3232131231231","depotAddr":"경기도 성남시 중원구 연꽃로20번길 5","depotLat":37.41743373676113,"depotLon":127.13683722890569,"depotRadius":250,"corp":{"corpKey":"349d4c94-70e9-11f0-8084-0242ac140002","corpType":"12","serviceGrade":"3","partnerType":"0","corpName":"수원시","corpNum":"1234567890","ceoName":"수원시","corpPhone":"01012345678","corpPhoneCtyCode":"+82","corpBusiness":"","corpItem":"","allocationUsed":"0","geoMaxCnt":5,"regDate":1754280736000,"corpDesc":"","vehicleManager":{"accountId":"suwon@jastecm.com","accountKey":"a539e184-fee8-4f3e-8218-23a89016a4d5","fcmKey":"d0vU91nDS498AmQc3Wp49x:APA91bFdUs58CLujFm5fZzU3Z2M5Zc4hJ25AvyHMMdPazGC3PZkiLMIDayLx34X0md_vZ141rsd7UFjvjdQErn2coREMvsriIt6WgkAm4xPI-uQT82oh2V0","mailAuth":"0","smsAuth":"0","mobilePhone":"01012345678","mobilePhoneCtyCode":"+82","phone":"","phoneCtyCode":"+82","rule":"1","subRule":"0","lang":"ko","name":"수원","serviceAccepted":"0","privateAccepted":"0","locationAccepted":"0","marketingAccepted":"0","smsAccepted":"0","joinDate":1754280736000,"corpPosition":"","pcmngMonitor":"0","pushAccept":"1","unit":"km"},"financeName":"수원","financeEmail":"suwon@jastecm.com","financePhone":"01012345678","contractViewYn":"1","paymentType":"0","serviceGroup":{"serviceGroupType":"0","serviceGroupName":"V4"},"prepareStatus":"0","prepareComplate":true,"useYn":"1","tripHeartBeatDay":7,"tripHeartBeatInterval":7,"approval":{"allocateApproval":"0","autoAllocateApprovalStep1":"0","autoAllocateApprovalStep2":"0","maintenanceApproval":"0","autoMaintenanceApprovalStep1":"0","autoMaintenanceApprovalStep2":"0","expensesApproval":"0","autoExpensesApprovalStep1":"0","autoExpensesApprovalStep2":"0","accidentApproval":"0"},"settings":[]},"corpKey":"349d4c94-70e9-11f0-8084-0242ac140002","regDate":1756278752000,"modDate":1756278752000,"arrWorkTypes":[{"depotKey":"84723df3-2c12-4ff7-a08d-26d31edf7f1b","workType":"0","priority":1}]},{"depotKey":"d18e2fad-7478-4f4f-b3fc-fc60b8a83db3","depotName":"123123","depotAddr":"경기도 성남시 수정구 창업로57번길 20","depotLat":37.40976429917992,"depotLon":127.0958745328213,"depotRadius":250,"corp":{"corpKey":"349d4c94-70e9-11f0-8084-0242ac140002","corpType":"12","serviceGrade":"3","partnerType":"0","corpName":"수원시","corpNum":"1234567890","ceoName":"수원시","corpPhone":"01012345678","corpPhoneCtyCode":"+82","corpBusiness":"","corpItem":"","allocationUsed":"0","geoMaxCnt":5,"regDate":1754280736000,"corpDesc":"","vehicleManager":{"accountId":"suwon@jastecm.com","accountKey":"a539e184-fee8-4f3e-8218-23a89016a4d5","fcmKey":"d0vU91nDS498AmQc3Wp49x:APA91bFdUs58CLujFm5fZzU3Z2M5Zc4hJ25AvyHMMdPazGC3PZkiLMIDayLx34X0md_vZ141rsd7UFjvjdQErn2coREMvsriIt6WgkAm4xPI-uQT82oh2V0","mailAuth":"0","smsAuth":"0","mobilePhone":"01012345678","mobilePhoneCtyCode":"+82","phone":"","phoneCtyCode":"+82","rule":"1","subRule":"0","lang":"ko","name":"수원","serviceAccepted":"0","privateAccepted":"0","locationAccepted":"0","marketingAccepted":"0","smsAccepted":"0","joinDate":1754280736000,"corpPosition":"","pcmngMonitor":"0","pushAccept":"1","unit":"km"},"financeName":"수원","financeEmail":"suwon@jastecm.com","financePhone":"01012345678","contractViewYn":"1","paymentType":"0","serviceGroup":{"serviceGroupType":"0","serviceGroupName":"V4"},"prepareStatus":"0","prepareComplate":true,"useYn":"1","tripHeartBeatDay":7,"tripHeartBeatInterval":7,"approval":{"allocateApproval":"0","autoAllocateApprovalStep1":"0","autoAllocateApprovalStep2":"0","maintenanceApproval":"0","autoMaintenanceApprovalStep1":"0","autoMaintenanceApprovalStep2":"0","expensesApproval":"0","autoExpensesApprovalStep1":"0","autoExpensesApprovalStep2":"0","accidentApproval":"0"},"settings":[]},"corpKey":"349d4c94-70e9-11f0-8084-0242ac140002","regDate":1756278733000,"modDate":1756278733000,"arrWorkTypes":[{"depotKey":"d18e2fad-7478-4f4f-b3fc-fc60b8a83db3","workType":"0","priority":1}]},{"depotKey":"cf311922-2939-4239-b97e-497b86d74a07","depotName":"222","depotAddr":"경기도 성남시 수정구 고산동길 19","depotLat":37.42339831194841,"depotLon":127.09611056720139,"depotRadius":250,"corp":{"corpKey":"349d4c94-70e9-11f0-8084-0242ac140002","corpType":"12","serviceGrade":"3","partnerType":"0","corpName":"수원시","corpNum":"1234567890","ceoName":"수원시","corpPhone":"01012345678","corpPhoneCtyCode":"+82","corpBusiness":"","corpItem":"","allocationUsed":"0","geoMaxCnt":5,"regDate":1754280736000,"corpDesc":"","vehicleManager":{"accountId":"suwon@jastecm.com","accountKey":"a539e184-fee8-4f3e-8218-23a89016a4d5","fcmKey":"d0vU91nDS498AmQc3Wp49x:APA91bFdUs58CLujFm5fZzU3Z2M5Zc4hJ25AvyHMMdPazGC3PZkiLMIDayLx34X0md_vZ141rsd7UFjvjdQErn2coREMvsriIt6WgkAm4xPI-uQT82oh2V0","mailAuth":"0","smsAuth":"0","mobilePhone":"01012345678","mobilePhoneCtyCode":"+82","phone":"","phoneCtyCode":"+82","rule":"1","subRule":"0","lang":"ko","name":"수원","serviceAccepted":"0","privateAccepted":"0","locationAccepted":"0","marketingAccepted":"0","smsAccepted":"0","joinDate":1754280736000,"corpPosition":"","pcmngMonitor":"0","pushAccept":"1","unit":"km"},"financeName":"수원","financeEmail":"suwon@jastecm.com","financePhone":"01012345678","contractViewYn":"1","paymentType":"0","serviceGroup":{"serviceGroupType":"0","serviceGroupName":"V4"},"prepareStatus":"0","prepareComplate":true,"useYn":"1","tripHeartBeatDay":7,"tripHeartBeatInterval":7,"approval":{"allocateApproval":"0","autoAllocateApprovalStep1":"0","autoAllocateApprovalStep2":"0","maintenanceApproval":"0","autoMaintenanceApprovalStep1":"0","autoMaintenanceApprovalStep2":"0","expensesApproval":"0","autoExpensesApprovalStep1":"0","autoExpensesApprovalStep2":"0","accidentApproval":"0"},"settings":[]},"corpKey":"349d4c94-70e9-11f0-8084-0242ac140002","regDate":1756278677000,"modDate":1756278686000,"arrWorkTypes":[{"depotKey":"cf311922-2939-4239-b97e-497b86d74a07","workType":"1","priority":1}]},{"depotKey":"7fd4b74a-0265-47ad-8722-e7447662ca7f","depotName":"woong집","depotAddr":"서울특별시 동작구 국사봉1길 157 원형쉐르빌","depotLat":37.495392216989046,"depotLon":126.93394998261844,"depotRadius":250,"corp":{"corpKey":"349d4c94-70e9-11f0-8084-0242ac140002","corpType":"12","serviceGrade":"3","partnerType":"0","corpName":"수원시","corpNum":"1234567890","ceoName":"수원시","corpPhone":"01012345678","corpPhoneCtyCode":"+82","corpBusiness":"","corpItem":"","allocationUsed":"0","geoMaxCnt":5,"regDate":1754280736000,"corpDesc":"","vehicleManager":{"accountId":"suwon@jastecm.com","accountKey":"a539e184-fee8-4f3e-8218-23a89016a4d5","fcmKey":"d0vU91nDS498AmQc3Wp49x:APA91bFdUs58CLujFm5fZzU3Z2M5Zc4hJ25AvyHMMdPazGC3PZkiLMIDayLx34X0md_vZ141rsd7UFjvjdQErn2coREMvsriIt6WgkAm4xPI-uQT82oh2V0","mailAuth":"0","smsAuth":"0","mobilePhone":"01012345678","mobilePhoneCtyCode":"+82","phone":"","phoneCtyCode":"+82","rule":"1","subRule":"0","lang":"ko","name":"수원","serviceAccepted":"0","privateAccepted":"0","locationAccepted":"0","marketingAccepted":"0","smsAccepted":"0","joinDate":1754280736000,"corpPosition":"","pcmngMonitor":"0","pushAccept":"1","unit":"km"},"financeName":"수원","financeEmail":"suwon@jastecm.com","financePhone":"01012345678","contractViewYn":"1","paymentType":"0","serviceGroup":{"serviceGroupType":"0","serviceGroupName":"V4"},"prepareStatus":"0","prepareComplate":true,"useYn":"1","tripHeartBeatDay":7,"tripHeartBeatInterval":7,"approval":{"allocateApproval":"0","autoAllocateApprovalStep1":"0","autoAllocateApprovalStep2":"0","maintenanceApproval":"0","autoMaintenanceApprovalStep1":"0","autoMaintenanceApprovalStep2":"0","expensesApproval":"0","autoExpensesApprovalStep1":"0","autoExpensesApprovalStep2":"0","accidentApproval":"0"},"settings":[]},"corpKey":"349d4c94-70e9-11f0-8084-0242ac140002","regDate":1756277434000,"modDate":1756278666000,"arrWorkTypes":[{"depotKey":"7fd4b74a-0265-47ad-8722-e7447662ca7f","workType":"0","priority":1}]},{"depotKey":"a2156616-5e69-48ca-9786-6472e20de2a8","depotName":"양재IC","depotAddr":"서울특별시 서초구 청계산로 68-8 우춘방농원","depotLat":37.45744120617479,"depotLon":127.04585241327067,"depotRadius":250,"corp":{"corpKey":"349d4c94-70e9-11f0-8084-0242ac140002","corpType":"12","serviceGrade":"3","partnerType":"0","corpName":"수원시","corpNum":"1234567890","ceoName":"수원시","corpPhone":"01012345678","corpPhoneCtyCode":"+82","corpBusiness":"","corpItem":"","allocationUsed":"0","geoMaxCnt":5,"regDate":1754280736000,"corpDesc":"","vehicleManager":{"accountId":"suwon@jastecm.com","accountKey":"a539e184-fee8-4f3e-8218-23a89016a4d5","fcmKey":"d0vU91nDS498AmQc3Wp49x:APA91bFdUs58CLujFm5fZzU3Z2M5Zc4hJ25AvyHMMdPazGC3PZkiLMIDayLx34X0md_vZ141rsd7UFjvjdQErn2coREMvsriIt6WgkAm4xPI-uQT82oh2V0","mailAuth":"0","smsAuth":"0","mobilePhone":"01012345678","mobilePhoneCtyCode":"+82","phone":"","phoneCtyCode":"+82","rule":"1","subRule":"0","lang":"ko","name":"수원","serviceAccepted":"0","privateAccepted":"0","locationAccepted":"0","marketingAccepted":"0","smsAccepted":"0","joinDate":1754280736000,"corpPosition":"","pcmngMonitor":"0","pushAccept":"1","unit":"km"},"financeName":"수원","financeEmail":"suwon@jastecm.com","financePhone":"01012345678","contractViewYn":"1","paymentType":"0","serviceGroup":{"serviceGroupType":"0","serviceGroupName":"V4"},"prepareStatus":"0","prepareComplate":true,"useYn":"1","tripHeartBeatDay":7,"tripHeartBeatInterval":7,"approval":{"allocateApproval":"0","autoAllocateApprovalStep1":"0","autoAllocateApprovalStep2":"0","maintenanceApproval":"0","autoMaintenanceApprovalStep1":"0","autoMaintenanceApprovalStep2":"0","expensesApproval":"0","autoExpensesApprovalStep1":"0","autoExpensesApprovalStep2":"0","accidentApproval":"0"},"settings":[]},"corpKey":"349d4c94-70e9-11f0-8084-0242ac140002","regDate":1756277404000,"modDate":1756277404000,"arrWorkTypes":[{"depotKey":"a2156616-5e69-48ca-9786-6472e20de2a8","workType":"0","priority":1},{"depotKey":"a2156616-5e69-48ca-9786-6472e20de2a8","workType":"1","priority":2}]}]
+    <!-- 달력 전체화면 모달 -->
+    <div id="calendarModal" class="cal-wrap" aria-modal="true" role="dialog" style="display:none;">
+        <div class="cal-sheet">
+            <div class="cal-header">
+                <button class="nav prev" aria-label="이전달">‹</button>
+                <div class="cal-title" id="calTitle">0000년 00월</div>
+                <button class="nav next" aria-label="다음달">›</button>
+            </div>
+            <div class="cal-weekdays">
+                <div>S</div>
+                <div>M</div>
+                <div>T</div>
+                <div>W</div>
+                <div>T</div>
+                <div>F</div>
+                <div>S</div>
+            </div>
+            <div id="calGrid" class="cal-grid"></div>
+            <div class="cal-footer">
+                <button class="btn cancel" id="calCancel">취소</button>
+                <button class="btn confirm" id="calConfirm">확인</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 별도 알림 카드 -->
+    <div id="alertFloat">
+        <div id="alertBox"></div>
+    </div>
+
+    <!-- 하단: 이벤트 발생내역 바텀시트 -->
+    <div id="eventSheet" class="event-sheet collapsed" role="region" aria-label="이벤트 발생내역">
+        <button id="eventHeader" class="event-header" aria-expanded="false">
+            <span class="event-title">이벤트 발생내역</span>
+            <img id="eventChevron" class="chev" src="common/img/up.svg" alt="위로" />
+        </button>
+        <div id="eventBody" class="event-body"></div>
+    </div>
+
+    <script>
+        const vehicle = JSON.parse(sessionStorage.getItem("vehicle") || '{}');
+        const _key=vehicle.vehicleKey;
+        console.log("veh2", vehicle);
+
+        $.ajax({
+            url: `http://localhost/api/1/vehicle/${_key}/timeSeries?keys=journeyStart,journeyEnd,dtc,batteryVolt,hardEvent,vehicleDepot`,
+            type: "GET",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Content-type", "application/json");
+                xhr.setRequestHeader("key", token);
+            },
+            data: {},
+            dataType: "json",
+            success: function (r) {
+                console.log("result", r);
+                const data = r.result;
+                if (data == null || data.length == 0) {
+                    alert("데이터가 없습니다");
+                } else {
+                    console.log("marker data", data);
+
+                }
+            }
+        });
+        /* ===== 상단 날짜 & 달력 모달 ===== */
+        (function () {
+            const dateText = document.getElementById('dateText');
+            const dateInput = document.getElementById('datePicker');
+            const modal = document.getElementById('calendarModal');
+            const calTitle = document.getElementById('calTitle');
+            const calGrid = document.getElementById('calGrid');
+            const btnPrev = modal.querySelector('.prev');
+            const btnNext = modal.querySelector('.next');
+            const btnCancel = document.getElementById('calCancel');
+            const btnOk = document.getElementById('calConfirm');
+
+            let viewYear, viewMonth; // 표시 중인 연/월(0~11)
+            let tempSelected = null; // 모달 내 임시 선택(YYYY-MM-DD)
+
+            const pad = n => String(n).padStart(2, '0');
+            const toISO = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+            const parseISO = s => {
+                const [y, m, dd] = s.split('-').map(Number);
+                return new Date(y, m - 1, dd);
+            };
+            const todayISO = () => toISO(new Date());
+
+            // 초기값
+            const initial = dateInput?.value || todayISO();
+            dateInput.value = initial;
+            dateText.textContent = initial;
+
+            function openCalendar(baseISO) {
+                const base = parseISO(baseISO || todayISO());
+                viewYear = base.getFullYear();
+                viewMonth = base.getMonth();
+                tempSelected = baseISO || todayISO();
+                renderCalendar();
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeCalendar() {
+                modal.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+
+            function renderCalendar() {
+                calTitle.textContent = `${viewYear}년 ${pad(viewMonth + 1)}월`;
+                calGrid.innerHTML = '';
+
+                const first = new Date(viewYear, viewMonth, 1);
+                const startDay = first.getDay();
+                const lastDate = new Date(viewYear, viewMonth + 1, 0).getDate();
+
+                // 이전달 말일 채우기
+                const prevLastDate = new Date(viewYear, viewMonth, 0).getDate();
+                for (let i = startDay - 1; i >= 0; i--) {
+                    const d = prevLastDate - i;
+                    const iso = toISO(new Date(viewYear, viewMonth - 1, d));
+                    calGrid.appendChild(dayCell(d, iso, true));
+                }
+                // 이번달
+                for (let d = 1; d <= lastDate; d++) {
+                    const iso = toISO(new Date(viewYear, viewMonth, d));
+                    calGrid.appendChild(dayCell(d, iso, false));
+                }
+                // 다음달(6주 42칸 보장)
+                const cells = calGrid.children.length;
+                const need = 42 - cells;
+                for (let d = 1; d <= need; d++) {
+                    const iso = toISO(new Date(viewYear, viewMonth + 1, d));
+                    calGrid.appendChild(dayCell(d, iso, true));
+                }
+            }
+
+            function dayCell(label, iso, muted) {
+                const div = document.createElement('div');
+                div.className = 'day' + (muted ? ' muted' : '');
+                if (iso === todayISO()) div.classList.add('today');
+                if (iso === tempSelected) div.classList.add('selected');
+                div.textContent = label;
+                div.addEventListener('click', () => {
+                    console.log("date click");
+                    tempSelected = iso;
+                    [...calGrid.querySelectorAll('.day')].forEach(d => d.classList.remove('selected'));
+                    div.classList.add('selected');
+                    // 다른 달 날짜 클릭 시 해당 달로 이동
+                    const d = parseISO(iso);
+                    viewYear = d.getFullYear();
+                    viewMonth = d.getMonth();
+                    renderCalendar();
+                });
+                return div;
+            }
+
+            btnPrev.addEventListener('click', () => {
+                viewMonth--;
+                if (viewMonth < 0) {
+                    viewMonth = 11;
+                    viewYear--;
+                }
+                renderCalendar();
+            });
+            btnNext.addEventListener('click', () => {
+                viewMonth++;
+                if (viewMonth > 11) {
+                    viewMonth = 0;
+                    viewYear++;
+                }
+                renderCalendar();
+            });
+            btnCancel.addEventListener('click', closeCalendar);
+            btnOk.addEventListener('click', () => {
+                if (tempSelected) {
+                    dateInput.value = tempSelected;
+                    dateText.textContent = tempSelected;
+                    // TODO: tempSelected 기준으로 데이터 갱신
+                    // loadMapData(tempSelected);
+                }
+                closeCalendar();
+            });
+
+            dateText.addEventListener('click', () => {
+
+                openCalendar(dateInput.value || todayISO())
+            });
+
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape' && modal.style.display === 'flex') {
+                    closeCalendar();
+                }
+            });
+            modal.addEventListener('click', e => {
+                if (e.target === modal) closeCalendar();
+            });
+
+            // 뒤로가기 버튼 동작
+            document.querySelector('.back-btn')?.addEventListener('click', () => history.back());
+        })();
+
+        /* ===== 별도 알림 카드 렌더링 ===== */
+        function renderAlertCard(alert) {
+            const box = document.getElementById('alertBox');
+            if (!box) return;
+            const on = String(alert.ignition).toUpperCase() === 'ON';
+
+            box.innerHTML = `
+                <div class="alert-card">
+                <div class="alert-head">${alert.plate ?? ''}</div>
+                <div class="alert-body">
+                    <div class="alert-left">
+                    <div class="alert-label">시동</div>
+                    <div class="alert-value ${on ? 'on' : ''}">${on ? 'ON' : 'OFF'}</div>
+                    <div class="alert-label" style="margin-top:1.8vh;">고장코드</div>
+                    <div class="alert-value" style="font-size:2.2vh;">${alert.faultCode ?? '-'}</div>
+                    <div class="alert-time">${alert.timeLeft ?? ''}</div>
+                    </div>
+                    <div class="alert-right">
+                    <div class="alert-label">배터리 전압</div>
+                    <div class="alert-value">${alert.battery ?? '-'}</div>
+                    <div class="alert-time">${alert.timeRight ?? alert.timeLeft ?? ''}</div>
+                    </div>
+                </div>
+                </div>
+            `;
+        }
+        // 초기 예시 데이터
+        renderAlertCard({
+            plate: '123가1234',
+            ignition: 'ON',
+            faultCode: '-',
+            battery: '20V',
+            timeLeft: '2025-09-17 11:19 기준',
+            timeRight: '2025-09-17 11:19 기준'
+        });
+
+        /* ===== 하단 이벤트 발생내역(리스트) ===== */
+        (function () {
+            const sheet = document.getElementById('eventSheet');
+            const header = document.getElementById('eventHeader');
+            const chev = document.getElementById('eventChevron');
+            const body = document.getElementById('eventBody');
+
+            let eventList = [
+                { time: '10:13:01', label: '주행시작', desc: '' },
+                { time: '10:20:53', label: '차고지 이탈', desc: '' },
+                { time: '13:01:22', label: '배터리 이상', desc: '' },
+                { time: '13:12:34', label: '고장 감지', desc: '고장코드설명이 들어갑니다.' },
+                { time: '15:03:21', label: '차고지 진입', desc: '' },
+                { time: '15:20:53', label: '5', desc: '차고지 이탈' },
+                { time: '15:56:33', label: '0', desc: '주행종료' }
+            ];
+
+            function renderEventList(items) {
+                if (!items || items.length === 0) {
+                    body.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:20vh;font-size:2vh;color:#333;">최근 발생한 이벤트가 없습니다.</div>`;
+                    return;
+                }
+                const rows = items.map(ev => `
+                    <div class="ev-row">
+                    <div class="ev-time">${ev.time}</div>
+                    <div class="ev-cell">
+                        <span class="ev-badge">${ev.label}</span>
+                        ${ev.desc ? `<span class="ev-desc">${ev.desc}</span>` : ''}
+                    </div>
+                    </div>
+                `).join('');
+                body.innerHTML = `
+                    <div class="ev-table">
+                    <div class="ev-thead"><div>시간</div><div>이벤트</div></div>
+                    ${rows}
+                    </div>`;
+            }
+
+            // ✅ 바텀시트 토글 로직
+            function setCollapsed(collapsed) {
+                sheet.classList.toggle('collapsed', collapsed);
+                header.setAttribute('aria-expanded', (!collapsed).toString());
+                chev.src = collapsed ? 'common/img/up.svg' : 'common/img/down.svg';
+                chev.alt = collapsed ? '위로' : '아래로';
+
+                if (!collapsed) {
+                    renderEventList(eventList);
+                }
+
+                // 🔁 알림 카드 위치 조정
+                updateAlertPosition();
+            }
+
+            // 알림 카드 위치 조정 함수
+            function updateAlertPosition() {
+                const float = document.getElementById('alertFloat');
+                const sheet = document.getElementById('eventSheet');
+                if (!float || !sheet) return;
+
+                const isCollapsed = sheet.classList.contains('collapsed');
+                float.style.bottom = isCollapsed ? 'calc(8vh + 1.2vh)' : 'calc(44vh + 1.2vh)';
+            }
+
+            // 최초 실행 & 리사이즈 대응
+            updateAlertPosition();
+            window.addEventListener('resize', updateAlertPosition);
+
+            setCollapsed(true);
+            header.addEventListener('click', () => setCollapsed(!sheet.classList.contains('collapsed')));
+        })();
+    </script>
+
+
+
+</body>
+
+</html>
